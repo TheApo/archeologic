@@ -48,6 +48,9 @@ public class AssetLoader {
 	private static Texture boardMainTexture;
 	public static TextureRegion boardMainTextureRegion;
 
+	private static Texture boardTexture;
+	public static TextureRegion boardTextureRegion;
+
 	private static Texture wonTexture;
 	public static TextureRegion wonTextureRegion;
 	private static Texture titleTexture;
@@ -102,6 +105,13 @@ public class AssetLoader {
 
 		boardMainTextureRegion = new TextureRegion(boardMainTexture, 0, 0, 1200, 715);
 		boardMainTextureRegion.flip(false, true);
+
+
+		boardTexture = new Texture(Gdx.files.internal("images/gameboard.png"));
+		boardTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+		boardTextureRegion = new TextureRegion(boardTexture, 0, 0, 350, 350);
+		boardTextureRegion.flip(false, true);
 
 		wonTexture = new Texture(Gdx.files.internal("images/won.png"));
 		wonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -211,6 +221,7 @@ public class AssetLoader {
 		circlesTexture.dispose();
 		backgroundMainTexture.dispose();
 		boardMainTexture.dispose();
+		boardTexture.dispose();
 		hudRightTexture.dispose();
 		buttonXTexture.dispose();
 		buttonFixTexture.dispose();

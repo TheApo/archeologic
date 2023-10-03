@@ -98,28 +98,7 @@ public class ButtonProvider {
 			int addValue = 100;
 
 			text = "<";
-			function = Menu.FUNCTION_LEVEL_LEFT;
-			width = 64;
-			height = 64;
-			x = Constants.GAME_WIDTH/2 - width - addValue;
-			y = Constants.GAME_HEIGHT/2 - 150;
-			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonLeftTextureRegion);
-			button.setFont(AssetLoader.font30);
-			this.game.getButtons().add(button);
-
-			text = ">";
-			function = Menu.FUNCTION_LEVEL_RIGHT;
-			width = 64;
-			height = 64;
-			x = Constants.GAME_WIDTH/2 + addValue;
-			y = Constants.GAME_HEIGHT/2 - 150;
-			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRightTextureRegion);
-			button.setFont(AssetLoader.font30);
-			this.game.getButtons().add(button);
-
-
-			text = "<";
-			function = Menu.FUNCTION_DIFFICULTY_LEFT;
+			function = Menu.FUNCTION_PLAYER_LEFT;
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 - width - addValue;
@@ -129,7 +108,7 @@ public class ButtonProvider {
 			this.game.getButtons().add(button);
 
 			text = ">";
-			function = Menu.FUNCTION_DIFFICULTY_RIGHT;
+			function = Menu.FUNCTION_PLAYER_RIGHT;
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 + addValue;
@@ -146,7 +125,7 @@ public class ButtonProvider {
 			x = Constants.GAME_WIDTH - width - 30;
 			y = Constants.GAME_HEIGHT - (height + 5) * 3;
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_CLEAR, "button_newlevel");
-			button.setFont(AssetLoader.font30);
+			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
 
 			text = "restart";

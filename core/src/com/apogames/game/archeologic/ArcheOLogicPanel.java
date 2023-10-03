@@ -164,16 +164,10 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         getMainPanel().spriteBatch.begin();
 
+        getMainPanel().spriteBatch.draw(AssetLoader.boardTextureRegion, 50, 100);
+
         float hudStartX = Constants.GAME_WIDTH - 5 - AssetLoader.hudRightTextureRegion.getRegionWidth();
         getMainPanel().spriteBatch.draw(AssetLoader.hudRightTextureRegion, hudStartX, 5);
-
-        int startY = 130;
-
-        getMainPanel().drawString(Localization.getInstance().getCommon().get("hud_rules")+":", hudStartX + 30, startY + 180, Constants.COLOR_WHITE, AssetLoader.font20, DrawString.BEGIN, false, false);
-        String[] rules = Localization.getInstance().getCommon().get("hud_rules_text").split(";");
-        for (int i = 0; i < rules.length; i++) {
-            getMainPanel().drawString(rules[i], hudStartX + 30, startY + 210 + i * 20, Constants.COLOR_WHITE, AssetLoader.font15, DrawString.BEGIN, false, false);
-        }
 
 
         getMainPanel().spriteBatch.draw(AssetLoader.titleTextureRegion, (Constants.GAME_WIDTH - AssetLoader.hudRightTextureRegion.getRegionWidth() - AssetLoader.titleTextureRegion.getRegionWidth())/2f, 5);
