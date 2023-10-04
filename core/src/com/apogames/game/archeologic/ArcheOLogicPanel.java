@@ -7,6 +7,10 @@ import com.apogames.backend.SequentiallyThinkingScreenModel;
 import com.apogames.common.Localization;
 import com.apogames.entity.ApoButton;
 import com.apogames.game.MainPanel;
+import com.apogames.game.knuthAlgoX.AlgorithmX;
+import com.apogames.game.tiles.ArcheOLogicTiles;
+import com.apogames.game.tiles.GivenTiles;
+import com.apogames.game.tiles.Tile;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -34,6 +38,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     private boolean isPressed = false;
 
+    private ArrayList<GameTile> currentTiles;
+
     public ArcheOLogicPanel(final MainPanel game) {
         super(game);
     }
@@ -57,6 +63,30 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         if (getGameProperties() == null) {
             setGameProperties(new ArcheOLogicPreferences(this));
             loadProperties();
+        }
+
+        if (currentTiles == null) {
+            ArcheOLogicTiles currentTiles = new ArcheOLogicTiles();
+            this.currentTiles = new ArrayList<>();
+            for (Tile tile : currentTiles.getAllTiles()) {
+                if (tile.getPossibilities().get(0).length != 1 || tile.getPossibilities().get(0)[0].length != 1) {
+                    this.currentTiles.add(new GameTile(tile));
+                }
+            }
+
+            int startX = 9 * Constants.TILE_SIZE;
+            int startY = 3 * Constants.TILE_SIZE;
+
+            for (GameTile tile : this.currentTiles) {
+                tile.setX(startX);
+                tile.setY(startY);
+
+                startX += (tile.getTile().getPossibilities().get(tile.getCurrentTile())[0].length) * Constants.TILE_SIZE;
+                if (startX >= 15 * Constants.TILE_SIZE) {
+                    startX = 9 * Constants.TILE_SIZE;
+                    startY += 3 * Constants.TILE_SIZE;
+                }
+            }
         }
 
         this.getMainPanel().resetSize(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
@@ -158,13 +188,21 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     public void render() {
         getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
 
-        getMainPanel().getRenderer().setColor(Constants.COLOR_PURPLE_MENU[0], Constants.COLOR_PURPLE_MENU[1], Constants.COLOR_PURPLE_MENU[2], 1f);
+        getMainPanel().getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
+
+        for (GameTile tile : this.currentTiles) {
+            tile.renderLine(getMainPanel());
+        }
 
         getMainPanel().getRenderer().end();
 
         getMainPanel().spriteBatch.begin();
 
-        getMainPanel().spriteBatch.draw(AssetLoader.boardTextureRegion, 50, 100);
+        getMainPanel().spriteBatch.draw(AssetLoader.boardTextureRegion, Constants.TILE_SIZE, Constants.TILE_SIZE * 2, 7 * Constants.TILE_SIZE, 7 * Constants.TILE_SIZE);
+
+        for (GameTile tile : this.currentTiles) {
+            tile.render(getMainPanel());
+        }
 
         float hudStartX = Constants.GAME_WIDTH - 5 - AssetLoader.hudRightTextureRegion.getRegionWidth();
         getMainPanel().spriteBatch.draw(AssetLoader.hudRightTextureRegion, hudStartX, 5);
@@ -178,6 +216,16 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         float scale = 1.0f;
 
         getMainPanel().spriteBatch.end();
+
+        getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
+
+        getMainPanel().getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
+
+        for (GameTile tile : this.currentTiles) {
+            tile.renderLine(getMainPanel());
+        }
+
+        getMainPanel().getRenderer().end();
 
         for (ApoButton button : this.getMainPanel().getButtons()) {
             button.render(this.getMainPanel());
