@@ -11,7 +11,9 @@ import com.apogames.game.knuthAlgoX.AlgorithmX;
 import com.apogames.game.tiles.ArcheOLogicTiles;
 import com.apogames.game.tiles.GivenTiles;
 import com.apogames.game.tiles.Tile;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -118,23 +120,41 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     }
 
     public void mouseMoved(int mouseX, int mouseY) {
+        for (GameTile tile : this.currentTiles) {
+            tile.isIn(mouseX, mouseY);
+        }
     }
 
     public void mouseButtonReleased(int mouseX, int mouseY, boolean isRightButton) {
         this.isPressed = false;
 
+        for (GameTile tile : this.currentTiles) {
+            tile.isIn(mouseX, mouseY);
+            if (tile.click(mouseX, mouseY)) {
+                break;
+            }
+        }
+
     }
 
     public void mousePressed(int x, int y, boolean isRightButton) {
-        if (isRightButton && !this.isPressed) {
+        if (!this.isPressed) {
             this.isPressed = true;
+            for (GameTile tile : this.currentTiles) {
+                if (tile.pressMouse(x, y)) {
+                    break;
+                }
+            }
         }
     }
 
     public void mouseDragged(int x, int y, boolean isRightButton) {
-        if (isRightButton) {
-            if (!this.isPressed) {
-                this.mousePressed(x, y, isRightButton);
+        if (!this.isPressed) {
+            this.mousePressed(x, y, isRightButton);
+        }
+        for (GameTile tile : this.currentTiles) {
+            if (tile.dragTile(x, y)) {
+                break;
             }
         }
     }
@@ -185,19 +205,23 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     @Override
     public void render() {
-        getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
-
-        getMainPanel().getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
-
-        for (GameTile tile : this.currentTiles) {
-            tile.renderLine(getMainPanel());
-        }
-
-        getMainPanel().getRenderer().end();
 
         getMainPanel().spriteBatch.begin();
 
         getMainPanel().spriteBatch.draw(AssetLoader.boardTextureRegion, Constants.TILE_SIZE, Constants.TILE_SIZE * 2, 7 * Constants.TILE_SIZE, 7 * Constants.TILE_SIZE);
+
+        getMainPanel().spriteBatch.end();
+
+        Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
+        getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
+        for (GameTile tile : this.currentTiles) {
+            tile.renderShadow(getMainPanel());
+        }
+
+        getMainPanel().getRenderer().end();
+        Gdx.graphics.getGL20().glDisable(GL20.GL_BLEND);
+
+        getMainPanel().spriteBatch.begin();
 
         for (GameTile tile : this.currentTiles) {
             tile.render(getMainPanel());
@@ -210,15 +234,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().spriteBatch.draw(AssetLoader.titleTextureRegion, (Constants.GAME_WIDTH - AssetLoader.hudRightTextureRegion.getRegionWidth() - AssetLoader.titleTextureRegion.getRegionWidth())/2f, 5);
         getMainPanel().drawString(Constants.PROPERTY_NAME, (Constants.GAME_WIDTH - AssetLoader.hudRightTextureRegion.getRegionWidth())/2f, 44, Constants.COLOR_WHITE, AssetLoader.font30, DrawString.MIDDLE, true, false);
 
-        int tileSizeWidth = AssetLoader.backgroundTextureRegion[4].getRegionWidth();
-        int tileSizeHeight = AssetLoader.backgroundTextureRegion[4].getRegionHeight();
-        float scale = 1.0f;
-
         getMainPanel().spriteBatch.end();
 
         getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
-
-        getMainPanel().getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
 
         for (GameTile tile : this.currentTiles) {
             tile.renderLine(getMainPanel());

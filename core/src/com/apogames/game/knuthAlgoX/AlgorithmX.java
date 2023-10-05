@@ -201,7 +201,6 @@ public class AlgorithmX {
     }
 
     private void showSolution() {
-        //System.out.println("Tada");
         byte[][] solutionArray = new byte[ySize][xSize];
         for (Node node : this.solution) {
             if (node.getY() < this.matrix.length - 1) {
