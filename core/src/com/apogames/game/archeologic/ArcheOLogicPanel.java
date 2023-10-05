@@ -78,8 +78,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             int startY = 3 * Constants.TILE_SIZE;
 
             for (GameTile tile : this.currentTiles) {
-                tile.setX(startX);
-                tile.setY(startY);
+                tile.changePosition(startX, startY);
 
                 startX += (tile.getTile().getPossibilities().get(tile.getCurrentTile())[0].length) * Constants.TILE_SIZE;
                 if (startX >= 15 * Constants.TILE_SIZE) {

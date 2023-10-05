@@ -378,6 +378,11 @@ public class GameScreen implements Screen, InputProcessor {
         return false;
     }
 
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         Vector3 screenCoords = new Vector3(screenX, screenY, 0);
         viewport.unproject(screenCoords);

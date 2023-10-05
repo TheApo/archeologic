@@ -4,10 +4,15 @@ import com.apogames.Constants;
 import com.apogames.asset.AssetLoader;
 import com.apogames.backend.GameScreen;
 import com.apogames.game.tiles.Tile;
+import com.badlogic.gdx.math.Polygon;
+
+import java.util.ArrayList;
 
 public class GameTile {
 
     private final Tile tile;
+
+    private byte[][] bytes;
 
     private int currentTile = 0;
 
@@ -17,50 +22,44 @@ public class GameTile {
     private int nextX = 0;
     private int nextY = 0;
 
+    private Polygon polygon;
+
     GameTile(Tile tile) {
         this.tile = tile;
+
+        this.bytes = this.tile.getPossibilities().get(this.currentTile);
     }
 
     public Tile getTile() {
         return tile;
     }
 
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
+    public void changePosition(float x, float y) {
         this.x = x;
 
         int myX = (int)(this.x / Constants.TILE_SIZE);
         this.nextX = myX * Constants.TILE_SIZE;
-    }
 
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
         this.y = y;
 
         int myY = (int)(this.y / Constants.TILE_SIZE);
         this.nextY = myY * Constants.TILE_SIZE;
     }
 
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
     public int getNextX() {
         return nextX;
     }
 
-    public void setNextX(int nextX) {
-        this.nextX = nextX;
-    }
-
     public int getNextY() {
         return nextY;
-    }
-
-    public void setNextY(int nextY) {
-        this.nextY = nextY;
     }
 
     public int getCurrentTile() {
@@ -69,6 +68,21 @@ public class GameTile {
 
     public void setCurrentTile(int currentTile) {
         this.currentTile = currentTile;
+
+        this.bytes = this.tile.getPossibilities().get(this.currentTile);
+        this.changePosition(this.x, this.y);
+    }
+
+    public boolean isIn(int x, int y) {
+        if (x >= this.nextX && (x < (this.nextX + bytes[0].length) * Constants.TILE_SIZE) &&
+           (y >= this.nextY && (y < (this.nextY + bytes.length) * Constants.TILE_SIZE))) {
+            int mouseX = (x - nextX)/Constants.TILE_SIZE;
+            int mouseY = (y - nextY)/Constants.TILE_SIZE;
+            if (bytes[mouseY][mouseX] != 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void render(GameScreen screen) {
