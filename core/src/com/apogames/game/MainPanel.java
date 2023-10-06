@@ -28,7 +28,7 @@ public class MainPanel extends GameScreen {
         }
 
         if (Constants.IS_HTML) {
-            Gdx.graphics.setContinuousRendering(false);
+            //Gdx.graphics.setContinuousRendering(false);
         }
         Localization.getInstance().setLocale(Locale.getDefault());
 

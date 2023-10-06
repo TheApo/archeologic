@@ -40,7 +40,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     private boolean isPressed = false;
 
-    private ArrayList<GameTile> currentTiles;
+    private GameEntity game;
 
     public ArcheOLogicPanel(final MainPanel game) {
         super(game);
@@ -64,35 +64,25 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     public void init() {
         if (getGameProperties() == null) {
             setGameProperties(new ArcheOLogicPreferences(this));
-            loadProperties();
         }
 
-        if (currentTiles == null) {
-            ArcheOLogicTiles currentTiles = new ArcheOLogicTiles();
-            this.currentTiles = new ArrayList<>();
-            for (Tile tile : currentTiles.getAllTiles()) {
-                if (tile.getPossibilities().get(0).length != 1 || tile.getPossibilities().get(0)[0].length != 1) {
-                    this.currentTiles.add(new GameTile(tile));
-                }
-            }
+        if (this.game == null) {
+            this.game = new GameEntity();
 
-            int startX = 9 * Constants.TILE_SIZE;
-            int startY = 3 * Constants.TILE_SIZE;
-
-            for (GameTile tile : this.currentTiles) {
-                tile.changePosition(startX, startY);
-
-                startX += (tile.getTile().getPossibilities().get(tile.getCurrentTile())[0].length) * Constants.TILE_SIZE;
-                if (startX >= 15 * Constants.TILE_SIZE) {
-                    startX = 9 * Constants.TILE_SIZE;
-                    startY += 3 * Constants.TILE_SIZE;
-                }
+            this.getGameProperties().readLevel();
+            if (this.game.getPossibleSolutions().size() == 0) {
+                this.getGameProperties().writeLevel();
+                this.getGameProperties().readLevel();
             }
         }
 
         this.getMainPanel().resetSize(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
 
         this.setNeededButtonsVisible();
+    }
+
+    public GameEntity getGame() {
+        return game;
     }
 
     @Override
@@ -120,31 +110,20 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     }
 
     public void mouseMoved(int mouseX, int mouseY) {
-        for (GameTile tile : this.currentTiles) {
-            tile.isIn(mouseX, mouseY);
-        }
+        this.game.mouseMoved(mouseX, mouseY);
     }
 
     public void mouseButtonReleased(int mouseX, int mouseY, boolean isRightButton) {
         this.isPressed = false;
 
-        for (GameTile tile : this.currentTiles) {
-            tile.isIn(mouseX, mouseY);
-            if (tile.click(mouseX, mouseY)) {
-                break;
-            }
-        }
-
+        this.game.mouseButtonReleased(mouseX, mouseY, isRightButton);
     }
 
     public void mousePressed(int x, int y, boolean isRightButton) {
         if (!this.isPressed) {
             this.isPressed = true;
-            for (GameTile tile : this.currentTiles) {
-                if (tile.pressMouse(x, y)) {
-                    break;
-                }
-            }
+
+            this.game.mousePressed(x, y, isRightButton);
         }
     }
 
@@ -152,11 +131,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         if (!this.isPressed) {
             this.mousePressed(x, y, isRightButton);
         }
-        for (GameTile tile : this.currentTiles) {
-            if (tile.dragTile(x, y)) {
-                break;
-            }
-        }
+
+        this.game.mouseDragged(x, y, isRightButton);
     }
 
     @Override
@@ -214,7 +190,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
         getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
-        for (GameTile tile : this.currentTiles) {
+        for (GameTile tile : this.game.getCurrentTiles()) {
             tile.renderShadow(getMainPanel());
         }
 
@@ -223,7 +199,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         getMainPanel().spriteBatch.begin();
 
-        for (GameTile tile : this.currentTiles) {
+        for (GameTile tile : this.game.getCurrentTiles()) {
             tile.render(getMainPanel());
         }
 
@@ -238,11 +214,22 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
 
-        for (GameTile tile : this.currentTiles) {
+        for (GameTile tile : this.game.getCurrentTiles()) {
             tile.renderLine(getMainPanel());
         }
 
         getMainPanel().getRenderer().end();
+
+        Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
+        getMainPanel().spriteBatch.begin();
+        getMainPanel().spriteBatch.setColor(1, 1, 1, 0.4f);
+        for (GameTile tile : this.game.getSolutionTiles()) {
+            tile.render(getMainPanel());
+        }
+
+        getMainPanel().spriteBatch.setColor(1, 1, 1, 1f);
+        getMainPanel().spriteBatch.end();
+        Gdx.graphics.getGL20().glDisable(GL20.GL_BLEND);
 
         for (ApoButton button : this.getMainPanel().getButtons()) {
             button.render(this.getMainPanel());

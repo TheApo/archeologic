@@ -138,17 +138,20 @@ public class GameTile {
     }
 
     public void render(GameScreen screen) {
-        byte[][] byteArray = tile.getPossibilities().get(this.currentTile);
-        int yTile = (int)(Constants.TILE_SIZE * AssetLoader.backgroundTextureRegion[0].getRegionHeight() / (float)(AssetLoader.backgroundTextureRegion[0].getRegionWidth()));
-        int xTile = Constants.TILE_SIZE;
-        int yChange = yTile - xTile;
-
         float curX = this.nextX;
         float curY = this.nextY;
         if (this.difX != 0 || this.difY != 0) {
             curX = this.x;
             curY = this.y;
         }
+        render(screen,curX, curY);
+    }
+
+    public void render(GameScreen screen, float curX, float curY) {
+        byte[][] byteArray = tile.getPossibilities().get(this.currentTile);
+        int yTile = (int)(Constants.TILE_SIZE * AssetLoader.backgroundTextureRegion[0].getRegionHeight() / (float)(AssetLoader.backgroundTextureRegion[0].getRegionWidth()));
+        int xTile = Constants.TILE_SIZE;
+        int yChange = yTile - xTile;
 
         for (int y = 0; y < byteArray.length; y++) {
             for (int x = 0; x < byteArray[0].length; x++) {
@@ -204,7 +207,7 @@ public class GameTile {
             return;
         }
 
-        screen.getRenderer().setColor(Constants.COLOR_GREY[0], Constants.COLOR_GREY[1], Constants.COLOR_GREY[2], 0.8f);
+        screen.getRenderer().setColor(Constants.COLOR_GREY[0], Constants.COLOR_GREY[1], Constants.COLOR_GREY[2], 0.6f);
 
         float curX = this.nextX;
         float curY = this.nextY;

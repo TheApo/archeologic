@@ -117,16 +117,18 @@ public class MyPuzzleADayBinary {
         int positionAllTiles = 0;
         int curPositionInMatrix = 0;
         for (Tile tile : this.allTiles) {
+            int possibility = 1;
             for (byte[][] curTile : tile.getPossibilities()) {
                 for (int y = 0; y < goal.length && y <= goal.length - curTile.length; y++) {
                     for (int x = 0; x < goal[0].length && x <= goal[0].length - curTile[0].length; x++) {
                         if (canPlaceTile(x, y, curTile, goal)) {
-                            matrix[curPositionInMatrix] = createRowForTile(tile.getTileNumber(), curTile, x, y, matrix[curPositionInMatrix].length, goal);
+                            matrix[curPositionInMatrix] = createRowForTile(tile.getTileNumber(), possibility, curTile, x, y, matrix[curPositionInMatrix].length, goal);
                             curPositionInMatrix += 1;
                             positionAllTiles += 1;
                         }
                     }
                 }
+                possibility += 1;
             }
         }
         for (int y = 0; y < goal.length; y++) {
@@ -161,7 +163,7 @@ public class MyPuzzleADayBinary {
         return returnMatrix;
     }
 
-    private byte[] createRowForTile(int tileNumber, byte[][] curTile, int checkX, int checkY, int size, byte[][] goal) {
+    private byte[] createRowForTile(int tileNumber, int realTileNumber, byte[][] curTile, int checkX, int checkY, int size, byte[][] goal) {
         byte[] curMatrix = new byte[size];
 
         for (int y = 0; y < curTile.length; y++) {
@@ -180,7 +182,7 @@ public class MyPuzzleADayBinary {
                 }
             }
         }
-        curMatrix[goal.length * goal[0].length * 2 + tileNumber - 1] = 1;
+        curMatrix[goal.length * goal[0].length * 2 + tileNumber - 1] = (byte)realTileNumber;
 
         return curMatrix;
     }

@@ -17,6 +17,7 @@ public class AlgorithmX {
     private ColumnNode root = null;
     public ArrayList<Node> solution = new ArrayList<>();
     public ArrayList<byte[][]> allSolutions = new ArrayList<>();
+    public ArrayList<byte[][]> allValueSolutions = new ArrayList<>();
 
     private int maxSolutions = 0;
 
@@ -57,6 +58,14 @@ public class AlgorithmX {
 
     public int getySize() {
         return ySize;
+    }
+
+    public ArrayList<byte[][]> getAllSolutions() {
+        return allSolutions;
+    }
+
+    public ArrayList<byte[][]> getAllValueSolutions() {
+        return allValueSolutions;
     }
 
     public ArrayList<byte[][]> run(int xSize, int ySize, int pieces, byte[][] matrix) {
@@ -113,7 +122,7 @@ public class AlgorithmX {
             Node lastCreatedElement = null;
             Node firstElement = null;
             for(int col = 0; col < matrix[row].length; col++) {
-                if(matrix[row][col] == 1)  {
+                if(matrix[row][col] >= 1)  {
                     Node colElement = curColumn;
                     while(colElement.down != null)
                     {
@@ -202,24 +211,27 @@ public class AlgorithmX {
 
     private void showSolution() {
         byte[][] solutionArray = new byte[ySize][xSize];
+        byte[][] solutionRealArray = new byte[ySize][xSize];
         for (Node node : this.solution) {
             if (node.getY() < this.matrix.length - 1) {
                 byte value = getValueForSolution(this.valueUntil, node);
+                byte realValue = getValueForSolutionReal(this.valueUntil, node);
                 for (int matrixY = 0; matrixY < this.matrix[0].length - this.pieces; matrixY += 1) {
                     if (matrixY < xSize * ySize && this.matrix[node.getY()][matrixY] == 1) {
                         int x = matrixY % xSize;
                         int y = matrixY / xSize;
-                        if (value > 7) {
+                        if (value > 6) {
                             value = 7;
                         }
                         solutionArray[y][x] = value;
+                        solutionRealArray[y][x] = realValue;
                     }
                 }
             }
         }
 
         for (int i = this.allSolutions.size() - 1; i >= 0; i--) {
-            if (Helper.equal(this.allSolutions.get(i), solutionArray)) {
+            if (Helper.equal(this.allSolutions.get(i), solutionArray) && Helper.equal(this.allValueSolutions.get(i), solutionRealArray)) {
                 return;
             }
         }
@@ -230,6 +242,7 @@ public class AlgorithmX {
 //        System.out.println();
 
         this.allSolutions.add(solutionArray);
+        this.allValueSolutions.add(solutionRealArray);
     }
 
     private byte getValueForSolution(int[] valueUntil, Node node) {
@@ -241,14 +254,24 @@ public class AlgorithmX {
         return 0;
     }
 
+    private byte getValueForSolutionReal(int[] valueUntil, Node node) {
+        for (int i = 0; i < valueUntil.length; i++) {
+            if (node.getY() < valueUntil[i]) {
+                //return (byte)(i+1);
+                return this.matrix[node.getY()][2 * this.xSize * this.ySize + i];
+            }
+        }
+        return 0;
+    }
+
     public int[] getTileUntil(int pieces) {
-        int[] valueUntil = new int[pieces];
+        int[] valueUntil = new int[pieces * 4];
 
         int start = 0;
         int index = 0;
         for (int piece = this.matrix[0].length - pieces; piece < this.matrix[0].length; piece++) {
             for (int y = start; y < this.matrix.length; y++) {
-                if (this.matrix[y][piece] != 1) {
+                if (this.matrix[y][piece] == 0) {
                     break;
                 } else {
                     start += 1;
