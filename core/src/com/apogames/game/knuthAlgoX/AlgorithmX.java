@@ -15,6 +15,8 @@ public class AlgorithmX {
     }
 
     private ColumnNode root = null;
+    
+    public HashSet<String> allStringSolutions = new HashSet<>();
     public ArrayList<Node> solution = new ArrayList<>();
     public ArrayList<byte[][]> allSolutions = new ArrayList<>();
     public ArrayList<byte[][]> allValueSolutions = new ArrayList<>();
@@ -85,7 +87,27 @@ public class AlgorithmX {
         this.allSolutions.clear();
         createDoubleLinkedLists(matrix);
         search(0);
-        System.out.println(this.allSolutions.size());
+
+        for (String levelString : this.allStringSolutions) {
+            String[] solutions = levelString.split("_");
+
+            byte[][] solutionArray = new byte[ySize][xSize];
+            byte[][] solutionRealArray = new byte[ySize][xSize];
+
+            int index = 0;
+            for (int y = 0; y < solutionArray.length; y++) {
+                for (int x = 0; x < solutionArray[0].length; x++) {
+                    solutionArray[y][x] = Byte.parseByte(solutions[0].substring(index, index + 1));
+                    solutionRealArray[y][x] = Byte.parseByte(solutions[1].substring(index, index + 1));
+
+                    index += 1;
+                }
+            }
+            this.allSolutions.add(solutionArray);
+            this.allValueSolutions.add(solutionRealArray);
+        }
+
+        System.out.println(this.allStringSolutions.size());
         return new ArrayList<>(this.allSolutions);
     }
 
@@ -210,6 +232,9 @@ public class AlgorithmX {
     }
 
     private void showSolution() {
+        StringBuilder solutionString = new StringBuilder();
+        StringBuilder solutionRealString = new StringBuilder();
+        
         byte[][] solutionArray = new byte[ySize][xSize];
         byte[][] solutionRealArray = new byte[ySize][xSize];
         for (Node node : this.solution) {
@@ -230,19 +255,30 @@ public class AlgorithmX {
             }
         }
 
-        for (int i = this.allSolutions.size() - 1; i >= 0; i--) {
-            if (Helper.equal(this.allSolutions.get(i), solutionArray) && Helper.equal(this.allValueSolutions.get(i), solutionRealArray)) {
-                return;
+        for (int y = 0; y < solutionArray.length; y++) {
+            for (int x = 0; x < solutionArray[0].length; x++) {
+                solutionString.append(solutionArray[y][x]);
+                solutionRealString.append(solutionRealArray[y][x]);
             }
         }
+
+        String allSolutionsRealString = solutionString + "_" + solutionRealString;
+        this.allStringSolutions.add(allSolutionsRealString);
+//
+//
+//        for (int i = this.allSolutions.size() - 1; i >= 0; i--) {
+//            if (Helper.equal(this.allSolutions.get(i), solutionArray) && Helper.equal(this.allValueSolutions.get(i), solutionRealArray)) {
+//                return;
+//            }
+//        }
 
 //        for (byte[] row : solutionArray) {
 //            System.out.println(Arrays.toString(row));
 //        }
 //        System.out.println();
 
-        this.allSolutions.add(solutionArray);
-        this.allValueSolutions.add(solutionRealArray);
+//        this.allSolutions.add(solutionArray);
+//        this.allValueSolutions.add(solutionRealArray);
     }
 
     private byte getValueForSolution(int[] valueUntil, Node node) {

@@ -8,6 +8,7 @@ import com.apogames.common.Localization;
 import com.apogames.entity.ApoButton;
 import com.apogames.game.MainPanel;
 import com.apogames.game.knuthAlgoX.AlgorithmX;
+import com.apogames.game.knuthAlgoX.MyPuzzleADayBinary;
 import com.apogames.game.tiles.ArcheOLogicTiles;
 import com.apogames.game.tiles.GivenTiles;
 import com.apogames.game.tiles.Tile;
@@ -64,16 +65,23 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     public void init() {
         if (getGameProperties() == null) {
             setGameProperties(new ArcheOLogicPreferences(this));
+            loadProperties();
         }
 
         if (this.game == null) {
             this.game = new GameEntity();
 
-            this.getGameProperties().readLevel();
-            if (this.game.getPossibleSolutions().size() == 0) {
-                this.getGameProperties().writeLevel();
-                this.getGameProperties().readLevel();
-            }
+            ArcheOLogicTiles logic = new ArcheOLogicTiles();
+            MyPuzzleADayBinary myPuzzleADayBinary = new MyPuzzleADayBinary(logic.getAllTiles());
+            byte[][] matrix = myPuzzleADayBinary.getMatrix(MyPuzzleADayBinary.GOAL);
+
+            int xSize = 5;
+            int ySize = 5;
+
+            AlgorithmX algoX = new AlgorithmX();
+            algoX.run(xSize, ySize, logic.getAllTiles().size(), matrix);
+
+            this.game.setAllSolutions(algoX.allSolutions, algoX.allValueSolutions);
         }
 
         this.getMainPanel().resetSize(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
@@ -95,6 +103,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     private void createNewLevel() {
         this.getMainPanel().getButtonByFunction(FUNCTION_NEW_LEVEL).setVisible(true);
 
+        this.game.choseNewSolution();
+        this.game.resetTiles();
+
         setNeededButtonsVisible();
     }
 
@@ -111,12 +122,19 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     public void mouseMoved(int mouseX, int mouseY) {
         this.game.mouseMoved(mouseX, mouseY);
+
+        if (this.isPressed) {
+            this.mouseButtonReleased(mouseX, mouseY, false);
+        }
     }
 
     public void mouseButtonReleased(int mouseX, int mouseY, boolean isRightButton) {
         this.isPressed = false;
 
         this.game.mouseButtonReleased(mouseX, mouseY, isRightButton);
+        if (this.game.isWon()) {
+            this.createNewLevel();
+        }
     }
 
     public void mousePressed(int x, int y, boolean isRightButton) {

@@ -119,6 +119,11 @@ public class GameTile {
         return false;
     }
 
+    public void setXAndYToNextXAndNextY() {
+        this.x = this.nextX;
+        this.y = this.nextY;
+    }
+
     public boolean pressMouse(int x, int y) {
         if (this.over) {
             this.difX = (int) (x - this.x);
@@ -166,6 +171,15 @@ public class GameTile {
                 }
             }
         }
+        for (int y = 0; y < byteArray.length; y++) {
+            for (int x = 0; x < byteArray[0].length; x++) {
+                if (byteArray[y][x] >= 1) {
+                    for (int z = 0; z < tile.getWaterSurround().get(this.currentTile)[y][x].size(); z++) {
+                        screen.spriteBatch.draw(AssetLoader.waterTextureRegion[tile.getWaterSurround().get(this.currentTile)[y][x].get(z)], curX + x * Constants.TILE_SIZE, curY + y * Constants.TILE_SIZE, Constants.TILE_SIZE, Constants.TILE_SIZE);
+                    }
+                }
+            }
+        }
     }
 
     public void renderLine(GameScreen screen) {
@@ -191,7 +205,7 @@ public class GameTile {
                     if (x + 1 >= byteArray[0].length || byteArray[y][x+1] == 0) {
                         screen.getRenderer().rectLine(curX - 1 + x * Constants.TILE_SIZE + Constants.TILE_SIZE, curY + y * Constants.TILE_SIZE, curX - 1 + x * Constants.TILE_SIZE + Constants.TILE_SIZE, curY + y * Constants.TILE_SIZE + Constants.TILE_SIZE, 3);
                     }
-                    if ((y - 1 < 0 || byteArray[y - 1][x] == 0) && (byteArray[y][x] != 2)) {
+                    if (y - 1 < 0 || byteArray[y - 1][x] == 0) {
                         screen.getRenderer().rectLine(curX + x * Constants.TILE_SIZE, curY + 1 + y * Constants.TILE_SIZE, curX + x * Constants.TILE_SIZE + Constants.TILE_SIZE, curY + 1 + y * Constants.TILE_SIZE, 3);
                     }
                     if (y + 1 >= byteArray.length || byteArray[y + 1][x] == 0) {

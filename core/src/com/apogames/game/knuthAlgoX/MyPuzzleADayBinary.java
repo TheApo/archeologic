@@ -216,11 +216,11 @@ public class MyPuzzleADayBinary {
         MyPuzzleADayBinary myPuzzleADayBinary = new MyPuzzleADayBinary(logic.getAllTiles());
         byte[][] matrix = myPuzzleADayBinary.getMatrix(GOAL);
 
-        for (byte[] row : matrix) {
-            System.out.println(Arrays.toString(row));
-        }
-
-        System.out.println(matrix.length+" "+matrix[0].length);
+//        for (byte[] row : matrix) {
+//            System.out.println(Arrays.toString(row));
+//        }
+//
+//        System.out.println(matrix.length+" "+matrix[0].length);
 
         AlgorithmX x = new AlgorithmX();
         ArrayList<byte[][]> run = x.run(5, 5, 9, matrix);

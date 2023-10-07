@@ -31,18 +31,21 @@ public class GameEntity {
                     this.currentTiles.add(new GameTile(tile));
                 }
             }
+            resetTiles();;
+        }
+    }
 
-            int startX = 9 * Constants.TILE_SIZE;
-            int startY = 3 * Constants.TILE_SIZE;
+    public void resetTiles() {
+        int startX = 9 * Constants.TILE_SIZE;
+        int startY = 3 * Constants.TILE_SIZE;
 
-            for (GameTile tile : this.currentTiles) {
-                tile.changePosition(startX, startY);
+        for (GameTile tile : this.currentTiles) {
+            tile.changePosition(startX, startY);
 
-                startX += (tile.getTile().getPossibilities().get(tile.getCurrentTile())[0].length) * Constants.TILE_SIZE;
-                if (startX >= 15 * Constants.TILE_SIZE) {
-                    startX = 9 * Constants.TILE_SIZE;
-                    startY += 3 * Constants.TILE_SIZE;
-                }
+            startX += (tile.getTile().getPossibilities().get(tile.getCurrentTile())[0].length) * Constants.TILE_SIZE;
+            if (startX >= 15 * Constants.TILE_SIZE) {
+                startX = 9 * Constants.TILE_SIZE;
+                startY += 3 * Constants.TILE_SIZE;
             }
         }
     }
@@ -50,6 +53,7 @@ public class GameEntity {
     public void choseNewSolution() {
         if (this.possibleSolutions.size() > 0) {
             int random = (int) (Math.random() * this.possibleSolutions.size());
+            System.out.println("random "+random);
             this.solution = this.possibleSolutions.get(random);
             this.solutionPossibilities = this.possibleSolutionsPossibilities.get(random);
 
@@ -61,54 +65,75 @@ public class GameEntity {
                     int index = (this.solution[y][x]);
                     if (this.solution[y][x] != 0 && this.solution[y][x] < 7 && !found.contains(index)) {
                         found.add(index);
-                        foundAndAddSolutionTile(x, y);
+                        GameTile nextTile = new GameTile(new Tile(index, this.getTileFromTileNumber(index).getTile().getPossibilities().get(this.solutionPossibilities[y][x] - 1)));
+                        this.solutionTiles.add(nextTile);
+                        foundAndAddSolutionTile(x, y, nextTile);
                     }
                 }
             }
-            System.out.println(this.solutionTiles.size());
         }
     }
 
-    private void foundAndAddSolutionTile(int givenX, int givenY) {
+    private GameTile getTileFromTileNumber(int tileNumber) {
+        for (GameTile tile : this.currentTiles) {
+            if (tile.getTile().getTileNumber() == tileNumber) {
+                return tile;
+            }
+        }
+        return null;
+    }
+
+    private void foundAndAddSolutionTile(int givenX, int givenY, GameTile nextTile) {
         int solutionIndex = (this.solution[givenY][givenX]);
         GameTile gameTile = this.currentTiles.get(solutionIndex - 1);
 
-        int index = 0;
-        for (byte[][] possibleTile : gameTile.getTile().getPossibilities()) {
-            boolean foundSolution = false;
-            for (int y = givenY - possibleTile.length + 1; y <= givenY; y++) {
-                for (int x = givenX - possibleTile[0].length + 1; x <= givenX; x++) {
-                    if (canPlaceTile(x, y, possibleTile, index)) {
-                        GameTile nextTile = new GameTile(new Tile(solutionIndex, possibleTile));
-                        nextTile.changePosition((2 + x) * Constants.TILE_SIZE, (3 + y) * Constants.TILE_SIZE);
-                        this.solutionTiles.add(nextTile);
-                        foundSolution = true;
-                        break;
-                    }
-                }
-                if (foundSolution) {
+        byte[][] possibleTile = gameTile.getTile().getPossibilities().get(this.solutionPossibilities[givenY][givenX] - 1);
+        boolean foundSolution = false;
+        for (int y = givenY - possibleTile.length + 1; y <= givenY; y++) {
+            for (int x = givenX - possibleTile[0].length + 1; x <= givenX; x++) {
+                if (canPlaceTile(x, y, possibleTile, solutionIndex)) {
+                    nextTile.changePosition((2 + x) * Constants.TILE_SIZE, (3 + y) * Constants.TILE_SIZE);
+                    foundSolution = true;
                     break;
                 }
             }
-            index += 1;
+            if (foundSolution) {
+                break;
+            }
         }
 
     }
 
-    private boolean canPlaceTile(int givenX, int givenY, byte[][] possibleTile, int index) {
+    private boolean canPlaceTile(int givenX, int givenY, byte[][] possibleTile, int tileNumber) {
         if (givenX < 0 || givenY < 0 ||
-                givenX + possibleTile[0].length >= this.solution[0].length ||
-                givenY + possibleTile.length >= this.solution.length) {
+                givenX + possibleTile[0].length > this.solution[0].length ||
+                givenY + possibleTile.length > this.solution.length) {
             return false;
         }
         for (int y = givenY; y < givenY + possibleTile.length; y++) {
             for (int x = givenX; x < givenX + possibleTile[0].length; x++) {
-                if (possibleTile[y - givenY][x - givenX] != 0 && this.solutionPossibilities[y][x] != index) {
+                if (possibleTile[y - givenY][x - givenX] != 0 && this.solution[y][x] != tileNumber) {
                     return false;
                 }
             }
         }
 
+        return true;
+    }
+
+    public boolean isWon() {
+        for (GameTile tile : this.currentTiles) {
+            boolean found = false;
+            for (GameTile checkTile : this.solutionTiles) {
+                if (tile.getNextX() == checkTile.getNextX() && tile.getNextY() == checkTile.getNextY()) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -129,6 +154,7 @@ public class GameEntity {
     public void mouseMoved(int mouseX, int mouseY) {
         for (GameTile tile : this.currentTiles) {
             tile.isIn(mouseX, mouseY);
+            tile.setXAndYToNextXAndNextY();
         }
     }
 

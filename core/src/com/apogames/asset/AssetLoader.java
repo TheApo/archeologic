@@ -58,6 +58,8 @@ public class AssetLoader {
 	private static Texture hudMenuTexture;
 	public static TextureRegion hudMenuTextureRegion;
 
+	private static Texture waterTexture;
+	public static TextureRegion[] waterTextureRegion;
 	private static Texture buttonXTexture;
 	public static TextureRegion[] buttonXTextureRegion;
 	private static Texture buttonHelpTexture;
@@ -110,7 +112,7 @@ public class AssetLoader {
 		boardTexture = new Texture(Gdx.files.internal("images/gameboard.png"));
 		boardTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-		boardTextureRegion = new TextureRegion(boardTexture, 0, 0, 350, 350);
+		boardTextureRegion = new TextureRegion(boardTexture, 0, 0, 455, 455);
 		boardTextureRegion.flip(false, true);
 
 		wonTexture = new Texture(Gdx.files.internal("images/won.png"));
@@ -136,6 +138,22 @@ public class AssetLoader {
 
 		hudMenuTextureRegion = new TextureRegion(hudMenuTexture, 0, 0, 800, 700);
 		hudMenuTextureRegion.flip(false, true);
+
+		waterTexture = new Texture(Gdx.files.internal("images/water.png"));
+		waterTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+		waterTextureRegion = new TextureRegion[16];
+		for (int i = 0; i < waterTextureRegion.length; i++) {
+			int x = i;
+			int y = 0;
+			if (x >= 8) {
+				x = i - 8;
+				y = 1;
+			}
+
+			waterTextureRegion[i] = new TextureRegion(waterTexture, 128 * x, y * 128, 128, 128);
+			waterTextureRegion[i].flip(false, true);
+		}
 
 		buttonXTexture = new Texture(Gdx.files.internal("images/buttons_x.png"));
 		buttonXTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -222,6 +240,7 @@ public class AssetLoader {
 		backgroundMainTexture.dispose();
 		boardMainTexture.dispose();
 		boardTexture.dispose();
+		waterTexture.dispose();
 		hudRightTexture.dispose();
 		buttonXTexture.dispose();
 		buttonFixTexture.dispose();
