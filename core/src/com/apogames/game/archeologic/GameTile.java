@@ -15,6 +15,8 @@ public class GameTile {
 
     private boolean over = false;
 
+    private int gameX = 0;
+    private int gameY = 0;
     private float x = 0;
     private float y = 0;
 
@@ -46,6 +48,17 @@ public class GameTile {
 
         int myY = (int)((this.y + Constants.TILE_SIZE/2) / Constants.TILE_SIZE);
         this.nextY = myY * Constants.TILE_SIZE;
+
+        this.gameX = (this.nextX - 2 * Constants.TILE_SIZE) / Constants.TILE_SIZE;
+        this.gameY = (this.nextY - 3 * Constants.TILE_SIZE) / Constants.TILE_SIZE;
+    }
+
+    public int getGameX() {
+        return gameX;
+    }
+
+    public int getGameY() {
+        return gameY;
     }
 
     public float getX() {
@@ -149,12 +162,16 @@ public class GameTile {
             curX = this.x;
             curY = this.y;
         }
-        render(screen,curX, curY);
+        render(screen,curX, curY, true);
     }
 
-    public void render(GameScreen screen, float curX, float curY) {
+    public void render(GameScreen screen, boolean withWater) {
+        render(screen,this.nextX, this.nextY, withWater);
+    }
+
+    public void render(GameScreen screen, float curX, float curY, boolean withWater) {
         byte[][] byteArray = tile.getPossibilities().get(this.currentTile);
-        int yTile = (int)(Constants.TILE_SIZE * AssetLoader.backgroundTextureRegion[0].getRegionHeight() / (float)(AssetLoader.backgroundTextureRegion[0].getRegionWidth()));
+        int yTile = (int) (Constants.TILE_SIZE * AssetLoader.backgroundTextureRegion[0].getRegionHeight() / (float) (AssetLoader.backgroundTextureRegion[0].getRegionWidth()));
         int xTile = Constants.TILE_SIZE;
         int yChange = yTile - xTile;
 
@@ -171,11 +188,13 @@ public class GameTile {
                 }
             }
         }
-        for (int y = 0; y < byteArray.length; y++) {
-            for (int x = 0; x < byteArray[0].length; x++) {
-                if (byteArray[y][x] >= 1) {
-                    for (int z = 0; z < tile.getWaterSurround().get(this.currentTile)[y][x].size(); z++) {
-                        screen.spriteBatch.draw(AssetLoader.waterTextureRegion[tile.getWaterSurround().get(this.currentTile)[y][x].get(z)], curX + x * Constants.TILE_SIZE, curY + y * Constants.TILE_SIZE, Constants.TILE_SIZE, Constants.TILE_SIZE);
+        if (withWater) {
+            for (int y = 0; y < byteArray.length; y++) {
+                for (int x = 0; x < byteArray[0].length; x++) {
+                    if (byteArray[y][x] >= 1) {
+                        for (int z = 0; z < tile.getWaterSurround().get(this.currentTile)[y][x].size(); z++) {
+                            screen.spriteBatch.draw(AssetLoader.waterTextureRegion[tile.getWaterSurround().get(this.currentTile)[y][x].get(z)], curX + x * Constants.TILE_SIZE, curY + y * Constants.TILE_SIZE, Constants.TILE_SIZE, Constants.TILE_SIZE);
+                        }
                     }
                 }
             }
@@ -186,6 +205,8 @@ public class GameTile {
         screen.getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
         if (over) {
             screen.getRenderer().setColor(Constants.COLOR_YELLOW[0], Constants.COLOR_YELLOW[1], Constants.COLOR_YELLOW[2], 1f);
+        } else {
+            return;
         }
 
         float curX = this.nextX;

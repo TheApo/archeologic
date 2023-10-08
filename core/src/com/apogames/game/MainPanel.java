@@ -7,9 +7,11 @@ import com.apogames.backend.GameScreen;
 import com.apogames.backend.ScreenModel;
 import com.apogames.common.Localization;
 import com.apogames.game.archeologic.ArcheOLogicPanel;
+import com.apogames.game.menu.Difficulty;
 import com.apogames.game.menu.Menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import jdk.internal.org.jline.utils.DiffHelper;
 
 import java.util.Locale;
 
@@ -46,8 +48,10 @@ public class MainPanel extends GameScreen {
         this.changeModel(this.menu);
     }
 
-    public void changeToGame() {
+    public void changeToGame(Difficulty difficulty) {
         this.changeModel(this.game);
+
+        this.game.setNewLevel(difficulty);
     }
 
     /**
@@ -89,10 +93,6 @@ public class MainPanel extends GameScreen {
 
     public void render(float delta) {
         super.render(delta);
-
-        this.spriteBatch.begin();
-        this.spriteBatch.draw(AssetLoader.backgroundMainTextureRegion, 0, 0);
-        this.spriteBatch.end();
 
         if (model != null) {
             model.render();

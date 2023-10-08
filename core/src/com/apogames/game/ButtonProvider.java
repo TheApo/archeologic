@@ -102,7 +102,7 @@ public class ButtonProvider {
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 - width - addValue;
-			y = Constants.GAME_HEIGHT/2;
+			y = Constants.GAME_HEIGHT/2 - 40;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonLeftTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
@@ -112,7 +112,28 @@ public class ButtonProvider {
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 + addValue;
-			y = Constants.GAME_HEIGHT/2;
+			y = Constants.GAME_HEIGHT/2 - 40;
+			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRightTextureRegion);
+			button.setFont(AssetLoader.font30);
+			this.game.getButtons().add(button);
+
+
+			text = "<";
+			function = Menu.FUNCTION_DIFFICULTY_LEFT;
+			width = 64;
+			height = 64;
+			x = Constants.GAME_WIDTH/2 - width - addValue;
+			y = Constants.GAME_HEIGHT/2 + 80;
+			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonLeftTextureRegion);
+			button.setFont(AssetLoader.font30);
+			this.game.getButtons().add(button);
+
+			text = ">";
+			function = Menu.FUNCTION_DIFFICULTY_RIGHT;
+			width = 64;
+			height = 64;
+			x = Constants.GAME_WIDTH/2 + addValue;
+			y = Constants.GAME_HEIGHT/2 + 80;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRightTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
@@ -166,26 +187,6 @@ public class ButtonProvider {
 			y = Constants.GAME_HEIGHT/2 + AssetLoader.wonTextureRegion.getRegionHeight()/2 - (height + 50);
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonXTextureRegion);
 			button.setFont(AssetLoader.font30);
-			this.game.getButtons().add(button);
-
-			text = "fix";
-			function = ArcheOLogicPanel.FUNCTION_FIX;
-			width = 64;
-			height = 64;
-			x = Constants.GAME_WIDTH - AssetLoader.hudRightTextureRegion.getRegionWidth() + 30;
-			y = 50;
-			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonFixTextureRegion);
-			button.setFont(AssetLoader.font25);
-			this.game.getButtons().add(button);
-
-			text = "Help";
-			function = ArcheOLogicPanel.FUNCTION_HELP;
-			width = 64;
-			height = 64;
-			x = Constants.GAME_WIDTH - width - 30;
-			y = 50;
-			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonHelpTextureRegion);
-			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
 
 			for (int i = 0; i < this.game.getButtons().size(); i++) {

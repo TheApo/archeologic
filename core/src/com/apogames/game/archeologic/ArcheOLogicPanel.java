@@ -9,6 +9,7 @@ import com.apogames.entity.ApoButton;
 import com.apogames.game.MainPanel;
 import com.apogames.game.knuthAlgoX.AlgorithmX;
 import com.apogames.game.knuthAlgoX.MyPuzzleADayBinary;
+import com.apogames.game.menu.Difficulty;
 import com.apogames.game.tiles.ArcheOLogicTiles;
 import com.apogames.game.tiles.GivenTiles;
 import com.apogames.game.tiles.Tile;
@@ -30,8 +31,6 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     public static final String FUNCTION_TIWANAKU_BACK = "TIWANAKU_QUIT";
     public static final String FUNCTION_NEW_LEVEL = "TIWANAKU_NEW_LEVEL";
     public static final String FUNCTION_RESTART = "TIWANAKU_RESTART";
-    public static final String FUNCTION_FIX = "TIWANAKU_FIX";
-    public static final String FUNCTION_HELP = "TIWANAKU_HELP";
 
     public static final String FUNCTION_FINISH_BACK = "TIWANAKU_FINISH_QUIT";
     public static final String FUNCTION_FINISH_NEW_LEVEL = "TIWANAKU_FINISH_NEW_LEVEL";
@@ -50,9 +49,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     public void setNeededButtonsVisible() {
         getMainPanel().getButtonByFunction(FUNCTION_TIWANAKU_BACK).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_RESTART).setVisible(true);
-        getMainPanel().getButtonByFunction(FUNCTION_FIX).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_NEW_LEVEL).setVisible(true);
-        getMainPanel().getButtonByFunction(FUNCTION_HELP).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_FINISH_BACK).setVisible(false);
         getMainPanel().getButtonByFunction(FUNCTION_FINISH_RESTART).setVisible(false);
         getMainPanel().getButtonByFunction(FUNCTION_FINISH_NEW_LEVEL).setVisible(false);
@@ -71,12 +68,12 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         if (this.game == null) {
             this.game = new GameEntity();
 
+            int xSize = 5;
+            int ySize = 5;
+
             ArcheOLogicTiles logic = new ArcheOLogicTiles();
             MyPuzzleADayBinary myPuzzleADayBinary = new MyPuzzleADayBinary(logic.getAllTiles());
             byte[][] matrix = myPuzzleADayBinary.getMatrix(MyPuzzleADayBinary.GOAL);
-
-            int xSize = 5;
-            int ySize = 5;
 
             AlgorithmX algoX = new AlgorithmX();
             algoX.run(xSize, ySize, logic.getAllTiles().size(), matrix);
@@ -87,6 +84,10 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.getMainPanel().resetSize(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
 
         this.setNeededButtonsVisible();
+    }
+
+    public void setNewLevel(Difficulty difficulty) {
+        this.game.setNewLevel(difficulty);
     }
 
     public GameEntity getGame() {
@@ -167,8 +168,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 break;
             case ArcheOLogicPanel.FUNCTION_RESTART:
             case ArcheOLogicPanel.FUNCTION_FINISH_RESTART:
-                break;
-            case ArcheOLogicPanel.FUNCTION_FIX:
+                this.game.resetTiles();
                 break;
         }
     }
@@ -176,9 +176,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     private void setButtonsVisibility() {
         getMainPanel().getButtonByFunction(FUNCTION_TIWANAKU_BACK).setVisible(false);
         getMainPanel().getButtonByFunction(FUNCTION_RESTART).setVisible(false);
-        getMainPanel().getButtonByFunction(FUNCTION_FIX).setVisible(false);
         getMainPanel().getButtonByFunction(FUNCTION_NEW_LEVEL).setVisible(false);
-        getMainPanel().getButtonByFunction(FUNCTION_HELP).setVisible(false);
         getMainPanel().getButtonByFunction(FUNCTION_FINISH_BACK).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_FINISH_RESTART).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_FINISH_NEW_LEVEL).setVisible(true);
@@ -202,18 +200,19 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         getMainPanel().spriteBatch.begin();
 
+        getMainPanel().spriteBatch.draw(AssetLoader.backgroundMainTextureRegion, 0, 0);
         getMainPanel().spriteBatch.draw(AssetLoader.boardTextureRegion, Constants.TILE_SIZE, Constants.TILE_SIZE * 2, 7 * Constants.TILE_SIZE, 7 * Constants.TILE_SIZE);
 
         getMainPanel().spriteBatch.end();
 
-        Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
-        getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
-        for (GameTile tile : this.game.getCurrentTiles()) {
-            tile.renderShadow(getMainPanel());
-        }
-
-        getMainPanel().getRenderer().end();
-        Gdx.graphics.getGL20().glDisable(GL20.GL_BLEND);
+//        Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
+//        getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
+//        for (GameTile tile : this.game.getCurrentTiles()) {
+//            tile.renderShadow(getMainPanel());
+//        }
+//
+//        getMainPanel().getRenderer().end();
+//        Gdx.graphics.getGL20().glDisable(GL20.GL_BLEND);
 
         getMainPanel().spriteBatch.begin();
 
@@ -241,8 +240,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
         getMainPanel().spriteBatch.begin();
         getMainPanel().spriteBatch.setColor(1, 1, 1, 0.4f);
-        for (GameTile tile : this.game.getSolutionTiles()) {
-            tile.render(getMainPanel());
+        for (GameTile tile : this.game.getHiddenTiles()) {
+            tile.render(getMainPanel(), false);
         }
 
         getMainPanel().spriteBatch.setColor(1, 1, 1, 1f);

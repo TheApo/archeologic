@@ -105,7 +105,7 @@ public class AssetLoader {
 		boardMainTexture = new Texture(Gdx.files.internal("images/board_main.png"));
 		boardMainTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-		boardMainTextureRegion = new TextureRegion(boardMainTexture, 0, 0, 1200, 715);
+		boardMainTextureRegion = new TextureRegion(boardMainTexture, 0, 0, 1422, 800);
 		boardMainTextureRegion.flip(false, true);
 
 

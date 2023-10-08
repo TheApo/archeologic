@@ -1,6 +1,9 @@
 package com.apogames.game.archeologic;
 
 import com.apogames.Constants;
+import com.apogames.game.knuthAlgoX.AlgorithmX;
+import com.apogames.game.knuthAlgoX.MyPuzzleADayBinary;
+import com.apogames.game.menu.Difficulty;
 import com.apogames.game.tiles.ArcheOLogicTiles;
 import com.apogames.game.tiles.Tile;
 
@@ -8,10 +11,15 @@ import java.util.ArrayList;
 
 public class GameEntity {
 
+    private Difficulty difficulty = Difficulty.EASY;
     private byte[][] solution;
     private byte[][] solutionPossibilities;
 
     private ArrayList<GameTile> solutionTiles;
+
+    private ArrayList<GameTile> hiddenTiles = new ArrayList<>();
+
+    private ArrayList<Integer> hiddenSolutions = new ArrayList<>();
 
     private ArrayList<byte[][]> possibleSolutions;
     private ArrayList<byte[][]> possibleSolutionsPossibilities;
@@ -51,9 +59,8 @@ public class GameEntity {
     }
 
     public void choseNewSolution() {
-        if (this.possibleSolutions.size() > 0) {
+        if (!this.possibleSolutions.isEmpty()) {
             int random = (int) (Math.random() * this.possibleSolutions.size());
-            System.out.println("random "+random);
             this.solution = this.possibleSolutions.get(random);
             this.solutionPossibilities = this.possibleSolutionsPossibilities.get(random);
 
@@ -71,7 +78,26 @@ public class GameEntity {
                     }
                 }
             }
+
+            byte[][] goal = new byte[this.solution.length][this.solution[0].length];
+            int size = difficulty.getGivenTiles();
+            prefillGoal(goal, size);
+
+            this.fillHiddenSoltuions();
         }
+    }
+
+    private void fillHiddenSoltuions() {
+        this.hiddenSolutions.clear();
+        for (int i = 0; i < this.possibleSolutions.size(); i++) {
+            for (GameTile tile : this.hiddenTiles) {
+
+            }
+        }
+    }
+
+    public ArrayList<GameTile> getHiddenTiles() {
+        return hiddenTiles;
     }
 
     private GameTile getTileFromTileNumber(int tileNumber) {
@@ -120,6 +146,41 @@ public class GameEntity {
 
         return true;
     }
+
+    public void setNewLevel(Difficulty difficulty) {
+        this.difficulty = difficulty;
+
+        this.choseNewSolution();
+    }
+
+    public void prefillGoal(byte[][] goal, int size) {
+        ArrayList<PrefillHelp> help = new ArrayList<>();
+        for (GameTile tile : this.getSolutionTiles()) {
+            byte[][] bytes = tile.getTile().getPossibilities().get(0);
+            for (int y = 0;y < bytes.length; y++) {
+                for (int x = 0;x < bytes[0].length; x++) {
+                    if (bytes[y][x] > 1) {
+                        int tX = (tile.getNextX() - 2 * Constants.TILE_SIZE) / Constants.TILE_SIZE + x;
+                        int tY = (tile.getNextY() - 3 * Constants.TILE_SIZE) / Constants.TILE_SIZE + y;
+                        help.add(new PrefillHelp(tX, tY, bytes[y][x]));
+                    }
+                }
+            }
+        }
+
+        this.getHiddenTiles().clear();
+        int count = size;
+        while (count > 0) {
+            int random = (int)(Math.random() * help.size());
+            PrefillHelp remove = help.remove(random);
+            GameTile gt = new GameTile(new Tile(1, new byte[][]{{(byte) remove.getTileNumber()}}));
+            gt.changePosition((2 + remove.getX()) * Constants.TILE_SIZE, (3 + remove.getY()) * Constants.TILE_SIZE);
+            this.getHiddenTiles().add(gt);
+            goal[remove.getY()][remove.getX()] = (byte)remove.getTileNumber();
+            count -= 1;
+        }
+    }
+
 
     public boolean isWon() {
         for (GameTile tile : this.currentTiles) {

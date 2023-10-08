@@ -13,11 +13,15 @@ import java.util.Locale;
 
 public class Menu extends SequentiallyThinkingScreenModel {
 
+    public static final int PLAYER_MAX = 4;
+
     public static final String FUNCTION_BACK = "MENU_QUIT";
 
     public static final String FUNCTION_PLAY = "MENU_PLAY";
     public static final String FUNCTION_PLAYER_LEFT = "MENU_PLAYER_LEFT";
     public static final String FUNCTION_PLAYER_RIGHT = "MENU_PLAYER_RIGHT";
+    public static final String FUNCTION_DIFFICULTY_LEFT = "MENU_DIFFICULTY_LEFT";
+    public static final String FUNCTION_DIFFICULTY_RIGHT = "MENU_DIFFICULTY_RIGHT";
 
     public static final String FUNCTION_LANGUAGE = "MENU_LANGUAGE";
 
@@ -26,6 +30,10 @@ public class Menu extends SequentiallyThinkingScreenModel {
     private boolean isPressed = false;
 
     private boolean german = true;
+
+    private int player = 1;
+
+    private Difficulty difficulty = Difficulty.EASY;
 
     public Menu(final MainPanel game) {
         super(game);
@@ -37,6 +45,8 @@ public class Menu extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_LANGUAGE).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_PLAYER_LEFT).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_PLAYER_RIGHT).setVisible(true);
+        getMainPanel().getButtonByFunction(FUNCTION_DIFFICULTY_LEFT).setVisible(true);
+        getMainPanel().getButtonByFunction(FUNCTION_DIFFICULTY_RIGHT).setVisible(true);
     }
 
     @Override
@@ -96,8 +106,26 @@ public class Menu extends SequentiallyThinkingScreenModel {
             case Menu.FUNCTION_BACK:
                 quit();
                 break;
+            case Menu.FUNCTION_PLAYER_LEFT:
+                this.player -= 1;
+                if (this.player <= 0) {
+                    this.player = PLAYER_MAX;
+                }
+                break;
+            case Menu.FUNCTION_PLAYER_RIGHT:
+                this.player += 1;
+                if (this.player > PLAYER_MAX) {
+                    this.player = 1;
+                }
+                break;
+            case Menu.FUNCTION_DIFFICULTY_LEFT:
+                this.difficulty = this.difficulty.addDifficulty(-1);
+                break;
+            case Menu.FUNCTION_DIFFICULTY_RIGHT:
+                this.difficulty = this.difficulty.addDifficulty(+1);
+                break;
             case Menu.FUNCTION_PLAY:
-                getMainPanel().changeToGame();
+                getMainPanel().changeToGame(this.difficulty);
                 break;
             case Menu.FUNCTION_LANGUAGE:
                 this.german = !this.german;
@@ -154,6 +182,8 @@ public class Menu extends SequentiallyThinkingScreenModel {
 
         getMainPanel().spriteBatch.begin();
 
+        getMainPanel().spriteBatch.draw(AssetLoader.boardMainTextureRegion, 0, 0);
+
         getMainPanel().spriteBatch.draw(AssetLoader.hudMenuTextureRegion, Constants.GAME_WIDTH/2f - AssetLoader.hudMenuTextureRegion.getRegionWidth()/2f, 5);
 
         getMainPanel().drawString(Localization.getInstance().getCommon().get("title"), Constants.GAME_WIDTH/2f, 90, Constants.COLOR_WHITE, AssetLoader.font40, DrawString.MIDDLE, true, false);
@@ -169,6 +199,13 @@ public class Menu extends SequentiallyThinkingScreenModel {
 
         ApoButton buttonLeft = getMainPanel().getButtonByFunction(FUNCTION_PLAYER_LEFT);
         getMainPanel().drawString(Localization.getInstance().getCommon().get("menu_player"), Constants.GAME_WIDTH/2f, buttonLeft.getY() - 20, Constants.COLOR_WHITE, AssetLoader.font25, DrawString.MIDDLE, true, false);
+
+        getMainPanel().drawString(this.player+"", Constants.GAME_WIDTH/2f, buttonLeft.getY() + buttonLeft.getHeight()/2, Constants.COLOR_WHITE, AssetLoader.font30, DrawString.MIDDLE, true, false);
+
+        ApoButton buttonDifficultyLeft = getMainPanel().getButtonByFunction(FUNCTION_DIFFICULTY_LEFT);
+        getMainPanel().drawString(Localization.getInstance().getCommon().get("menu_difficulty"), Constants.GAME_WIDTH/2f, buttonDifficultyLeft.getY() - 20, Constants.COLOR_WHITE, AssetLoader.font25, DrawString.MIDDLE, true, false);
+
+        getMainPanel().drawString(this.difficulty.getText(), Constants.GAME_WIDTH/2f, buttonDifficultyLeft.getY() + buttonDifficultyLeft.getHeight()/2, Constants.COLOR_WHITE, AssetLoader.font30, DrawString.MIDDLE, true, false);
 
         getMainPanel().spriteBatch.end();
 
