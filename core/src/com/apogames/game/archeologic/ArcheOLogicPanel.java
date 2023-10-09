@@ -214,6 +214,14 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 //        getMainPanel().getRenderer().end();
 //        Gdx.graphics.getGL20().glDisable(GL20.GL_BLEND);
 
+        getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
+
+        for (GameTile tile : this.game.getCurrentTiles()) {
+            tile.renderShadow(getMainPanel());
+        }
+
+        getMainPanel().getRenderer().end();
+
         getMainPanel().spriteBatch.begin();
 
         for (GameTile tile : this.game.getCurrentTiles()) {
@@ -239,11 +247,10 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         Gdx.graphics.getGL20().glEnable(GL20.GL_BLEND);
         getMainPanel().spriteBatch.begin();
-        getMainPanel().spriteBatch.setColor(1, 1, 1, 0.4f);
+        getMainPanel().spriteBatch.setColor(1, 1, 1, 0.7f);
         for (GameTile tile : this.game.getHiddenTiles()) {
             tile.render(getMainPanel(), false);
         }
-
         getMainPanel().spriteBatch.setColor(1, 1, 1, 1f);
         getMainPanel().spriteBatch.end();
         Gdx.graphics.getGL20().glDisable(GL20.GL_BLEND);

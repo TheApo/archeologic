@@ -131,18 +131,18 @@ public class MyPuzzleADayBinary {
                 possibility += 1;
             }
         }
-        for (int y = 0; y < goal.length; y++) {
-            for (int x = 0; x < goal[0].length; x++) {
-                matrix[curPositionInMatrix] = createRowForTileRule(x, y, matrix[curPositionInMatrix].length, goal, positionAllTiles, 2);
-                curPositionInMatrix += 1;
-            }
-        }
-        for (int y = 0; y < goal.length; y++) {
-            for (int x = 0; x < goal[0].length; x++) {
-                matrix[curPositionInMatrix] = createRowForTileRule(x, y, matrix[curPositionInMatrix].length, goal, positionAllTiles, 3);
-                curPositionInMatrix += 1;
-            }
-        }
+//        for (int y = 0; y < goal.length; y++) {
+//            for (int x = 0; x < goal[0].length; x++) {
+//                matrix[curPositionInMatrix] = createRowForTileRule(x, y, matrix[curPositionInMatrix].length, goal, positionAllTiles, 2);
+//                curPositionInMatrix += 1;
+//            }
+//        }
+//        for (int y = 0; y < goal.length; y++) {
+//            for (int x = 0; x < goal[0].length; x++) {
+//                matrix[curPositionInMatrix] = createRowForTileRule(x, y, matrix[curPositionInMatrix].length, goal, positionAllTiles, 3);
+//                curPositionInMatrix += 1;
+//            }
+//        }
 
         byte[][] returnMatrix = new byte[curPositionInMatrix + 1][goal.length * goal[0].length + allTiles.size()];
         System.arraycopy(matrix, 0, returnMatrix, 0, curPositionInMatrix + 1);

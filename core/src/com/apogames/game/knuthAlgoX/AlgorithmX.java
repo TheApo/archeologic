@@ -20,6 +20,7 @@ public class AlgorithmX {
     public ArrayList<Node> solution = new ArrayList<>();
     public ArrayList<byte[][]> allSolutions = new ArrayList<>();
     public ArrayList<byte[][]> allValueSolutions = new ArrayList<>();
+    public ArrayList<byte[][]> allRealSolutions = new ArrayList<>();
 
     private int maxSolutions = 0;
 
@@ -70,6 +71,10 @@ public class AlgorithmX {
         return allValueSolutions;
     }
 
+    public ArrayList<byte[][]> getAllRealSolutions() {
+        return allRealSolutions;
+    }
+
     public ArrayList<byte[][]> run(int xSize, int ySize, int pieces, byte[][] matrix) {
         return run(xSize, ySize, pieces, matrix, -1);
     }
@@ -107,7 +112,7 @@ public class AlgorithmX {
             this.allValueSolutions.add(solutionRealArray);
         }
 
-        System.out.println(this.allStringSolutions.size());
+        //System.out.println(this.allStringSolutions.size());
         return new ArrayList<>(this.allSolutions);
     }
 

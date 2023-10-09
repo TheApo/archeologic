@@ -15,6 +15,8 @@ public class GameEntity {
     private byte[][] solution;
     private byte[][] solutionPossibilities;
 
+    private byte[][] realSolution;
+
     private ArrayList<GameTile> solutionTiles;
 
     private ArrayList<GameTile> hiddenTiles = new ArrayList<>();
@@ -23,6 +25,7 @@ public class GameEntity {
 
     private ArrayList<byte[][]> possibleSolutions;
     private ArrayList<byte[][]> possibleSolutionsPossibilities;
+    private ArrayList<byte[][]> possibleSolutionsReal = new ArrayList<>();
 
     private ArrayList<GameTile> currentTiles;
 
@@ -63,6 +66,7 @@ public class GameEntity {
             int random = (int) (Math.random() * this.possibleSolutions.size());
             this.solution = this.possibleSolutions.get(random);
             this.solutionPossibilities = this.possibleSolutionsPossibilities.get(random);
+            this.realSolution = new byte[this.solution.length][this.solution[0].length];
 
             this.solutionTiles = new ArrayList<>();
 
@@ -83,15 +87,33 @@ public class GameEntity {
             int size = difficulty.getGivenTiles();
             prefillGoal(goal, size);
 
-            this.fillHiddenSoltuions();
+            this.fillHiddenSolutions();
+
+            System.out.println("Aktuelle Möglichkeiten: "+this.hiddenSolutions.size());
+            if (this.hiddenSolutions.size() < 10) {
+                choseNewSolution();
+            }
         }
     }
 
-    private void fillHiddenSoltuions() {
+    private void fillHiddenSolutions() {
         this.hiddenSolutions.clear();
-        for (int i = 0; i < this.possibleSolutions.size(); i++) {
-            for (GameTile tile : this.hiddenTiles) {
 
+        byte[][] goal = new byte[5][5];
+        for (GameTile tile : this.hiddenTiles) {
+            goal[tile.getGameY()][tile.getGameX()] = tile.getTile().getPossibilities().get(0)[0][0];
+        }
+
+        for (int i = 0; i < this.possibleSolutionsReal.size(); i++) {
+            boolean error = false;
+            for (GameTile tile : this.hiddenTiles) {
+                if (this.possibleSolutionsReal.get(i)[tile.getGameY()][tile.getGameX()] != goal[tile.getGameY()][tile.getGameX()]) {
+                    error = true;
+                    break;
+                }
+            }
+            if (!error) {
+                this.hiddenSolutions.add(i);
             }
         }
     }
@@ -117,8 +139,9 @@ public class GameEntity {
         boolean foundSolution = false;
         for (int y = givenY - possibleTile.length + 1; y <= givenY; y++) {
             for (int x = givenX - possibleTile[0].length + 1; x <= givenX; x++) {
-                if (canPlaceTile(x, y, possibleTile, solutionIndex)) {
+                if (canPlaceTile(x, y, possibleTile, solutionIndex, this.solution)) {
                     nextTile.changePosition((2 + x) * Constants.TILE_SIZE, (3 + y) * Constants.TILE_SIZE);
+                    placeInSolution(x, y, possibleTile, this.realSolution);
                     foundSolution = true;
                     break;
                 }
@@ -130,15 +153,25 @@ public class GameEntity {
 
     }
 
-    private boolean canPlaceTile(int givenX, int givenY, byte[][] possibleTile, int tileNumber) {
+    private void placeInSolution(int givenX, int givenY, byte[][] possibleTile, byte[][] realSolution) {
+        for (int y = givenY; y < givenY + possibleTile.length; y++) {
+            for (int x = givenX; x < givenX + possibleTile[0].length; x++) {
+                if (possibleTile[y - givenY][x - givenX] != 0) {
+                    realSolution[y][x] = possibleTile[y - givenY][x - givenX];
+                }
+            }
+        }
+    }
+
+    private boolean canPlaceTile(int givenX, int givenY, byte[][] possibleTile, int tileNumber, byte[][] solution) {
         if (givenX < 0 || givenY < 0 ||
-                givenX + possibleTile[0].length > this.solution[0].length ||
-                givenY + possibleTile.length > this.solution.length) {
+                givenX + possibleTile[0].length > solution[0].length ||
+                givenY + possibleTile.length > solution.length) {
             return false;
         }
         for (int y = givenY; y < givenY + possibleTile.length; y++) {
             for (int x = givenX; x < givenX + possibleTile[0].length; x++) {
-                if (possibleTile[y - givenY][x - givenX] != 0 && this.solution[y][x] != tileNumber) {
+                if (possibleTile[y - givenY][x - givenX] != 0 && solution[y][x] != tileNumber) {
                     return false;
                 }
             }
@@ -201,7 +234,58 @@ public class GameEntity {
     public void setAllSolutions(ArrayList<byte[][]> possibleSolutions, ArrayList<byte[][]> possibleSolutionsPossibilities) {
         this.possibleSolutions = new ArrayList<>(possibleSolutions);
         this.possibleSolutionsPossibilities = new ArrayList<>(possibleSolutionsPossibilities);
+
+        this.possibleSolutionsReal.clear();
+        for (int i = 0; i < this.possibleSolutions.size(); i++) {
+            byte[][] bytes = this.possibleSolutions.get(i);
+            byte[][] realSolution = new byte[bytes.length][bytes[0].length];
+            ArrayList<Byte> found = new ArrayList<>();
+            for (int y = 0; y < bytes.length; y++) {
+                for (int x = 0; x < bytes[0].length; x++) {
+                    if (bytes[y][x] > 0 && bytes[y][x] < 7 && !found.contains(bytes[y][x])) {
+                        found.add(bytes[y][x]);
+                        placeInReal(x, y, realSolution, bytes, this.possibleSolutionsPossibilities.get(i)[y][x]);
+                    }
+                }
+            }
+            this.possibleSolutionsReal.add(realSolution);
+        }
         this.choseNewSolution();
+    }
+
+    private void placeInReal(int givenX, int givenY, byte[][] realSolution, byte[][] givenArray, byte possibility) {
+        byte[][] bytes = this.currentTiles.get(givenArray[givenY][givenX] - 1).getTile().getPossibilities().get(possibility-1);
+
+        boolean foundSolution = false;
+        for (int y = givenY - bytes.length + 1; y <= givenY; y++) {
+            for (int x = givenX - bytes[0].length + 1; x <= givenX; x++) {
+                if (canPlaceTileReal(x, y, bytes, givenArray, realSolution, givenArray[givenY][givenX])) {
+                    placeInSolution(x, y, bytes, realSolution);
+                    foundSolution = true;
+                    break;
+                }
+            }
+            if (foundSolution) {
+                break;
+            }
+        }
+    }
+
+    private boolean canPlaceTileReal(int givenX, int givenY, byte[][] possibleTile, byte[][] givenArray, byte[][] realSolution, int tileNumber) {
+        if (givenX < 0 || givenY < 0 ||
+                givenX + possibleTile[0].length > realSolution[0].length ||
+                givenY + possibleTile.length > realSolution.length) {
+            return false;
+        }
+        for (int y = givenY; y < givenY + possibleTile.length; y++) {
+            for (int x = givenX; x < givenX + possibleTile[0].length; x++) {
+                if (possibleTile[y - givenY][x - givenX] != 0 && (realSolution[y][x] != 0 || givenArray[y][x] != tileNumber)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public ArrayList<byte[][]> getPossibleSolutions() {
