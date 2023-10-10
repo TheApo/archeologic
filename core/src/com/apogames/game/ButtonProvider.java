@@ -98,7 +98,7 @@ public class ButtonProvider {
 			int addValue = 100;
 
 			text = "<";
-			function = Menu.FUNCTION_PLAYER_LEFT;
+			function = Menu.FUNCTION_AMOUNTTILES_LEFT;
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 - width - addValue;
@@ -108,7 +108,7 @@ public class ButtonProvider {
 			this.game.getButtons().add(button);
 
 			text = ">";
-			function = Menu.FUNCTION_PLAYER_RIGHT;
+			function = Menu.FUNCTION_AMOUNTTILES_RIGHT;
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 + addValue;
@@ -146,6 +146,16 @@ public class ButtonProvider {
 			x = Constants.GAME_WIDTH - width - 30;
 			y = Constants.GAME_HEIGHT - (height + 5) * 3;
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_CLEAR, "button_newlevel");
+			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
+			text = "Test";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_TEST;
+			width = 180;
+			height = 64;
+			x = Constants.GAME_WIDTH - width - 30;
+			y = Constants.GAME_HEIGHT - (height + 5) * 4;
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_CLEAR, "button_question");
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
 

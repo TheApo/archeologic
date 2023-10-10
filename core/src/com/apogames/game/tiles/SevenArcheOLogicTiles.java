@@ -1,6 +1,6 @@
 package com.apogames.game.tiles;
 
-public class ArcheOLogicTiles extends GivenTiles {
+public class SevenArcheOLogicTiles extends GivenTiles {
 
     private final byte[][] tileOneByte = new byte[][] {
             {2, 0},
@@ -26,7 +26,7 @@ public class ArcheOLogicTiles extends GivenTiles {
     };
 
     private final byte[][] tileFiveByte = new byte[][] {
-            {1, 3},
+            {1, 0},
             {1, 2},
     };
 
@@ -35,6 +35,10 @@ public class ArcheOLogicTiles extends GivenTiles {
     };
 
     private final byte[][] tileSevenByte = new byte[][] {
+            {3},
+    };
+
+    private final byte[][] tileEightByte = new byte[][] {
             {1},
     };
 
@@ -45,10 +49,11 @@ public class ArcheOLogicTiles extends GivenTiles {
     private final Tile tileFive = new Tile(5, tileFiveByte);
     private final Tile tileSix = new Tile(6, tileSixByte);
     private final Tile tileSeven = new Tile(7, tileSevenByte);
-    private final Tile tileEight = new Tile(8, tileSevenByte);
-    private final Tile tileNine = new Tile(9, tileSevenByte);
+    private final Tile tileEight = new Tile(8, tileEightByte);
+    private final Tile tileNine = new Tile(9, tileEightByte);
+    private final Tile tileTen = new Tile(10, tileEightByte);
 
-    public ArcheOLogicTiles() {
+    public SevenArcheOLogicTiles() {
         super.getAllTiles().add(tileOne);
         super.getAllTiles().add(tileTwo);
         super.getAllTiles().add(tileThree);
@@ -58,21 +63,21 @@ public class ArcheOLogicTiles extends GivenTiles {
         super.getAllTiles().add(tileSeven);
         super.getAllTiles().add(tileEight);
         super.getAllTiles().add(tileNine);
+        super.getAllTiles().add(tileTen);
     }
 
     @Override
     public String getName() {
-        return "ArcheOLogic";
+        return "SevenArcheOLogic";
     }
 
     @Override
     public int getMaxTile() {
-        return 6;
+        return 7;
     }
 
     @Override
     public int[] getDifficultyTiles() {
-        return new int[] {5, 3};
+        return new int[] {6, 4};
     }
-
 }

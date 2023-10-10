@@ -13,6 +13,10 @@ public abstract class GivenTiles {
 
     public abstract String getName();
 
+    public abstract int getMaxTile();
+
+    public abstract int[] getDifficultyTiles();
+
     public void shuffleTiles() {
         Collections.shuffle(allTiles);
         for (Tile tile : allTiles) {

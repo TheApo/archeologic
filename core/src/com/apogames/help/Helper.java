@@ -26,4 +26,13 @@ public class Helper {
         return true;
     }
 
+    public static void print(final byte[][] array) {
+        for (int y = 0; y < array.length; y++) {
+            for (int x = 0; x < array[0].length; x++) {
+                System.out.print(array[y][x]);
+            }
+            System.out.println();
+        }
+    }
+
 }

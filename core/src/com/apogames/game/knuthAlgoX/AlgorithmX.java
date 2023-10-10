@@ -9,9 +9,6 @@ import java.util.HashSet;
 public class AlgorithmX {
 
     public static void main(String[] args) {
-        //long start = System.nanoTime();
-        AlgorithmX algorithmXSolve = new AlgorithmX();
-        algorithmXSolve.run(5, 5);
     }
 
     private ColumnNode root = null;
@@ -20,7 +17,6 @@ public class AlgorithmX {
     public ArrayList<Node> solution = new ArrayList<>();
     public ArrayList<byte[][]> allSolutions = new ArrayList<>();
     public ArrayList<byte[][]> allValueSolutions = new ArrayList<>();
-    public ArrayList<byte[][]> allRealSolutions = new ArrayList<>();
 
     private int maxSolutions = 0;
 
@@ -29,15 +25,11 @@ public class AlgorithmX {
     private int xSize;
     private int ySize;
 
+    private int maxTile;
+
     private int pieces;
 
     private int[] valueUntil;
-
-    public void run(int xSize, int ySize) {
-        this.matrix = createMatrix(xSize, ySize);
-
-        this.run(xSize, ySize, this.pieces, this.matrix);
-    }
 
     public byte[][] getMatrix() {
         return matrix;
@@ -71,18 +63,15 @@ public class AlgorithmX {
         return allValueSolutions;
     }
 
-    public ArrayList<byte[][]> getAllRealSolutions() {
-        return allRealSolutions;
+    public ArrayList<byte[][]> run(int xSize, int ySize, int pieces, int maxTiles, byte[][] matrix) {
+        return run(xSize, ySize, pieces, maxTiles, matrix, -1);
     }
 
-    public ArrayList<byte[][]> run(int xSize, int ySize, int pieces, byte[][] matrix) {
-        return run(xSize, ySize, pieces, matrix, -1);
-    }
-
-    public ArrayList<byte[][]> run(int xSize, int ySize, int pieces, byte[][] matrix, int maxSolutions) {
+    public ArrayList<byte[][]> run(int xSize, int ySize, int pieces, int maxTiles, byte[][] matrix, int maxSolutions) {
         this.xSize = xSize;
         this.ySize = ySize;
         this.pieces = pieces;
+        this.maxTile = maxTiles;
 
         this.matrix = matrix;
         this.valueUntil = getTileUntil(this.pieces);
@@ -114,14 +103,6 @@ public class AlgorithmX {
 
         //System.out.println(this.allStringSolutions.size());
         return new ArrayList<>(this.allSolutions);
-    }
-
-    private byte[][] createMatrix(int xSize, int ySize) {
-        MyPuzzleADayBinary myPuzzleADayBinary = new MyPuzzleADayBinary();
-
-        byte[][] matrix = myPuzzleADayBinary.getMatrix(MyPuzzleADayBinary.GOAL);
-        this.pieces = myPuzzleADayBinary.getAllTiles().size();
-        return matrix;
     }
 
     private ColumnNode createDoubleLinkedLists(byte[][] matrix)
@@ -250,8 +231,8 @@ public class AlgorithmX {
                     if (matrixY < xSize * ySize && this.matrix[node.getY()][matrixY] == 1) {
                         int x = matrixY % xSize;
                         int y = matrixY / xSize;
-                        if (value > 6) {
-                            value = 7;
+                        if (value > this.maxTile) {
+                            value = 9;
                         }
                         solutionArray[y][x] = value;
                         solutionRealArray[y][x] = realValue;
@@ -306,7 +287,7 @@ public class AlgorithmX {
     }
 
     public int[] getTileUntil(int pieces) {
-        int[] valueUntil = new int[pieces * 4];
+        int[] valueUntil = new int[pieces];
 
         int start = 0;
         int index = 0;

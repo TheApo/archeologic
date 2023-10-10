@@ -59,7 +59,10 @@ public class Tile {
             boolean up = isFilled(x, y, possibility, 0, -1);
             boolean down = isFilled(x, y, possibility, 0, 1);
 
-            if (!left && !right && !up) {
+            if (!left && !right && !up && !down) {
+                list.add(6);
+                list.add(4);
+            } else if (!left && !right && !up) {
                 list.add(6);
             } else if (!left && !right && !down) {
                 list.add(4);

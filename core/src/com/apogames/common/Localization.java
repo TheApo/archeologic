@@ -10,8 +10,6 @@ import static com.badlogic.gdx.utils.I18NBundle.createBundle;
 
 /**
  * Holds instances of the resource bundles and manages the locale.
- *
- * @author Maik Becker {@literal <hi@maik.codes>}
  */
 public final class Localization {
     private static final Localization INSTANCE = new Localization();

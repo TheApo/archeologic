@@ -4,8 +4,8 @@ import com.apogames.Constants;
 import com.apogames.game.knuthAlgoX.AlgorithmX;
 import com.apogames.game.knuthAlgoX.MyPuzzleADayBinary;
 import com.apogames.game.menu.Difficulty;
-import com.apogames.game.tiles.ArcheOLogicTiles;
-import com.apogames.game.tiles.Tile;
+import com.apogames.game.question.Question;
+import com.apogames.game.tiles.*;
 
 import java.util.ArrayList;
 
@@ -19,15 +19,17 @@ public class GameEntity {
 
     private ArrayList<GameTile> solutionTiles;
 
-    private ArrayList<GameTile> hiddenTiles = new ArrayList<>();
-
-    private ArrayList<Integer> hiddenSolutions = new ArrayList<>();
+    private final ArrayList<GameTile> hiddenTiles = new ArrayList<>();
 
     private ArrayList<byte[][]> possibleSolutions;
     private ArrayList<byte[][]> possibleSolutionsPossibilities;
-    private ArrayList<byte[][]> possibleSolutionsReal = new ArrayList<>();
+    private final ArrayList<byte[][]> possibleSolutionsReal = new ArrayList<>();
 
     private ArrayList<GameTile> currentTiles;
+
+    private ArrayList<Question> questions = new ArrayList<>();
+
+    private GivenTiles givenTiles;
 
     public GameEntity() {
         init();
@@ -35,15 +37,26 @@ public class GameEntity {
 
     private void init() {
         if (currentTiles == null) {
-            ArcheOLogicTiles currentTiles = new ArcheOLogicTiles();
-            this.currentTiles = new ArrayList<>();
-            for (Tile tile : currentTiles.getAllTiles()) {
-                if (tile.getPossibilities().get(0).length != 1 || tile.getPossibilities().get(0)[0].length != 1) {
-                    this.currentTiles.add(new GameTile(tile));
-                }
-            }
-            resetTiles();;
+            setGivenTiles(6);
         }
+    }
+
+    public void setGivenTiles(int tiles) {
+        if (tiles == 5) {
+            this.givenTiles = new FiveArcheOLogicTiles();
+        } else if (tiles == 7) {
+            this.givenTiles = new SevenArcheOLogicTiles();
+        } else {
+            this.givenTiles = new ArcheOLogicTiles();
+        }
+        this.currentTiles = new ArrayList<>();
+        for (int i = 0; i < this.givenTiles.getAllTiles().size(); i++) {
+            Tile tile = this.givenTiles.getAllTiles().get(i);
+            if (tile.getTileNumber() <= this.givenTiles.getMaxTile()) {
+                this.currentTiles.add(new GameTile(tile));
+            }
+        }
+        resetTiles();
     }
 
     public void resetTiles() {
@@ -62,7 +75,24 @@ public class GameEntity {
     }
 
     public void choseNewSolution() {
-        if (!this.possibleSolutions.isEmpty()) {
+        int xSize = 5;
+        int ySize = 5;
+
+        byte[][] goal = new byte[ySize][xSize];
+        int size = this.givenTiles.getDifficultyTiles()[this.difficulty.getGivenTiles()];
+        prefillGoal(goal, size);
+
+        MyPuzzleADayBinary myPuzzleADayBinary = new MyPuzzleADayBinary(givenTiles.getAllTiles());
+        byte[][] matrix = myPuzzleADayBinary.getMatrix(goal);
+
+        AlgorithmX algoX = new AlgorithmX();
+        algoX.run(xSize, ySize, givenTiles.getAllTiles().size(), givenTiles.getMaxTile(), matrix);
+
+        if (algoX.allSolutions.size() < 10) {
+            choseNewSolution();
+        } else {
+            this.setAllSolutions(algoX.allSolutions, algoX.allValueSolutions);
+
             int random = (int) (Math.random() * this.possibleSolutions.size());
             this.solution = this.possibleSolutions.get(random);
             this.solutionPossibilities = this.possibleSolutionsPossibilities.get(random);
@@ -74,46 +104,13 @@ public class GameEntity {
             for (int y = 0; y < this.solution.length; y++) {
                 for (int x = 0; x < this.solution.length; x++) {
                     int index = (this.solution[y][x]);
-                    if (this.solution[y][x] != 0 && this.solution[y][x] < 7 && !found.contains(index)) {
+                    if (this.solution[y][x] != 0 && this.solution[y][x] < 8 && !found.contains(index)) {
                         found.add(index);
                         GameTile nextTile = new GameTile(new Tile(index, this.getTileFromTileNumber(index).getTile().getPossibilities().get(this.solutionPossibilities[y][x] - 1)));
                         this.solutionTiles.add(nextTile);
                         foundAndAddSolutionTile(x, y, nextTile);
                     }
                 }
-            }
-
-            byte[][] goal = new byte[this.solution.length][this.solution[0].length];
-            int size = difficulty.getGivenTiles();
-            prefillGoal(goal, size);
-
-            this.fillHiddenSolutions();
-
-            System.out.println("Aktuelle Möglichkeiten: "+this.hiddenSolutions.size());
-            if (this.hiddenSolutions.size() < 10) {
-                choseNewSolution();
-            }
-        }
-    }
-
-    private void fillHiddenSolutions() {
-        this.hiddenSolutions.clear();
-
-        byte[][] goal = new byte[5][5];
-        for (GameTile tile : this.hiddenTiles) {
-            goal[tile.getGameY()][tile.getGameX()] = tile.getTile().getPossibilities().get(0)[0][0];
-        }
-
-        for (int i = 0; i < this.possibleSolutionsReal.size(); i++) {
-            boolean error = false;
-            for (GameTile tile : this.hiddenTiles) {
-                if (this.possibleSolutionsReal.get(i)[tile.getGameY()][tile.getGameX()] != goal[tile.getGameY()][tile.getGameX()]) {
-                    error = true;
-                    break;
-                }
-            }
-            if (!error) {
-                this.hiddenSolutions.add(i);
             }
         }
     }
@@ -128,7 +125,7 @@ public class GameEntity {
                 return tile;
             }
         }
-        return null;
+        return this.currentTiles.get(0);
     }
 
     private void foundAndAddSolutionTile(int givenX, int givenY, GameTile nextTile) {
@@ -187,41 +184,48 @@ public class GameEntity {
     }
 
     public void prefillGoal(byte[][] goal, int size) {
-        ArrayList<PrefillHelp> help = new ArrayList<>();
-        for (GameTile tile : this.getSolutionTiles()) {
+        int count = size;
+        this.getHiddenTiles().clear();
+        ArrayList<Byte> values = new ArrayList<>();
+        for (GameTile tile : this.currentTiles) {
             byte[][] bytes = tile.getTile().getPossibilities().get(0);
-            for (int y = 0;y < bytes.length; y++) {
-                for (int x = 0;x < bytes[0].length; x++) {
+            for (int y = 0; y < bytes.length; y++) {
+                for (int x = 0; x < bytes[0].length; x++) {
                     if (bytes[y][x] > 1) {
-                        int tX = (tile.getNextX() - 2 * Constants.TILE_SIZE) / Constants.TILE_SIZE + x;
-                        int tY = (tile.getNextY() - 3 * Constants.TILE_SIZE) / Constants.TILE_SIZE + y;
-                        help.add(new PrefillHelp(tX, tY, bytes[y][x]));
+                        values.add(bytes[y][x]);
                     }
                 }
             }
         }
 
-        this.getHiddenTiles().clear();
-        int count = size;
         while (count > 0) {
-            int random = (int)(Math.random() * help.size());
-            PrefillHelp remove = help.remove(random);
-            GameTile gt = new GameTile(new Tile(1, new byte[][]{{(byte) remove.getTileNumber()}}));
-            gt.changePosition((2 + remove.getX()) * Constants.TILE_SIZE, (3 + remove.getY()) * Constants.TILE_SIZE);
-            this.getHiddenTiles().add(gt);
-            goal[remove.getY()][remove.getX()] = (byte)remove.getTileNumber();
-            count -= 1;
+            int x = (int)(Math.random() * goal[0].length);
+            int y = (int)(Math.random() * goal.length);
+            if (goal[y][x] == 0) {
+                goal[y][x] = values.remove((int)(Math.random() * values.size()));
+                GameTile gameTile = new GameTile(new Tile(1, new byte[][]{{goal[y][x]}}));
+                gameTile.changePosition((2 + x) * Constants.TILE_SIZE, (3+y) * Constants.TILE_SIZE);
+                this.getHiddenTiles().add(gameTile);
+                count -= 1;
+            }
         }
     }
 
 
     public boolean isWon() {
         for (GameTile tile : this.currentTiles) {
-            boolean found = false;
-            for (GameTile checkTile : this.solutionTiles) {
-                if (tile.getNextX() == checkTile.getNextX() && tile.getNextY() == checkTile.getNextY()) {
-                    found = true;
-                    break;
+            byte[][] bytes = tile.getTile().getPossibilities().get(tile.getCurrentTile());
+            if (tile.getGameX() < 0 || tile.getGameX() >= this.solution[0].length ||
+                    tile.getGameY() < 0 || tile.getGameY() >= this.solution.length) {
+                return false;
+            }
+            boolean found = true;
+            for (int y = 0; y < bytes.length; y++) {
+                for (int x = 0; x < bytes[0].length; x++) {
+                    if (bytes[y][x] != 0 && (this.solution[tile.getGameY()+y][tile.getGameX()+x] != tile.getTile().getTileNumber() || this.realSolution[tile.getGameY()+y][tile.getGameX()+x] != bytes[y][x])) {
+                        found = false;
+                        break;
+                    }
                 }
             }
             if (!found) {
@@ -242,7 +246,7 @@ public class GameEntity {
             ArrayList<Byte> found = new ArrayList<>();
             for (int y = 0; y < bytes.length; y++) {
                 for (int x = 0; x < bytes[0].length; x++) {
-                    if (bytes[y][x] > 0 && bytes[y][x] < 7 && !found.contains(bytes[y][x])) {
+                    if (bytes[y][x] > 0 && bytes[y][x] <= this.givenTiles.getMaxTile() && !found.contains(bytes[y][x])) {
                         found.add(bytes[y][x]);
                         placeInReal(x, y, realSolution, bytes, this.possibleSolutionsPossibilities.get(i)[y][x]);
                     }
@@ -250,7 +254,6 @@ public class GameEntity {
             }
             this.possibleSolutionsReal.add(realSolution);
         }
-        this.choseNewSolution();
     }
 
     private void placeInReal(int givenX, int givenY, byte[][] realSolution, byte[][] givenArray, byte possibility) {
@@ -292,8 +295,16 @@ public class GameEntity {
         return possibleSolutions;
     }
 
+    public ArrayList<byte[][]> getPossibleSolutionsReal() {
+        return possibleSolutionsReal;
+    }
+
     public ArrayList<GameTile> getSolutionTiles() {
         return solutionTiles;
+    }
+
+    public byte[][] getRealSolution() {
+        return realSolution;
     }
 
     public void mouseMoved(int mouseX, int mouseY) {

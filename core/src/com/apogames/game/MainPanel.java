@@ -48,9 +48,10 @@ public class MainPanel extends GameScreen {
         this.changeModel(this.menu);
     }
 
-    public void changeToGame(Difficulty difficulty) {
+    public void changeToGame(Difficulty difficulty, int amountTiles) {
         this.changeModel(this.game);
 
+        this.game.getGame().setGivenTiles(amountTiles);
         this.game.setNewLevel(difficulty);
     }
 

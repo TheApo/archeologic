@@ -13,13 +13,14 @@ import java.util.Locale;
 
 public class Menu extends SequentiallyThinkingScreenModel {
 
-    public static final int PLAYER_MAX = 4;
+    public static final int AMOUNT_TILES_MIN = 5;
+    public static final int AMOUNT_TILES_MAX = 7;
 
     public static final String FUNCTION_BACK = "MENU_QUIT";
 
     public static final String FUNCTION_PLAY = "MENU_PLAY";
-    public static final String FUNCTION_PLAYER_LEFT = "MENU_PLAYER_LEFT";
-    public static final String FUNCTION_PLAYER_RIGHT = "MENU_PLAYER_RIGHT";
+    public static final String FUNCTION_AMOUNTTILES_LEFT = "MENU_AMOUNTTILES_LEFT";
+    public static final String FUNCTION_AMOUNTTILES_RIGHT = "MENU_AMOUNTTILES_RIGHT";
     public static final String FUNCTION_DIFFICULTY_LEFT = "MENU_DIFFICULTY_LEFT";
     public static final String FUNCTION_DIFFICULTY_RIGHT = "MENU_DIFFICULTY_RIGHT";
 
@@ -31,7 +32,7 @@ public class Menu extends SequentiallyThinkingScreenModel {
 
     private boolean german = true;
 
-    private int player = 1;
+    private int amountTiles = 6;
 
     private Difficulty difficulty = Difficulty.EASY;
 
@@ -43,8 +44,8 @@ public class Menu extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_BACK).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_PLAY).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_LANGUAGE).setVisible(true);
-        getMainPanel().getButtonByFunction(FUNCTION_PLAYER_LEFT).setVisible(true);
-        getMainPanel().getButtonByFunction(FUNCTION_PLAYER_RIGHT).setVisible(true);
+        getMainPanel().getButtonByFunction(FUNCTION_AMOUNTTILES_LEFT).setVisible(true);
+        getMainPanel().getButtonByFunction(FUNCTION_AMOUNTTILES_RIGHT).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_DIFFICULTY_LEFT).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_DIFFICULTY_RIGHT).setVisible(true);
     }
@@ -106,16 +107,16 @@ public class Menu extends SequentiallyThinkingScreenModel {
             case Menu.FUNCTION_BACK:
                 quit();
                 break;
-            case Menu.FUNCTION_PLAYER_LEFT:
-                this.player -= 1;
-                if (this.player <= 0) {
-                    this.player = PLAYER_MAX;
+            case Menu.FUNCTION_AMOUNTTILES_LEFT:
+                this.amountTiles -= 1;
+                if (this.amountTiles < AMOUNT_TILES_MIN) {
+                    this.amountTiles = AMOUNT_TILES_MAX;
                 }
                 break;
-            case Menu.FUNCTION_PLAYER_RIGHT:
-                this.player += 1;
-                if (this.player > PLAYER_MAX) {
-                    this.player = 1;
+            case Menu.FUNCTION_AMOUNTTILES_RIGHT:
+                this.amountTiles += 1;
+                if (this.amountTiles > AMOUNT_TILES_MAX) {
+                    this.amountTiles = AMOUNT_TILES_MIN;
                 }
                 break;
             case Menu.FUNCTION_DIFFICULTY_LEFT:
@@ -125,7 +126,7 @@ public class Menu extends SequentiallyThinkingScreenModel {
                 this.difficulty = this.difficulty.addDifficulty(+1);
                 break;
             case Menu.FUNCTION_PLAY:
-                getMainPanel().changeToGame(this.difficulty);
+                getMainPanel().changeToGame(this.difficulty, this.amountTiles);
                 break;
             case Menu.FUNCTION_LANGUAGE:
                 this.german = !this.german;
@@ -189,18 +190,18 @@ public class Menu extends SequentiallyThinkingScreenModel {
         getMainPanel().drawString(Localization.getInstance().getCommon().get("title"), Constants.GAME_WIDTH/2f, 90, Constants.COLOR_WHITE, AssetLoader.font40, DrawString.MIDDLE, true, false);
         getMainPanel().drawString(Localization.getInstance().getCommon().get("title_description"), Constants.GAME_WIDTH/2f, 135, Constants.COLOR_WHITE, AssetLoader.font25, DrawString.MIDDLE, true, false);
 
-        int hudY = 180;
+//        int hudY = 180;
+//
+//        getMainPanel().drawString(Localization.getInstance().getCommon().get("hud_rules")+":", Constants.GAME_WIDTH/2f, hudY, Constants.COLOR_WHITE, AssetLoader.font30, DrawString.MIDDLE, false, false);
+//        String[] rules = Localization.getInstance().getCommon().get("hud_rules_text").split(";");
+//        for (int i = 0; i < rules.length; i++) {
+//            getMainPanel().drawString(rules[i], Constants.GAME_WIDTH/2f, hudY + 40 + i * 25, Constants.COLOR_WHITE, AssetLoader.font20, DrawString.MIDDLE, false, false);
+//        }
 
-        getMainPanel().drawString(Localization.getInstance().getCommon().get("hud_rules")+":", Constants.GAME_WIDTH/2f, hudY, Constants.COLOR_WHITE, AssetLoader.font30, DrawString.MIDDLE, false, false);
-        String[] rules = Localization.getInstance().getCommon().get("hud_rules_text").split(";");
-        for (int i = 0; i < rules.length; i++) {
-            getMainPanel().drawString(rules[i], Constants.GAME_WIDTH/2f, hudY + 40 + i * 25, Constants.COLOR_WHITE, AssetLoader.font20, DrawString.MIDDLE, false, false);
-        }
+        ApoButton buttonLeft = getMainPanel().getButtonByFunction(FUNCTION_AMOUNTTILES_LEFT);
+        getMainPanel().drawString(Localization.getInstance().getCommon().get("menu_tileAmount"), Constants.GAME_WIDTH/2f, buttonLeft.getY() - 20, Constants.COLOR_WHITE, AssetLoader.font25, DrawString.MIDDLE, true, false);
 
-        ApoButton buttonLeft = getMainPanel().getButtonByFunction(FUNCTION_PLAYER_LEFT);
-        getMainPanel().drawString(Localization.getInstance().getCommon().get("menu_player"), Constants.GAME_WIDTH/2f, buttonLeft.getY() - 20, Constants.COLOR_WHITE, AssetLoader.font25, DrawString.MIDDLE, true, false);
-
-        getMainPanel().drawString(this.player+"", Constants.GAME_WIDTH/2f, buttonLeft.getY() + buttonLeft.getHeight()/2, Constants.COLOR_WHITE, AssetLoader.font30, DrawString.MIDDLE, true, false);
+        getMainPanel().drawString(this.amountTiles +"", Constants.GAME_WIDTH/2f, buttonLeft.getY() + buttonLeft.getHeight()/2, Constants.COLOR_WHITE, AssetLoader.font30, DrawString.MIDDLE, true, false);
 
         ApoButton buttonDifficultyLeft = getMainPanel().getButtonByFunction(FUNCTION_DIFFICULTY_LEFT);
         getMainPanel().drawString(Localization.getInstance().getCommon().get("menu_difficulty"), Constants.GAME_WIDTH/2f, buttonDifficultyLeft.getY() - 20, Constants.COLOR_WHITE, AssetLoader.font25, DrawString.MIDDLE, true, false);
