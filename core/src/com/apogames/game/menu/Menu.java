@@ -173,22 +173,14 @@ public class Menu extends SequentiallyThinkingScreenModel {
 
     @Override
     public void render() {
-        int startY = (int)(Constants.GAME_HEIGHT/2f + 50);
-
-        getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
-
-        getMainPanel().getRenderer().setColor(Constants.COLOR_PURPLE_MENU[0], Constants.COLOR_PURPLE_MENU[1], Constants.COLOR_PURPLE_MENU[2], 1f);
-
-        getMainPanel().getRenderer().end();
-
         getMainPanel().spriteBatch.begin();
 
         getMainPanel().spriteBatch.draw(AssetLoader.boardMainTextureRegion, 0, 0);
 
-        getMainPanel().spriteBatch.draw(AssetLoader.hudMenuTextureRegion, Constants.GAME_WIDTH/2f - AssetLoader.hudMenuTextureRegion.getRegionWidth()/2f, 5);
+        getMainPanel().spriteBatch.draw(AssetLoader.hudMenuTextureRegion, Constants.GAME_WIDTH/2f - AssetLoader.hudMenuTextureRegion.getRegionWidth()/2f + 50, 15);
 
-        getMainPanel().drawString(Localization.getInstance().getCommon().get("title"), Constants.GAME_WIDTH/2f, 90, Constants.COLOR_WHITE, AssetLoader.font40, DrawString.MIDDLE, true, false);
-        getMainPanel().drawString(Localization.getInstance().getCommon().get("title_description"), Constants.GAME_WIDTH/2f, 135, Constants.COLOR_WHITE, AssetLoader.font25, DrawString.MIDDLE, true, false);
+        getMainPanel().drawString(Localization.getInstance().getCommon().get("title"), Constants.GAME_WIDTH/2f, 90, Constants.COLOR_BLACK, AssetLoader.font40, DrawString.MIDDLE, true, false);
+        getMainPanel().drawString(Localization.getInstance().getCommon().get("title_description"), Constants.GAME_WIDTH/2f, 135, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
 
 //        int hudY = 180;
 //
@@ -199,14 +191,14 @@ public class Menu extends SequentiallyThinkingScreenModel {
 //        }
 
         ApoButton buttonLeft = getMainPanel().getButtonByFunction(FUNCTION_AMOUNTTILES_LEFT);
-        getMainPanel().drawString(Localization.getInstance().getCommon().get("menu_tileAmount"), Constants.GAME_WIDTH/2f, buttonLeft.getY() - 20, Constants.COLOR_WHITE, AssetLoader.font25, DrawString.MIDDLE, true, false);
+        getMainPanel().drawString(Localization.getInstance().getCommon().get("menu_tileAmount"), Constants.GAME_WIDTH/2f, buttonLeft.getY() - 20, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
 
-        getMainPanel().drawString(this.amountTiles +"", Constants.GAME_WIDTH/2f, buttonLeft.getY() + buttonLeft.getHeight()/2, Constants.COLOR_WHITE, AssetLoader.font30, DrawString.MIDDLE, true, false);
+        getMainPanel().drawString(this.amountTiles +"", Constants.GAME_WIDTH/2f, buttonLeft.getY() + buttonLeft.getHeight()/2, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.MIDDLE, true, false);
 
         ApoButton buttonDifficultyLeft = getMainPanel().getButtonByFunction(FUNCTION_DIFFICULTY_LEFT);
-        getMainPanel().drawString(Localization.getInstance().getCommon().get("menu_difficulty"), Constants.GAME_WIDTH/2f, buttonDifficultyLeft.getY() - 20, Constants.COLOR_WHITE, AssetLoader.font25, DrawString.MIDDLE, true, false);
+        getMainPanel().drawString(Localization.getInstance().getCommon().get("menu_difficulty"), Constants.GAME_WIDTH/2f, buttonDifficultyLeft.getY() - 20, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
 
-        getMainPanel().drawString(this.difficulty.getText(), Constants.GAME_WIDTH/2f, buttonDifficultyLeft.getY() + buttonDifficultyLeft.getHeight()/2, Constants.COLOR_WHITE, AssetLoader.font30, DrawString.MIDDLE, true, false);
+        getMainPanel().drawString(this.difficulty.getText(), Constants.GAME_WIDTH/2f, buttonDifficultyLeft.getY() + buttonDifficultyLeft.getHeight()/2, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.MIDDLE, true, false);
 
         getMainPanel().spriteBatch.end();
 

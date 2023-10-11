@@ -30,10 +30,12 @@ package com.apogames.game;
 import com.apogames.Constants;
 import com.apogames.asset.AssetLoader;
 import com.apogames.entity.ApoButton;
+import com.apogames.entity.ApoButtonImageDropdown;
 import com.apogames.entity.ApoButtonImageThree;
 import com.apogames.entity.ApoButtonImageWithThree;
 import com.apogames.game.archeologic.ArcheOLogicPanel;
 import com.apogames.game.menu.Menu;
+import com.apogames.game.question.QuestionEnum;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 public class ButtonProvider {
@@ -61,12 +63,12 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font40);
 			this.game.getButtons().add(button);
 
-			text = "X";
-			function = ArcheOLogicPanel.FUNCTION_TIWANAKU_BACK;
+			text = "";
+			function = ArcheOLogicPanel.FUNCTION_ARCHEOLOGIC_BACK;
 			width = 64;
 			height = 64;
-			x = Constants.GAME_WIDTH - width - 15;
-			y = Constants.GAME_HEIGHT - height - 5;
+			x = Constants.GAME_WIDTH - width - 25;
+			y = Constants.GAME_HEIGHT - height - 60;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonXTextureRegion);
 			//ApoButtonColor(x, y, width, height, function, text, Constants.COLOR_BACKGROUND, Constants.COLOR_WHITE);
 			button.setStroke(1);
@@ -79,7 +81,7 @@ public class ButtonProvider {
 			height = 80;
 			x = Constants.GAME_WIDTH/2 - width/2;
 			y = Constants.GAME_HEIGHT/2 + 110 + 50;
-			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_CLEAR, "button_play");
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_play");
 			//ApoButtonColor(x, y, width, height, function, text, Constants.COLOR_BACKGROUND, Constants.COLOR_WHITE);
 			button.setStroke(1);
 			button.setFont(AssetLoader.font30);
@@ -91,13 +93,13 @@ public class ButtonProvider {
 			height = 64;
 			x = 15;
 			y = Constants.GAME_HEIGHT - height - 5;
-			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_CLEAR, "button_language_de");
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_language_de");
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
 
 			int addValue = 100;
 
-			text = "<";
+			text = "";
 			function = Menu.FUNCTION_AMOUNTTILES_LEFT;
 			width = 64;
 			height = 64;
@@ -107,7 +109,7 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
 
-			text = ">";
+			text = "";
 			function = Menu.FUNCTION_AMOUNTTILES_RIGHT;
 			width = 64;
 			height = 64;
@@ -118,7 +120,7 @@ public class ButtonProvider {
 			this.game.getButtons().add(button);
 
 
-			text = "<";
+			text = "";
 			function = Menu.FUNCTION_DIFFICULTY_LEFT;
 			width = 64;
 			height = 64;
@@ -128,7 +130,7 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
 
-			text = ">";
+			text = "";
 			function = Menu.FUNCTION_DIFFICULTY_RIGHT;
 			width = 64;
 			height = 64;
@@ -139,64 +141,150 @@ public class ButtonProvider {
 			this.game.getButtons().add(button);
 
 
-			text = "new Level";
+			text = "";
 			function = ArcheOLogicPanel.FUNCTION_NEW_LEVEL;
-			width = 180;
+			width = 64;
 			height = 64;
-			x = Constants.GAME_WIDTH - width - 30;
-			y = Constants.GAME_HEIGHT - (height + 5) * 3;
-			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_CLEAR, "button_newlevel");
+			x = Constants.GAME_WIDTH - (width + 25) * 3;
+			y = Constants.GAME_HEIGHT - 60 - height;
+			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonFixTextureRegion);
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
 
-			text = "Test";
+			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_TEST;
-			width = 180;
+			width = 64;
 			height = 64;
-			x = Constants.GAME_WIDTH - width - 30;
-			y = Constants.GAME_HEIGHT - (height + 5) * 4;
-			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_CLEAR, "button_question");
+			x = 10;
+			y = 10;
+			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonHelpTextureRegion);
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
 
-			text = "restart";
+			text = "check";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_CHECK;
+			width = 180;
+			height = 64;
+			x = Constants.GAME_WIDTH - width - 430;
+			y = 70;
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_check");
+			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
+			text = "frage";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION;
+			width = 180;
+			height = 64;
+			x = Constants.GAME_WIDTH - width - 430;
+			y = Constants.GAME_HEIGHT - 60 - height;
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_question");
+			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
+			text = "";
 			function = ArcheOLogicPanel.FUNCTION_RESTART;
 			width = 64;
 			height = 64;
-			x = Constants.GAME_WIDTH - AssetLoader.hudRightTextureRegion.getRegionWidth() + 5;
-			y = Constants.GAME_HEIGHT - (height + 5);
+			x = Constants.GAME_WIDTH - (width + 25) * 2;
+			y = Constants.GAME_HEIGHT - 60 - height;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRestartTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
 
-			text = "new Level";
+			text = "";
 			function = ArcheOLogicPanel.FUNCTION_FINISH_NEW_LEVEL;
 			width = 180;
 			height = 64;
-			x = Constants.GAME_WIDTH/2 - AssetLoader.hudRightTextureRegion.getRegionWidth()/2 - width/2;
+			x = Constants.GAME_WIDTH/2 - width/2;
 			y = Constants.GAME_HEIGHT/2 + AssetLoader.wonTextureRegion.getRegionHeight()/2 - (height + 50);
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_CLEAR, "button_newlevel");
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
 
-			text = "restart";
+			text = "";
 			function = ArcheOLogicPanel.FUNCTION_FINISH_RESTART;
 			width = 64;
 			height = 64;
-			x = Constants.GAME_WIDTH/2 - AssetLoader.hudRightTextureRegion.getRegionWidth()/2 - AssetLoader.wonTextureRegion.getRegionWidth()/2 + 55;
+			x = Constants.GAME_WIDTH/2 - AssetLoader.wonTextureRegion.getRegionWidth()/2 + 55;
 			y = Constants.GAME_HEIGHT/2 + AssetLoader.wonTextureRegion.getRegionHeight()/2 - (height + 50);
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRestartTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
 
-			text = "back";
+			text = "";
 			function = ArcheOLogicPanel.FUNCTION_FINISH_BACK;
 			width = 64;
 			height = 64;
-			x = Constants.GAME_WIDTH/2 - AssetLoader.hudRightTextureRegion.getRegionWidth()/2 + AssetLoader.wonTextureRegion.getRegionWidth()/2 - 55 - width;
+			x = Constants.GAME_WIDTH/2 + AssetLoader.wonTextureRegion.getRegionWidth()/2 - 55 - width;
 			y = Constants.GAME_HEIGHT/2 + AssetLoader.wonTextureRegion.getRegionHeight()/2 - (height + 50);
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonXTextureRegion);
 			button.setFont(AssetLoader.font30);
+			this.game.getButtons().add(button);
+
+			String[] values = ArcheOLogicPanel.askOrder;
+			for (int i = 0; i < values.length; i++) {
+				text = values[i];
+				function = ArcheOLogicPanel.FUNCTION_QUESTION_ROW + text;
+				width = 64;
+				height = 64;
+				x = Constants.GAME_WIDTH - 10 - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() + 30 + i * width;
+				y = 160;
+				button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
+				button.setFont(AssetLoader.font30);
+				this.game.getButtons().add(button);
+
+				if (i == 0) {
+					button.setSelect(true);
+				}
+			}
+
+			QuestionEnum[] enumValues = QuestionEnum.values();
+			for (int i = 0; i < enumValues.length; i++) {
+				text = "";
+				function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_ASK + enumValues[i].name();
+				width = 50;
+				height = 50;
+				x = Constants.GAME_WIDTH - 10 - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() + 30;
+				y = 250 + i * (height + 10);
+				button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
+				button.setFont(AssetLoader.font30);
+				this.game.getButtons().add(button);
+
+				if (i == 0) {
+					button.setSelect(true);
+				}
+			}
+
+			text = "frage";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_REAL;
+			width = 180;
+			height = 64;
+			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - width/2;
+			y = Constants.GAME_HEIGHT - 60 - height;
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_question");
+			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
+			text = "";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN;
+			width = 40;
+			height = 40;
+			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - width/2 - 62;
+			y = 250 + 3 * (60);
+			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
+			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
+			text = "";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_CLOSE;
+			width = 64;
+			height = 64;
+			x = Constants.GAME_WIDTH - width - 25;
+			y = Constants.GAME_HEIGHT - height - 60;
+			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonXTextureRegion);
+			//ApoButtonColor(x, y, width, height, function, text, Constants.COLOR_BACKGROUND, Constants.COLOR_WHITE);
+			button.setStroke(1);
+			button.setFont(AssetLoader.font40);
 			this.game.getButtons().add(button);
 
 			for (int i = 0; i < this.game.getButtons().size(); i++) {

@@ -44,6 +44,8 @@ public class AssetLoader {
 
 	private static Texture backgroundMainTexture;
 	public static TextureRegion backgroundMainTextureRegion;
+	private static Texture backgroundQuestionTexture;
+	public static TextureRegion backgroundQuestionTextureRegion;
 
 	private static Texture boardMainTexture;
 	public static TextureRegion boardMainTextureRegion;
@@ -57,6 +59,8 @@ public class AssetLoader {
 	public static TextureRegion titleTextureRegion;
 	private static Texture hudMenuTexture;
 	public static TextureRegion hudMenuTextureRegion;
+	private static Texture xTexture;
+	public static TextureRegion xTextureRegion;
 
 	private static Texture waterTexture;
 	public static TextureRegion[] waterTextureRegion;
@@ -74,8 +78,10 @@ public class AssetLoader {
 	public static TextureRegion[] buttonLeftTextureRegion;
 	private static Texture buttonBlancoTexture;
 	public static TextureRegion[] buttonBlancoTextureRegion;
-	private static Texture hudRightTexture;
-	public static TextureRegion hudRightTextureRegion;
+	private static Texture buttonBlancoSmallTexture;
+	public static TextureRegion[] buttonBlancoSmallTextureRegion;
+	private static Texture coinTexture;
+	public static TextureRegion coinTextureRegion;
 	private static Texture circlesTexture;
 	public static TextureRegion[] circlesTextureRegion;
 	public static BitmapFont font40;
@@ -108,6 +114,11 @@ public class AssetLoader {
 		boardMainTextureRegion = new TextureRegion(boardMainTexture, 0, 0, 1422, 800);
 		boardMainTextureRegion.flip(false, true);
 
+		backgroundQuestionTexture = new Texture(Gdx.files.internal("images/background_question.png"));
+		backgroundQuestionTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+		backgroundQuestionTextureRegion = new TextureRegion(backgroundQuestionTexture, 0, 0, 700, 700);
+		backgroundQuestionTextureRegion.flip(false, true);
 
 		boardTexture = new Texture(Gdx.files.internal("images/gameboard.png"));
 		boardTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -127,17 +138,23 @@ public class AssetLoader {
 		titleTextureRegion = new TextureRegion(titleTexture, 0, 0, 400, 71);
 		titleTextureRegion.flip(false, true);
 
-		hudRightTexture = new Texture(Gdx.files.internal("images/hud_right.png"));
-		hudRightTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+		coinTexture = new Texture(Gdx.files.internal("images/coin.png"));
+		coinTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-		hudRightTextureRegion = new TextureRegion(hudRightTexture, 0, 0, 230, 700);
-		hudRightTextureRegion.flip(false, true);
+		coinTextureRegion = new TextureRegion(coinTexture, 0, 0, 128, 128);
+		coinTextureRegion.flip(false, true);
 
 		hudMenuTexture = new Texture(Gdx.files.internal("images/hud_menu.png"));
 		hudMenuTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-		hudMenuTextureRegion = new TextureRegion(hudMenuTexture, 0, 0, 800, 700);
+		hudMenuTextureRegion = new TextureRegion(hudMenuTexture, 0, 0, 767, 674);
 		hudMenuTextureRegion.flip(false, true);
+
+		xTexture = new Texture(Gdx.files.internal("images/x.png"));
+		xTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+		xTextureRegion = new TextureRegion(xTexture, 0, 0, 90, 90);
+		xTextureRegion.flip(false, true);
 
 		waterTexture = new Texture(Gdx.files.internal("images/water.png"));
 		waterTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -214,8 +231,17 @@ public class AssetLoader {
 
 		buttonBlancoTextureRegion = new TextureRegion[3];
 		for (int i = 0; i < buttonBlancoTextureRegion.length; i++) {
-			buttonBlancoTextureRegion[i] = new TextureRegion(buttonBlancoTexture, 300 * i, 0, 300, 70);
+			buttonBlancoTextureRegion[i] = new TextureRegion(buttonBlancoTexture, 142 * i, 0, 142, 70);
 			buttonBlancoTextureRegion[i].flip(false, true);
+		}
+
+		buttonBlancoSmallTexture = new Texture(Gdx.files.internal("images/buttons_blanco_small.png"));
+		buttonBlancoSmallTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+		buttonBlancoSmallTextureRegion = new TextureRegion[3];
+		for (int i = 0; i < buttonBlancoSmallTextureRegion.length; i++) {
+			buttonBlancoSmallTextureRegion[i] = new TextureRegion(buttonBlancoSmallTexture, 64 * i, 0, 64, 64);
+			buttonBlancoSmallTextureRegion[i].flip(false, true);
 		}
 
 		circlesTexture = new Texture(Gdx.files.internal("images/circles.png"));
@@ -238,17 +264,20 @@ public class AssetLoader {
 		backgroundTexture.dispose();
 		circlesTexture.dispose();
 		backgroundMainTexture.dispose();
+		backgroundQuestionTexture.dispose();
 		boardMainTexture.dispose();
 		boardTexture.dispose();
 		waterTexture.dispose();
-		hudRightTexture.dispose();
+		coinTexture.dispose();
 		buttonXTexture.dispose();
 		buttonFixTexture.dispose();
 		buttonHelpTexture.dispose();
 		buttonRestartTexture.dispose();
+		xTexture.dispose();
 		buttonRightTexture.dispose();
 		buttonLeftTexture.dispose();
 		buttonBlancoTexture.dispose();
+		buttonBlancoSmallTexture.dispose();
 		wonTexture.dispose();
 		titleTexture.dispose();
 		font40.dispose();

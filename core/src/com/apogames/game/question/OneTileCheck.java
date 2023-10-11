@@ -72,11 +72,12 @@ public class OneTileCheck extends Question {
 
     @Override
     public void draw(GameScreen screen, int addX, int addY, int size) {
-        int startX = addX;
         int startY = addY - this.currentTile.length*size/2;
         for (int y = 0; y < currentTile.length; y++) {
             for (int x = 0; x < currentTile[0].length; x++) {
-                screen.getRenderer().rect(startX + 2 + x * size, startY + 2 + y * size, size - 4, size - 4);
+                if (this.currentTile[y][x] != 0) {
+                    screen.getRenderer().rect(addX + 1 + x * size, startY + 1 + y * size, size - 2, size - 2);
+                }
             }
         }
     }
@@ -134,33 +135,39 @@ public class OneTileCheck extends Question {
         ArrayList<Integer> results = new ArrayList<>();
         for (int i = 0; i < solutionsReal.size(); i++) {
             byte[][] currentSolution = solutionsReal.get(i);
+            byte[][] solution = solutions.get(i);
             boolean found = true;
+            int sand = 0;
+            int grass = 0;
+            int forest = 0;
             if (getColumn() >= 0) {
-                int sand = 0;
-                int grass = 0;
-                for (int y = 0; y < currentSolution.length; y++) {
-                    if (currentSolution[y][getColumn()] == 3) {
+                for (int y = 0; y < solution.length; y++) {
+                    if (currentSolution[y][getColumn()] == 3 && solution[y][getColumn()] == tile) {
                         sand += 1;
                     }
-                    if (currentSolution[y][getColumn()] == 2) {
+                    if (currentSolution[y][getColumn()] == 2 && solution[y][getColumn()] == tile) {
                         grass += 1;
                     }
+                    if (currentSolution[y][getColumn()] == 1 && solution[y][getColumn()] == tile) {
+                        forest += 1;
+                    }
                 }
-                if (sand != this.sand || grass != this.grass) {
+                if (sand != this.sand || grass != this.grass || forest != this.forest) {
                     found = false;
                 }
             } else if (getRow() >= 0) {
-                int sand = 0;
-                int grass = 0;
                 for (int x = 0; x < currentSolution[0].length; x++) {
-                    if (currentSolution[getRow()][x] == 3) {
-                        this.sand += 1;
+                    if (currentSolution[getRow()][x] == 3 && solution[getRow()][x] == tile) {
+                        sand += 1;
                     }
-                    if (currentSolution[getRow()][x] == 2) {
-                        this.grass += 1;
+                    if (currentSolution[getRow()][x] == 2 && solution[getRow()][x] == tile) {
+                        grass += 1;
+                    }
+                    if (currentSolution[getRow()][x] == 1 && solution[getRow()][x] == tile) {
+                        forest += 1;
                     }
                 }
-                if (sand != this.sand || grass != this.grass) {
+                if (sand != this.sand || grass != this.grass || forest != this.forest) {
                     found = false;
                 }
             }

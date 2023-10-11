@@ -4,6 +4,7 @@ import com.apogames.Constants;
 import com.apogames.game.knuthAlgoX.AlgorithmX;
 import com.apogames.game.knuthAlgoX.MyPuzzleADayBinary;
 import com.apogames.game.menu.Difficulty;
+import com.apogames.game.question.OneSpecificPosition;
 import com.apogames.game.question.Question;
 import com.apogames.game.tiles.*;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 
 public class GameEntity {
 
+    public static final int MAX_SHOWN_QUESTION = 18;
     private Difficulty difficulty = Difficulty.EASY;
     private byte[][] solution;
     private byte[][] solutionPossibilities;
@@ -27,9 +29,12 @@ public class GameEntity {
 
     private ArrayList<GameTile> currentTiles;
 
-    private ArrayList<Question> questions = new ArrayList<>();
+    private final ArrayList<Question> questions = new ArrayList<>();
+    private int curStartQuestion = 0;
 
     private GivenTiles givenTiles;
+
+    private int costs = 0;
 
     public GameEntity() {
         init();
@@ -59,22 +64,34 @@ public class GameEntity {
         resetTiles();
     }
 
+    public int getCosts() {
+        return costs;
+    }
+
     public void resetTiles() {
-        int startX = 9 * Constants.TILE_SIZE;
-        int startY = 3 * Constants.TILE_SIZE;
+        int startX = Constants.TILE_SIZE;
+        int startY = 9 * Constants.TILE_SIZE;
 
         for (GameTile tile : this.currentTiles) {
             tile.changePosition(startX, startY);
 
             startX += (tile.getTile().getPossibilities().get(tile.getCurrentTile())[0].length) * Constants.TILE_SIZE;
-            if (startX >= 15 * Constants.TILE_SIZE) {
-                startX = 9 * Constants.TILE_SIZE;
-                startY += 3 * Constants.TILE_SIZE;
+            if (startX >= 11 * Constants.TILE_SIZE) {
+                startX = 8 * Constants.TILE_SIZE;
+                startY -= 3 * Constants.TILE_SIZE;
             }
         }
     }
 
+    public ArrayList<Question> getQuestions() {
+        return questions;
+    }
+
     public void choseNewSolution() {
+        this.costs = 0;
+        this.questions.clear();
+        this.curStartQuestion = 0;
+
         int xSize = 5;
         int ySize = 5;
 
@@ -206,6 +223,7 @@ public class GameEntity {
                 GameTile gameTile = new GameTile(new Tile(1, new byte[][]{{goal[y][x]}}));
                 gameTile.changePosition((2 + x) * Constants.TILE_SIZE, (3+y) * Constants.TILE_SIZE);
                 this.getHiddenTiles().add(gameTile);
+                this.getQuestions().add(new OneSpecificPosition(x, y, goal));
                 count -= 1;
             }
         }
@@ -215,8 +233,8 @@ public class GameEntity {
     public boolean isWon() {
         for (GameTile tile : this.currentTiles) {
             byte[][] bytes = tile.getTile().getPossibilities().get(tile.getCurrentTile());
-            if (tile.getGameX() < 0 || tile.getGameX() >= this.solution[0].length ||
-                    tile.getGameY() < 0 || tile.getGameY() >= this.solution.length) {
+            if (tile.getGameX() < 0 || tile.getGameX() + bytes[0].length > this.solution[0].length ||
+                    tile.getGameY() < 0 || tile.getGameY() + bytes.length > this.solution.length) {
                 return false;
             }
             boolean found = true;
@@ -291,18 +309,6 @@ public class GameEntity {
         return true;
     }
 
-    public ArrayList<byte[][]> getPossibleSolutions() {
-        return possibleSolutions;
-    }
-
-    public ArrayList<byte[][]> getPossibleSolutionsReal() {
-        return possibleSolutionsReal;
-    }
-
-    public ArrayList<GameTile> getSolutionTiles() {
-        return solutionTiles;
-    }
-
     public byte[][] getRealSolution() {
         return realSolution;
     }
@@ -346,5 +352,21 @@ public class GameEntity {
 
     public ArrayList<GameTile> getCurrentTiles() {
         return currentTiles;
+    }
+
+    public void setCosts(int costs) {
+        this.costs = costs;
+    }
+
+    public int getCurStartQuestion() {
+        return curStartQuestion;
+    }
+
+    public void addCurStartQuestion(int add) {
+        if (this.curStartQuestion + add < 0) {
+            this.curStartQuestion = 0;
+        } else if (this.curStartQuestion + add + MAX_SHOWN_QUESTION <= this.questions.size()) {
+            this.curStartQuestion += add;
+        }
     }
 }

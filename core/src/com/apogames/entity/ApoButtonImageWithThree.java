@@ -1,6 +1,7 @@
 package com.apogames.entity;
 
 import com.apogames.Constants;
+import com.apogames.asset.AssetLoader;
 import com.apogames.backend.DrawString;
 import com.apogames.backend.GameScreen;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -24,6 +25,10 @@ public class ApoButtonImageWithThree extends ApoButton {
 		this.mouseOverText = "";
 	}
 
+	public TextureRegion[] getImages() {
+		return images;
+	}
+
 	public void setMouseOverText(TextureRegion mouseOverTextureRegion, String mouseOverText) {
 		this.setMouseOverText(mouseOverTextureRegion, mouseOverText, false);
 	}
@@ -45,7 +50,14 @@ public class ApoButtonImageWithThree extends ApoButton {
 				//screen.spriteBatch.enableBlending();
 			}
 			renderImage(screen, changeX, changeY);
-			if (this.mouseOverText.length() > 0 && this.isBOver()) {
+			if (this.getText() != null && !this.getText().isEmpty()) {
+				float[] color = Constants.COLOR_BLACK;
+				if (this.isSelect()) {
+					color = Constants.COLOR_RED_DARK;
+				}
+				drawString(screen, changeX, changeY, color);
+			}
+			if (!this.mouseOverText.isEmpty() && this.isBOver()) {
 				screen.getGlyphLayout().setText(this.getFont(), this.mouseOverText);
 				int width = (int)(screen.getGlyphLayout().width);
 				int height = 30;
@@ -69,12 +81,28 @@ public class ApoButtonImageWithThree extends ApoButton {
 		}
 	}
 
+	public void drawString(GameScreen screen, int changeX, int changeY, float[] color) {
+		Constants.glyphLayout.setText(getFont(), getText());
+		float h = Constants.glyphLayout.height;
+		if (( this.isBPressed() )) {
+			screen.drawString(getText(), this.getX() + changeX + this.getWidth()/2, this.getY() + changeY + this.getHeight()/2 - h/2, Constants.COLOR_RED, getFont(), DrawString.MIDDLE, false, false);
+		} else if ( this.isBOver() ) {
+			screen.drawString(getText(), this.getX() + changeX + this.getWidth()/2, this.getY() + changeY + this.getHeight()/2 - h/2, Constants.COLOR_YELLOW, getFont(), DrawString.MIDDLE, false, false);
+		} else {
+			screen.drawString(getText(), this.getX() + changeX + this.getWidth()/2, this.getY() + changeY + this.getHeight()/2 - h/2, color, getFont(), DrawString.MIDDLE, false, false);
+		}
+	}
+
+
 	public void renderOutline(GameScreen screen, int changeX, int changeY) {
 	}
 
 	public void renderImage(GameScreen screen, int changeX, int changeY) {
 		if (this.isBPressed() || this.isSelect()) {
 			screen.spriteBatch.draw(this.images[2], this.getX() + changeX, this.getY() + changeY, getWidth(), getHeight());
+			if (this.isSelect()) {
+				screen.spriteBatch.draw(AssetLoader.xTextureRegion, this.getX() + changeX + 10, this.getY() + changeY + 10, getWidth() - 20, getHeight() - 20);
+			}
 		} else if (this.isBOver()) {
 			screen.spriteBatch.draw(this.images[1], this.getX() + changeX, this.getY() + changeY, getWidth(), getHeight());
 		} else {

@@ -493,7 +493,7 @@ public class ApoButton extends ApoEntity {
 			
 		}
 		if (isVisible() || ((bShowTextOnly) && (isOnlyText()))) {
-			if (this.text != null && this.text.length() > 0) {
+			if (this.text != null && !this.text.isEmpty()) {
 				drawString(screen, changeX, changeY, Constants.COLOR_WHITE);
 			}
 		}

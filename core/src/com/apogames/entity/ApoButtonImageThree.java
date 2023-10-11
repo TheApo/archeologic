@@ -94,7 +94,7 @@ public class ApoButtonImageThree extends ApoButton {
 		if ( this.isVisible() ) {
 			screen.spriteBatch.begin();
 			renderImage(screen, changeX, changeY);
-			if (this.getText() != null && this.getText().length() > 0) {
+			if (this.getText() != null && !this.getText().isEmpty()) {
 				drawString(screen,changeX, changeY, color);
 			}
 			screen.spriteBatch.end();
@@ -103,15 +103,15 @@ public class ApoButtonImageThree extends ApoButton {
 
 	public void drawString(GameScreen screen, int changeX, int changeY, float[] color) {
 		String text = getText();
-		if (this.getId() != null && this.getId().length() > 0) {
+		if (this.getId() != null && !this.getId().isEmpty()) {
 			text = Localization.getInstance().getCommon().get(this.getId());
 		}
 		Constants.glyphLayout.setText(getFont(), text);
 		float h = Constants.glyphLayout.height;
 		if (( this.isBPressed() )) {
-			screen.drawString(text, this.getX() + changeX + this.getWidth()/2, this.getY() + changeY + this.getHeight()/2 - h/2, Constants.COLOR_RED, getFont(), DrawString.MIDDLE, false, false);
+			screen.drawString(text, this.getX() + changeX + this.getWidth()/2, this.getY() + changeY + this.getHeight()/2 - h/2, Constants.COLOR_RED_DARK, getFont(), DrawString.MIDDLE, false, false);
 		} else if ( this.isBOver() ) {
-			screen.drawString(text, this.getX() + changeX + this.getWidth()/2, this.getY() + changeY + this.getHeight()/2 - h/2, Constants.COLOR_YELLOW, getFont(), DrawString.MIDDLE, false, false);
+			screen.drawString(text, this.getX() + changeX + this.getWidth()/2, this.getY() + changeY + this.getHeight()/2 - h/2, Constants.COLOR_YELLOW_DARK, getFont(), DrawString.MIDDLE, false, false);
 		} else {
 			screen.drawString(text, this.getX() + changeX + this.getWidth()/2, this.getY() + changeY + this.getHeight()/2 - h/2, color, getFont(), DrawString.MIDDLE, false, false);
 		}
