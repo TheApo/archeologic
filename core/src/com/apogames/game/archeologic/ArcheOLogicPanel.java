@@ -435,7 +435,13 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         if (this.showQuestion) {
             getMainPanel().spriteBatch.begin();
 
-            getMainPanel().spriteBatch.draw(AssetLoader.backgroundQuestionTextureRegion, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10, 50);
+            getMainPanel().spriteBatch.draw(AssetLoader.backgroundQuestionTextureRegion, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10, 10, AssetLoader.backgroundQuestionTextureRegion.getRegionWidth(), Constants.GAME_HEIGHT - 20);
+
+            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_title"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, 85, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.MIDDLE, true, false);
+
+            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_first").split(";")[0], Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, 140, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
+            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_second"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, 240, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
+            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_third"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, Constants.GAME_HEIGHT - 105, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
 
             for (int i = 0; i < QuestionEnum.values().length; i++) {
                 BitmapFont font15 = AssetLoader.font15;
@@ -444,6 +450,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 Constants.glyphLayout.setText(font15, text);
                 getMainPanel().drawString(this.curAddQuestionString, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 100 + Constants.glyphLayout.width, 285 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
             }
+
+
 
             getMainPanel().spriteBatch.end();
         }

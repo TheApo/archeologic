@@ -260,7 +260,7 @@ public class ButtonProvider {
 			width = 180;
 			height = 64;
 			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - width/2;
-			y = Constants.GAME_HEIGHT - 60 - height;
+			y = Constants.GAME_HEIGHT - 20 - height;
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_question");
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
