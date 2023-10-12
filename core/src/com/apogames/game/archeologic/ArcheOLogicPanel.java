@@ -51,28 +51,40 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     private boolean showQuestion = false;
 
+    private boolean won = false;
+
     public ArcheOLogicPanel(final MainPanel game) {
         super(game);
     }
 
     public void setNeededButtonsVisible() {
+        this.setAllButtonVisible(false);
         getMainPanel().getButtonByFunction(FUNCTION_ARCHEOLOGIC_BACK).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_RESTART).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_NEW_LEVEL).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_TEST).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_CHECK).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(true);
-        getMainPanel().getButtonByFunction(FUNCTION_FINISH_BACK).setVisible(false);
-        getMainPanel().getButtonByFunction(FUNCTION_FINISH_RESTART).setVisible(false);
-        getMainPanel().getButtonByFunction(FUNCTION_FINISH_NEW_LEVEL).setVisible(false);
-        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_REAL).setVisible(false);
-        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(false);
-        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_CLOSE).setVisible(false);
+    }
+
+    private void setAllButtonVisible(boolean visible) {
+        getMainPanel().getButtonByFunction(FUNCTION_ARCHEOLOGIC_BACK).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_RESTART).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_NEW_LEVEL).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_TEST).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_CHECK).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_FINISH_BACK).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_FINISH_RESTART).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_FINISH_NEW_LEVEL).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_REAL).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_CLOSE).setVisible(visible);
         for (String s : askOrder) {
-            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_ROW + s).setVisible(false);
+            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_ROW + s).setVisible(visible);
         }
         for (int i = 0; i < QuestionEnum.values().length; i++) {
-            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name()).setVisible(false);
+            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name()).setVisible(visible);
         }
     }
 
@@ -92,6 +104,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             this.curAddQuestionString = Localization.getInstance().getCommon().get("question_add_column")+" A?";
         }
 
+        this.won = false;
+
         this.getMainPanel().resetSize(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
 
         this.setNeededButtonsVisible();
@@ -99,6 +113,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     public void setNewLevel(Difficulty difficulty) {
         this.game.setNewLevel(difficulty);
+
+        this.won = false;
 
         ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN));
         buttonByFunction.setCurTiles(this.game.getCurrentTiles());
@@ -117,6 +133,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     private void createNewLevel() {
         this.getMainPanel().getButtonByFunction(FUNCTION_NEW_LEVEL).setVisible(true);
+
+        this.won = false;
 
         this.game.choseNewSolution();
         this.game.resetTiles();
@@ -177,15 +195,14 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     private void setShowQuestion(boolean showQuestion) {
         this.showQuestion = showQuestion;
 
+        this.setAllButtonVisible(false);
+
         getMainPanel().getButtonByFunction(FUNCTION_ARCHEOLOGIC_BACK).setVisible(!showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_RESTART).setVisible(!showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_NEW_LEVEL).setVisible(!showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_TEST).setVisible(!showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_CHECK).setVisible(!showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(!showQuestion);
-        getMainPanel().getButtonByFunction(FUNCTION_FINISH_BACK).setVisible(false);
-        getMainPanel().getButtonByFunction(FUNCTION_FINISH_RESTART).setVisible(false);
-        getMainPanel().getButtonByFunction(FUNCTION_FINISH_NEW_LEVEL).setVisible(false);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_REAL).setVisible(showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_CLOSE).setVisible(showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(showQuestion);
@@ -248,14 +265,14 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     break;
                 case ArcheOLogicPanel.FUNCTION_RESTART:
                 case ArcheOLogicPanel.FUNCTION_FINISH_RESTART:
-                    this.game.resetTiles();
+                    resetTiles();
                     break;
                 case ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION:
                     this.setShowQuestion(true);
                     break;
                 case ArcheOLogicPanel.FUNCTION_QUESTION_CHECK:
                     if (this.game.isWon()) {
-                        this.createNewLevel();
+                        setWon(true);
                     } else {
                         this.game.setCosts(this.game.getCosts() + 5);
                     }
@@ -289,6 +306,24 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     }
                     break;
             }
+        }
+    }
+
+    private void resetTiles() {
+        this.setNeededButtonsVisible();
+        this.won = false;
+        this.game.resetTiles();
+    }
+
+    private void setWon(boolean won) {
+        this.won = won;
+
+        if (won) {
+            this.setAllButtonVisible(false);
+
+            getMainPanel().getButtonByFunction(FUNCTION_FINISH_BACK).setVisible(true);
+            getMainPanel().getButtonByFunction(FUNCTION_FINISH_RESTART).setVisible(true);
+            getMainPanel().getButtonByFunction(FUNCTION_FINISH_NEW_LEVEL).setVisible(true);
         }
     }
 
@@ -452,6 +487,24 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             }
 
 
+
+            getMainPanel().spriteBatch.end();
+        }
+
+        if (won) {
+            getMainPanel().spriteBatch.begin();
+
+            int size = 600;
+            int height = 300;
+            getMainPanel().spriteBatch.draw(AssetLoader.backgroundQuestionTextureRegion, Constants.GAME_WIDTH/2f - size/2f, Constants.GAME_HEIGHT/2f - height/2f, size, height);
+
+            String s = Localization.getInstance().getCommon().get("won");
+            getMainPanel().drawString(s, Constants.GAME_WIDTH/2f, Constants.GAME_HEIGHT/2f - height/2f + 40, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.MIDDLE, true, false);
+
+            s = Localization.getInstance().getCommon().get("won_text");
+            s = s.replace("{x}", String.valueOf(this.game.getQuestions().size()));
+            s = s.replace("{y}", String.valueOf(this.game.getCosts()));
+            getMainPanel().drawString(s, Constants.GAME_WIDTH/2f, Constants.GAME_HEIGHT/2f - height/2f + 100, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
 
             getMainPanel().spriteBatch.end();
         }

@@ -148,7 +148,8 @@ public class ButtonProvider {
 			x = Constants.GAME_WIDTH - (width + 25) * 3;
 			y = Constants.GAME_HEIGHT - 60 - height;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonFixTextureRegion);
-			button.setFont(AssetLoader.font25);
+			button.setFont(AssetLoader.font20);
+			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "New Level");
 			this.game.getButtons().add(button);
 
 			text = "";
@@ -188,17 +189,20 @@ public class ButtonProvider {
 			x = Constants.GAME_WIDTH - (width + 25) * 2;
 			y = Constants.GAME_HEIGHT - 60 - height;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRestartTextureRegion);
-			button.setFont(AssetLoader.font30);
+			button.setFont(AssetLoader.font25);
+			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "Restart");
 			this.game.getButtons().add(button);
 
-			text = "";
+			int size = 300;
+
+			text = "level";
 			function = ArcheOLogicPanel.FUNCTION_FINISH_NEW_LEVEL;
 			width = 180;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 - width/2;
-			y = Constants.GAME_HEIGHT/2 + AssetLoader.wonTextureRegion.getRegionHeight()/2 - (height + 50);
-			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_CLEAR, "button_newlevel");
-			button.setFont(AssetLoader.font30);
+			y = Constants.GAME_HEIGHT/2 + size/2 - (height + 20);
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_newlevel");
+			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
 
 			text = "";
@@ -206,9 +210,10 @@ public class ButtonProvider {
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 - AssetLoader.wonTextureRegion.getRegionWidth()/2 + 55;
-			y = Constants.GAME_HEIGHT/2 + AssetLoader.wonTextureRegion.getRegionHeight()/2 - (height + 50);
+			y = Constants.GAME_HEIGHT/2 + size/2 - (height + 20);
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRestartTextureRegion);
-			button.setFont(AssetLoader.font30);
+			button.setFont(AssetLoader.font25);
+			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "Restart");
 			this.game.getButtons().add(button);
 
 			text = "";
@@ -216,8 +221,9 @@ public class ButtonProvider {
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 + AssetLoader.wonTextureRegion.getRegionWidth()/2 - 55 - width;
-			y = Constants.GAME_HEIGHT/2 + AssetLoader.wonTextureRegion.getRegionHeight()/2 - (height + 50);
+			y = Constants.GAME_HEIGHT/2 + size/2 - (height + 20);
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonXTextureRegion);
+			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "Menu");
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
 

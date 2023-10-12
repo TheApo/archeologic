@@ -73,7 +73,7 @@ public class ApoButtonImageWithThree extends ApoButton {
 				}
 				screen.spriteBatch.draw(this.mouseOverTextureRegion, x, y, width + 20, height);
 //				screen.drawString(this.mouseOverText, x + 11 + width/2f, y + 1, Constants.COLOR_WHITE, this.getFont(), DrawString.MIDDLE, false, false);
-				screen.drawString(this.mouseOverText, x + 10 + width/2f, y, Constants.COLOR_WHITE, this.getFont(), DrawString.MIDDLE, false, false);
+				screen.drawString(this.mouseOverText, x + 10 + width/2f, (int)(this.getY() + changeY - height/2 - 3), Constants.COLOR_BLACK, this.getFont(), DrawString.MIDDLE, true, false);
 			}
 			if (needNewSpriteBatch) {
 				screen.spriteBatch.end();

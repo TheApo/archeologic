@@ -81,6 +81,9 @@ public class GameEntity {
                 startY -= 3 * Constants.TILE_SIZE;
             }
         }
+        for (int i = this.questions.size() - 1; i >= this.givenTiles.getDifficultyTiles()[this.difficulty.getGivenTiles()]; i--) {
+            this.questions.remove(this.questions.get(i));
+        }
     }
 
     public ArrayList<Question> getQuestions() {
