@@ -13,6 +13,7 @@ public class ApoButtonImageWithThree extends ApoButton {
 
 	private TextureRegion[] images;
 
+	private int rotate = 0;
 	private TextureRegion mouseOverTextureRegion;
 	private String mouseOverText;
 
@@ -23,6 +24,14 @@ public class ApoButtonImageWithThree extends ApoButton {
 		
 		this.images = images;
 		this.mouseOverText = "";
+	}
+
+	public int getRotate() {
+		return rotate;
+	}
+
+	public void setRotate(int rotate) {
+		this.rotate = rotate;
 	}
 
 	public TextureRegion[] getImages() {
@@ -98,15 +107,28 @@ public class ApoButtonImageWithThree extends ApoButton {
 	}
 
 	public void renderImage(GameScreen screen, int changeX, int changeY) {
-		if (this.isBPressed() || this.isSelect()) {
-			screen.spriteBatch.draw(this.images[2], this.getX() + changeX, this.getY() + changeY, getWidth(), getHeight());
-			if (this.isSelect()) {
-				screen.spriteBatch.draw(AssetLoader.xTextureRegion, this.getX() + changeX + 10, this.getY() + changeY + 10, getWidth() - 20, getHeight() - 20);
+		if (this.rotate == 0) {
+			if (this.isBPressed() || this.isSelect()) {
+				screen.spriteBatch.draw(this.images[2], this.getX() + changeX, this.getY() + changeY, getWidth(), getHeight());
+				if (this.isSelect()) {
+					screen.spriteBatch.draw(AssetLoader.xTextureRegion, this.getX() + changeX + 10, this.getY() + changeY + 10, getWidth() - 20, getHeight() - 20);
+				}
+			} else if (this.isBOver()) {
+				screen.spriteBatch.draw(this.images[1], this.getX() + changeX, this.getY() + changeY, getWidth(), getHeight());
+			} else {
+				screen.spriteBatch.draw(this.images[0], this.getX() + changeX, this.getY() + changeY, getWidth(), getHeight());
 			}
-		} else if (this.isBOver()) {
-			screen.spriteBatch.draw(this.images[1], this.getX() + changeX, this.getY() + changeY, getWidth(), getHeight());
 		} else {
-			screen.spriteBatch.draw(this.images[0], this.getX() + changeX, this.getY() + changeY, getWidth(), getHeight());
+			if (this.isBPressed() || this.isSelect()) {
+				screen.spriteBatch.draw(this.images[2], this.getX() + changeX, this.getY() + changeY, getWidth()/2, getHeight()/2, getWidth(), getHeight(), 1f, 1f, this.rotate);
+				if (this.isSelect()) {
+					screen.spriteBatch.draw(AssetLoader.xTextureRegion, this.getX() + changeX + 10, this.getY() + changeY + 10, getWidth() - 20, getHeight() - 20);
+				}
+			} else if (this.isBOver()) {
+				screen.spriteBatch.draw(this.images[1], this.getX() + changeX, this.getY() + changeY, getWidth()/2, getHeight()/2, getWidth(), getHeight(), 1f, 1f, this.rotate);
+			} else {
+				screen.spriteBatch.draw(this.images[0], this.getX() + changeX, this.getY() + changeY, getWidth()/2, getHeight()/2, getWidth(), getHeight(), 1f, 1f, this.rotate);
+			}
 		}
 	}
 }

@@ -275,7 +275,7 @@ public class ButtonProvider {
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN;
 			width = 40;
 			height = 40;
-			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - width/2 - 62;
+			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - width/2 - 32;
 			y = 250 + 3 * (60);
 			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font25);
@@ -292,6 +292,30 @@ public class ButtonProvider {
 			button.setStroke(1);
 			button.setFont(AssetLoader.font40);
 			this.game.getButtons().add(button);
+
+
+			text = "";
+			function = ArcheOLogicPanel.FUNCTION_HINT_UP;
+			width = 64;
+			height = 64;
+			x = Constants.GAME_WIDTH - width - 20;
+			y = 230;
+			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonLeftTextureRegion);
+			button.setFont(AssetLoader.font30);
+			((ApoButtonImageWithThree)(button)).setRotate(90);
+			this.game.getButtons().add(button);
+
+			text = "";
+			function = ArcheOLogicPanel.FUNCTION_HINT_DOWN;
+			width = 64;
+			height = 64;
+			x = Constants.GAME_WIDTH - width - 20;
+			y = Constants.GAME_HEIGHT - height - 150;
+			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRightTextureRegion);
+			button.setFont(AssetLoader.font30);
+			((ApoButtonImageWithThree)(button)).setRotate(90);
+			this.game.getButtons().add(button);
+
 
 			for (int i = 0; i < this.game.getButtons().size(); i++) {
 				this.game.getButtons().get(i).setBOpaque(false);

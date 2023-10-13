@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class GameEntity {
 
-    public static final int MAX_SHOWN_QUESTION = 18;
+    public static final int MAX_SHOWN_QUESTION = 16;
     private Difficulty difficulty = Difficulty.EASY;
     private byte[][] solution;
     private byte[][] solutionPossibilities;
