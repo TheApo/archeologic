@@ -334,6 +334,7 @@ public class GameEntity {
     }
 
     public void mousePressed(int x, int y, boolean isRightButton) {
+        mouseMoved(x, y);
         for (GameTile tile : this.currentTiles) {
             if (tile.pressMouse(x, y)) {
                 break;

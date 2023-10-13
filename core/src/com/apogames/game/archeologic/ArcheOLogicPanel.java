@@ -205,6 +205,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     }
 
     public void mouseButtonReleased(int mouseX, int mouseY, boolean isRightButton) {
+        super.mouseButtonReleased(mouseX, mouseY, isRightButton);
         this.isPressed = false;
 
         if (this.showQuestion) {
@@ -220,6 +221,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         if (!this.isPressed) {
             this.isPressed = true;
 
+            this.game.mouseMoved(x, y);
             this.game.mousePressed(x, y, isRightButton);
         }
     }
