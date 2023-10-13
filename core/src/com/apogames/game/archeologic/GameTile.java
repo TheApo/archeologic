@@ -109,7 +109,7 @@ public class GameTile {
 
     public boolean click(int x, int y) {
         int dif = (int)(Math.abs(this.startX - this.x) + Math.abs(this.startY - this.y));
-        if (this.over && dif < 20) {
+        if (this.over && dif < 30) {
             int mouseX = (x - nextX)/Constants.TILE_SIZE;
             int mouseY = (y - nextY)/Constants.TILE_SIZE;
 
