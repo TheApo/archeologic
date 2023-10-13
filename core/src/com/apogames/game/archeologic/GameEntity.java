@@ -344,6 +344,7 @@ public class GameEntity {
 
     public void mouseDragged(int x, int y, boolean isRightButton) {
         for (GameTile tile : this.currentTiles) {
+            //mouseMoved(x, y);
             if (tile.dragTile(x, y)) {
                 break;
             }

@@ -205,7 +205,6 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     }
 
     public void mouseButtonReleased(int mouseX, int mouseY, boolean isRightButton) {
-        super.mouseButtonReleased(mouseX, mouseY, isRightButton);
         this.isPressed = false;
 
         if (this.showQuestion) {

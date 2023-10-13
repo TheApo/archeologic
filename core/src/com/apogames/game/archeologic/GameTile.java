@@ -109,7 +109,7 @@ public class GameTile {
 
     public boolean click(int x, int y) {
         int dif = (int)(Math.abs(this.startX - this.x) + Math.abs(this.startY - this.y));
-        if (this.over && dif < 5) {
+        if (this.over && dif < 20) {
             int mouseX = (x - nextX)/Constants.TILE_SIZE;
             int mouseY = (y - nextY)/Constants.TILE_SIZE;
 
@@ -149,7 +149,7 @@ public class GameTile {
     }
 
     public boolean dragTile(int x, int y) {
-        if (this.over) {
+        if (this.over && (this.difX != 0 || this.difY != 0)) {
             this.changePosition(x - this.difX, y - this.difY);
         }
         return this.over;
