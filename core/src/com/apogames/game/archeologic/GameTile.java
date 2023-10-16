@@ -125,10 +125,14 @@ public class GameTile {
 
             this.difX = 0;
             this.difY = 0;
+
+            this.over = false;
             return true;
         }
         this.difX = 0;
         this.difY = 0;
+
+        this.over = false;
         return false;
     }
 

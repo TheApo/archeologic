@@ -195,24 +195,22 @@ public class GameScreen implements Screen, InputProcessor {
             this.buttonFunction = "";
             buttonClickSound();
         }
-        if (this.clickReleasedArray.size() > 0) {
-            for (GridPoint2 aClickReleasedArray : clickReleasedArray) {
-                this.model.mouseButtonReleased(aClickReleasedArray.x, aClickReleasedArray.y, bRightClick);
-            }
-            clickReleasedArray.clear();
-            bRightClick = false;
-        }
-        if (this.clickDraggedArray.size() > 0) {
-            for (GridPoint2 aClickDraggedArray : clickDraggedArray) {
-                this.model.mouseDragged(aClickDraggedArray.x, aClickDraggedArray.y, bRightClick);
-            }
-            clickDraggedArray.clear();
-        }
         if (this.clickPressedArray.size() > 0) {
             for (GridPoint2 aClickPressedArray : clickPressedArray) {
                 this.model.mousePressed(aClickPressedArray.x, aClickPressedArray.y, bRightClick);
             }
             clickPressedArray.clear();
+        } else if (this.clickReleasedArray.size() > 0) {
+            for (GridPoint2 aClickReleasedArray : clickReleasedArray) {
+                this.model.mouseButtonReleased(aClickReleasedArray.x, aClickReleasedArray.y, bRightClick);
+            }
+            clickReleasedArray.clear();
+            bRightClick = false;
+        } else if (this.clickDraggedArray.size() > 0) {
+            for (GridPoint2 aClickDraggedArray : clickDraggedArray) {
+                this.model.mouseDragged(aClickDraggedArray.x, aClickDraggedArray.y, bRightClick);
+            }
+            clickDraggedArray.clear();
         }
         if (this.keyPressedArray.size() > 0) {
             for (Integer aKeyPressedArray : keyPressedArray) {
@@ -356,16 +354,18 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (pointer > 0) {
+            return false;
+        }
         Vector3 screenCoords = new Vector3(screenX, screenY, 0);
         viewport.unproject(screenCoords);
         int x = (int) screenCoords.x;
         int y = (int) screenCoords.y;
         boolean bCheck = true;
         if (this.buttons != null) {
-            for (int i = 0; i < this.buttons.size(); i++) {
-                if (this.buttons.get(i).getReleased(x, y)) {
-                    String function = this.buttons.get(i).getFunction();
-                    this.buttonFunction = function;
+            for (ApoButton apoButton : this.buttons) {
+                if (apoButton.getReleased(x, y)) {
+                    this.buttonFunction = apoButton.getFunction();
                     bCheck = false;
                     break;
                 }
@@ -384,6 +384,9 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        if (pointer > 0) {
+            return false;
+        }
         Vector3 screenCoords = new Vector3(screenX, screenY, 0);
         viewport.unproject(screenCoords);
         int x = (int) screenCoords.x;
@@ -395,13 +398,16 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (pointer > 0) {
+            return false;
+        }
         Vector3 screenCoords = new Vector3(screenX, screenY, 0);
         viewport.unproject(screenCoords);
         int x = (int) screenCoords.x;
         int y = (int) screenCoords.y;
         if (this.buttons != null) {
-            for (int i = 0; i < this.buttons.size(); i++) {
-                if (this.buttons.get(i).getPressed(x, y)) {
+            for (ApoButton apoButton : this.buttons) {
+                if (apoButton.getPressed(x, y)) {
                     return false;
                 }
             }
@@ -451,8 +457,8 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         if (this.buttons != null) {
-            for (int i = 0; i < this.buttons.size(); i++) {
-                if (this.buttons.get(i).getMove(x, y)) {
+            for (ApoButton button : this.buttons) {
+                if (button.getMove(x, y)) {
                     break;
                 }
             }
