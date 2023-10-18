@@ -25,7 +25,6 @@ b:i18n/settler_en.properties:i18n/settler_en-fd39fd4311778256c610b13887ac5b12.pr
 d:images:images:0:application/unknown:1
 i:images/background.png:images/background-e6d0f2487dadea3cdf22d506b32a9d6e.png:165752:image/png:1
 i:images/background_main.png:images/background_main-3dfa48c705f66681ab89dcc65b594f0c.png:693210:image/png:1
-i:images/background_main_original.png:images/background_main_original-788b4f183e5c831a325c8aa9a5117453.png:834387:image/png:1
 i:images/background_question.png:images/background_question-0ef538a663b2342e1b1d4d74389e8bb4.png:288291:image/png:1
 i:images/background_small.png:images/background_small-d8b99a21da8616f1b7cc63c280e9cec8.png:34878:image/png:1
 i:images/board_main.png:images/board_main-c584b5ce1021d22a7cdaa61547d7bf9d.png:795386:image/png:1
