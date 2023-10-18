@@ -526,8 +526,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             getMainPanel().drawString(this.game.getQuestions().get(i).getText(), Constants.GAME_WIDTH - 575, 250 + (i - this.game.getCurStartQuestion()) * 25, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.BEGIN, true, false);
 
             if (this.game.getQuestions().get(i).getCompleteCosts() > 0) {
-                getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, (Constants.GAME_WIDTH - 79), 238 + (i - this.game.getCurStartQuestion()) * 25, 20, 20);
-                getMainPanel().drawString(String.valueOf(this.game.getQuestions().get(i).getCompleteCosts()), Constants.GAME_WIDTH - 70, 250 + (i - this.game.getCurStartQuestion()) * 25, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
+                getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, (Constants.GAME_WIDTH - 109), 238 + (i - this.game.getCurStartQuestion()) * 25, 20, 20);
+                getMainPanel().drawString(String.valueOf(this.game.getQuestions().get(i).getCompleteCosts()), Constants.GAME_WIDTH - 100, 250 + (i - this.game.getCurStartQuestion()) * 25, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
             }
         }
 

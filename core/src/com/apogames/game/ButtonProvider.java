@@ -209,7 +209,7 @@ public class ButtonProvider {
 			function = ArcheOLogicPanel.FUNCTION_FINISH_RESTART;
 			width = 64;
 			height = 64;
-			x = Constants.GAME_WIDTH/2 + 55;
+			x = Constants.GAME_WIDTH/2 - 135 - width;
 			y = Constants.GAME_HEIGHT/2 + size/2 - (height + 20);
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRestartTextureRegion);
 			button.setFont(AssetLoader.font25);
@@ -220,7 +220,7 @@ public class ButtonProvider {
 			function = ArcheOLogicPanel.FUNCTION_FINISH_BACK;
 			width = 64;
 			height = 64;
-			x = Constants.GAME_WIDTH/2 - 55 - width;
+			x = Constants.GAME_WIDTH/2 + 135;
 			y = Constants.GAME_HEIGHT/2 + size/2 - (height + 20);
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonXTextureRegion);
 			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "Menu");
