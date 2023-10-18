@@ -432,15 +432,12 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             this.game.getQuestions().add(nextQuestion);
         }
 
-        int askCosts = 1;
-        if (this.curAskOrder != this.curWantedQuestion) {
-            askCosts = 2;
-        }
-        this.getGame().setCosts(this.getGame().getCosts() + askCosts);
+        this.getGame().setCosts(this.getGame().getCosts() + getNextCostsAsk());
         this.curAskOrder = this.curWantedQuestion + 1;
         if (this.curAskOrder >= askOrder.length) {
             this.curAskOrder = 0;
         }
+        this.curWantedQuestion = this.curAskOrder;
         String nextFunction = ArcheOLogicPanel.FUNCTION_QUESTION_ROW + askOrder[this.curAskOrder];
         for (String s : askOrder) {
             String function = ArcheOLogicPanel.FUNCTION_QUESTION_ROW + s;
