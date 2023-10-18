@@ -104,7 +104,7 @@ public class ButtonProvider {
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 - width - addValue;
-			y = Constants.GAME_HEIGHT/2 - 40;
+			y = Constants.GAME_HEIGHT/2 - 80;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonLeftTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
@@ -114,7 +114,7 @@ public class ButtonProvider {
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 + addValue;
-			y = Constants.GAME_HEIGHT/2 - 40;
+			y = Constants.GAME_HEIGHT/2 - 80;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRightTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
@@ -125,7 +125,7 @@ public class ButtonProvider {
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 - width - addValue;
-			y = Constants.GAME_HEIGHT/2 + 80;
+			y = Constants.GAME_HEIGHT/2 + 60;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonLeftTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
@@ -135,7 +135,7 @@ public class ButtonProvider {
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH/2 + addValue;
-			y = Constants.GAME_HEIGHT/2 + 80;
+			y = Constants.GAME_HEIGHT/2 + 60;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRightTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);

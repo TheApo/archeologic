@@ -9,6 +9,8 @@ public abstract class Question {
     private int row = -1;
     private int column = -1;
 
+    private int completeCosts = 0;
+
     private String text;
 
     public int getRow() {
@@ -34,4 +36,12 @@ public abstract class Question {
     public abstract String getAnswer();
 
     public abstract ArrayList<Integer> filter(ArrayList<byte[][]> solutionsReal, ArrayList<byte[][]> solutions);
+
+    public int getCompleteCosts() {
+        return completeCosts;
+    }
+
+    public void setCompleteCosts(int completeCosts) {
+        this.completeCosts = completeCosts;
+    }
 }

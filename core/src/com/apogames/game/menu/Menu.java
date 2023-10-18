@@ -180,7 +180,7 @@ public class Menu extends SequentiallyThinkingScreenModel {
         getMainPanel().spriteBatch.draw(AssetLoader.hudMenuTextureRegion, Constants.GAME_WIDTH/2f - AssetLoader.hudMenuTextureRegion.getRegionWidth()/2f + 50, 15);
 
         getMainPanel().drawString(Localization.getInstance().getCommon().get("title"), Constants.GAME_WIDTH/2f, 90, Constants.COLOR_BLACK, AssetLoader.font40, DrawString.MIDDLE, true, false);
-        getMainPanel().drawString(Localization.getInstance().getCommon().get("title_description"), Constants.GAME_WIDTH/2f, 135, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
+        getMainPanel().drawString(Localization.getInstance().getCommon().get("title_description"), Constants.GAME_WIDTH/2f, 145, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
 
 //        int hudY = 180;
 //
