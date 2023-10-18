@@ -40,10 +40,7 @@ i:images/circles.png:images/circles-6d41cf1af38614a9e50d4b33d0499aea.png:11920:i
 i:images/coin.png:images/coin-80354f02d97c0219f96910238a2845a7.png:29123:image/png:1
 i:images/gameboard.png:images/gameboard-129b034eb3cd1f751fb04dd27b11f369.png:393068:image/png:1
 i:images/hud_menu.png:images/hud_menu-fa7066d3bc081a505ea2489b0e434529.png:211101:image/png:1
-i:images/hud_right.png:images/hud_right-a34532649e5a78d83d37dbce9e2e5a9e.png:26222:image/png:1
-i:images/title.png:images/title-afa5c01fdc853a53a5b22bfed42d0155.png:21330:image/png:1
 i:images/water.png:images/water-cea5df4c6c21116267351a03a609aa7c.png:112332:image/png:1
-i:images/won.png:images/won-25dd19ab353d3a045f18b38ec75461a7.png:60424:image/png:1
 i:images/x.png:images/x-1892c8ce1483fd5b33fe51bc9bc2c54a.png:7908:image/png:1
 t:com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl:particles.fragment-b90524761fdf09b0a836056d590c30b8.glsl:820:application/unknown:1
 t:com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl:particles.vertex-f25b8b2fae10b9bfa09bfdd484923148.glsl:2886:application/unknown:1

@@ -53,10 +53,6 @@ public class AssetLoader {
 	private static Texture boardTexture;
 	public static TextureRegion boardTextureRegion;
 
-	private static Texture wonTexture;
-	public static TextureRegion wonTextureRegion;
-	private static Texture titleTexture;
-	public static TextureRegion titleTextureRegion;
 	private static Texture hudMenuTexture;
 	public static TextureRegion hudMenuTextureRegion;
 	private static Texture xTexture;
@@ -125,18 +121,6 @@ public class AssetLoader {
 
 		boardTextureRegion = new TextureRegion(boardTexture, 0, 0, 455, 455);
 		boardTextureRegion.flip(false, true);
-
-		wonTexture = new Texture(Gdx.files.internal("images/won.png"));
-		wonTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-
-		wonTextureRegion = new TextureRegion(wonTexture, 0, 0, 500, 300);
-		wonTextureRegion.flip(false, true);
-
-		titleTexture = new Texture(Gdx.files.internal("images/title.png"));
-		titleTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-
-		titleTextureRegion = new TextureRegion(titleTexture, 0, 0, 400, 71);
-		titleTextureRegion.flip(false, true);
 
 		coinTexture = new Texture(Gdx.files.internal("images/coin.png"));
 		coinTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -273,13 +257,12 @@ public class AssetLoader {
 		buttonFixTexture.dispose();
 		buttonHelpTexture.dispose();
 		buttonRestartTexture.dispose();
+		hudMenuTexture.dispose();
 		xTexture.dispose();
 		buttonRightTexture.dispose();
 		buttonLeftTexture.dispose();
 		buttonBlancoTexture.dispose();
 		buttonBlancoSmallTexture.dispose();
-		wonTexture.dispose();
-		titleTexture.dispose();
 		font40.dispose();
 		font30.dispose();
 		font25.dispose();
