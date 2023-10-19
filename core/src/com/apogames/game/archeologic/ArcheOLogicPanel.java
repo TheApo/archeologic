@@ -607,6 +607,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().spriteBatch.end();
         Gdx.graphics.getGL20().glDisable(GL20.GL_BLEND);
 
+        boolean showCoinNextCostAsk = false;
+
         if (this.showQuestion) {
             getMainPanel().spriteBatch.begin();
 
@@ -614,10 +616,6 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
             getMainPanel().drawString(Localization.getInstance().getCommon().get("question_title"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, 85, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.MIDDLE, true, false);
 
-            getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() + 80, 140 - 20, 35, 35);
-            getMainPanel().drawString(String.valueOf(this.getNextCostsAsk()), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() + 80 + 17, 141,  Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
-
-            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_first").split(";")[0], Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, 140, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
             getMainPanel().drawString(Localization.getInstance().getCommon().get("question_second"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, 240, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
             getMainPanel().drawString(Localization.getInstance().getCommon().get("question_third"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, Constants.GAME_HEIGHT - 105, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
 
@@ -632,7 +630,19 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     Constants.glyphLayout.setText(font15, text);
                     getMainPanel().drawString(this.curAddQuestionString, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130 + Constants.glyphLayout.width, 277 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
                 }
+                ApoButton button = getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name());
+                if (button.isSelect() && !QuestionEnum.values()[i].equals(QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK)) {
+                    showCoinNextCostAsk = true;
+                }
             }
+
+            if (showCoinNextCostAsk) {
+                getMainPanel().drawString(Localization.getInstance().getCommon().get("question_first").split(";")[0], Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, 140, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
+
+                getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() + 80, 140 - 20, 35, 35);
+                getMainPanel().drawString(String.valueOf(this.getNextCostsAsk()), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() + 80 + 17, 141, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
+            }
+
 
             ApoButton button = getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_REAL);
             getMainPanel().drawString(Localization.getInstance().getCommon().get("question_costs"), button.getXMiddle(), button.getY() - 70,  Constants.COLOR_BLACK, AssetLoader.font25, DrawString.END, true, false);
@@ -662,26 +672,32 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
 
         for (ApoButton button : this.getMainPanel().getButtons()) {
+            if (!showCoinNextCostAsk && this.showQuestion && button.getFunction().startsWith(FUNCTION_QUESTION_ROW)) {
+                continue;
+            }
             button.render(this.getMainPanel());
+        }
+
+        for (ApoButton button : this.getMainPanel().getButtons()) {
+            if (!showCoinNextCostAsk && this.showQuestion && button.getFunction().startsWith(FUNCTION_QUESTION_ROW)) {
+                continue;
+            }
+            if (button.isVisible() && button.isSelect()) {
+                button.render(this.getMainPanel());
+            }
         }
 
         if (this.showQuestion) {
             getMainPanel().spriteBatch.begin();
 
             for (int i = 0; i < askOrder.length; i++) {
-                if (i == this.curAskOrder) {
+                if (i == this.curAskOrder && showCoinNextCostAsk) {
                     float[] color = Constants.COLOR_RED;
                     getMainPanel().drawString(askOrder[i], Constants.GAME_WIDTH - 10 - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() + 30 + i * 64 + 32, 160 + 35, color, AssetLoader.font30, DrawString.MIDDLE, true, false);
                 }
             }
 
             getMainPanel().spriteBatch.end();
-        }
-
-        for (ApoButton button : this.getMainPanel().getButtons()) {
-            if (button.isVisible() && button.isSelect()) {
-                button.render(this.getMainPanel());
-            }
         }
     }
 
