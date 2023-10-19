@@ -188,7 +188,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.won = false;
 
         this.game.choseNewSolution();
-        this.game.resetTiles();
+        this.resetTiles();
 
         ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN));
         buttonByFunction.setCurTiles(this.game.getCurrentTiles());
@@ -392,7 +392,14 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     private void resetTiles() {
         this.won = false;
         this.game.resetTiles();
+        this.resetCurAsk();
         this.setNeededButtonsVisible();
+    }
+
+    private void resetCurAsk() {
+        this.curAskOrder = 0;
+        this.curWantedQuestion = 0;
+        setNextAskButtonsSelected();
     }
 
     private void setWon(boolean won) {
@@ -481,14 +488,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             this.curAskOrder = 0;
         }
         this.curWantedQuestion = this.curAskOrder;
-        String nextFunction = ArcheOLogicPanel.FUNCTION_QUESTION_ROW + askOrder[this.curAskOrder];
-        for (String s : askOrder) {
-            String function = ArcheOLogicPanel.FUNCTION_QUESTION_ROW + s;
-            getMainPanel().getButtonByFunction(function).setSelect(false);
-            if (function.equals(nextFunction)) {
-                getMainPanel().getButtonByFunction(function).setSelect(true);
-            }
-        }
+        setNextAskButtonsSelected();
 
         if (nextQuestion != null) {
             nextQuestion.setCompleteCosts(completeCost);
@@ -497,6 +497,17 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.setShowQuestion(false);
     }
 
+    private void setNextAskButtonsSelected() {
+        String nextFunction = ArcheOLogicPanel.FUNCTION_QUESTION_ROW + askOrder[this.curAskOrder];
+        for (String s : askOrder) {
+            String function = ArcheOLogicPanel.FUNCTION_QUESTION_ROW + s;
+            getMainPanel().getButtonByFunction(function).setSelect(false);
+            if (function.equals(nextFunction)) {
+                getMainPanel().getButtonByFunction(function).setSelect(true);
+                setCurAddQuestionString(s);
+            }
+        }
+    }
 
 
     private void setCurAddQuestionString(String s) {
