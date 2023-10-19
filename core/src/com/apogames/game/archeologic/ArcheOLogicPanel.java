@@ -33,6 +33,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     public static final String FUNCTION_QUESTION_QUESTION_ASK = "ARCHEOLOGIC_QUESTION_QUESTION_";
     public static final String FUNCTION_QUESTION_QUESTION_REAL = "ARCHEOLOGIC_QUESTION_QUESTION_REAL";
     public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN";
+    public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN_HORIZONTAL";
+    public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN_STRING_SIDE";
     public static final String FUNCTION_QUESTION_QUESTION_CLOSE = "ARCHEOLOGIC_QUESTION_QUESTION_CLOSE";
     public static final String FUNCTION_HINT_UP = "ARCHEOLOGIC_HINT_UP";
     public static final String FUNCTION_HINT_DOWN = "ARCHEOLOGIC_HINT_DOWN";
@@ -85,6 +87,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_FINISH_NEW_LEVEL).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_REAL).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_CLOSE).setVisible(visible);
         for (String s : askOrder) {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_ROW + s).setVisible(visible);
@@ -114,6 +118,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN));
             buttonByFunction.setCurTiles(this.game.getCurrentTiles());
 
+            buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL));
+            buttonByFunction.setCurTiles(this.game.getCurrentTiles());
+
             this.curAddQuestionString = Localization.getInstance().getCommon().get("question_add_column")+" A?";
         }
 
@@ -141,7 +148,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     }
 
     private void setNextCosts(Question question) {
-        this.nextCosts = getNextCostsAsk() + question.getCosts();
+        int nextAsk = question.withAskCosts() ? getNextCostsAsk() : 0;
+        this.nextCosts = nextAsk + question.getCosts();
     }
 
     private int getNextCostsAsk() {
@@ -154,6 +162,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.won = false;
 
         ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN));
+        buttonByFunction.setCurTiles(this.game.getCurrentTiles());
+
+        buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL));
         buttonByFunction.setCurTiles(this.game.getCurrentTiles());
 
         setAllNextQuestions();
@@ -180,6 +191,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.game.resetTiles();
 
         ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN));
+        buttonByFunction.setCurTiles(this.game.getCurrentTiles());
+
+        buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL));
         buttonByFunction.setCurTiles(this.game.getCurrentTiles());
 
         setNeededButtonsVisible();
@@ -247,6 +261,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_REAL).setVisible(showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_CLOSE).setVisible(showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(showQuestion);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(showQuestion);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(showQuestion);
         for (String s : askOrder) {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_ROW + s).setVisible(showQuestion);
         }
@@ -269,6 +285,11 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN)) {
                 setAllNextQuestions();
                 mouseButtonFunction(FUNCTION_QUESTION_QUESTION_ASK+QuestionEnum.ONE_TILE_CHECK.name());
+                return;
+            }
+            if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL) || function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE)) {
+                setAllNextQuestions();
+                mouseButtonFunction(FUNCTION_QUESTION_QUESTION_ASK+QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK.name());
                 return;
             }
             for (String s : askOrder) {
@@ -419,6 +440,18 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 } else if (QuestionEnum.values()[i] == QuestionEnum.ONE_TILE_CHECK) {
                     ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN);
                     nextQuestion = new OneTileCheck(column, row, this.game.getSolution(), this.game.getRealSolution(), buttonByFunction.getTileNumber(), buttonByFunction.getTileArray());
+                } else if (QuestionEnum.values()[i] == QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK) {
+                    ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL);
+
+                    ApoButtonImageDropdown buttonByFunctionString = (ApoButtonImageDropdown)getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE);
+
+                    if (buttonByFunctionString.getTileNumber() == 0) {
+                        nextQuestion = new OneTileSideCheck(-1, 1, this.game.getSolution(), buttonByFunction.getTileNumber(), buttonByFunction.getTileArray());
+                    } else if (buttonByFunctionString.getTileNumber() == 1) {
+                        nextQuestion = new OneTileSideCheck(1, -1, this.game.getSolution(), buttonByFunction.getTileNumber(), buttonByFunction.getTileArray());
+                    } else {
+                        nextQuestion = new OneTileSideCheck(1, 1, this.game.getSolution(), buttonByFunction.getTileNumber(), buttonByFunction.getTileArray());
+                    }
                 }
 
                 return nextQuestion;
@@ -436,10 +469,13 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             completeCost = nextQuestion.getCosts();
             this.getGame().setCosts(this.getGame().getCosts() + nextQuestion.getCosts());
             this.game.getQuestions().add(nextQuestion);
+
+            if (nextQuestion.withAskCosts()) {
+                completeCost += getNextCostsAsk();
+                this.getGame().setCosts(this.getGame().getCosts() + getNextCostsAsk());
+            }
         }
 
-        completeCost += getNextCostsAsk();
-        this.getGame().setCosts(this.getGame().getCosts() + getNextCostsAsk());
         this.curAskOrder = this.curWantedQuestion + 1;
         if (this.curAskOrder >= askOrder.length) {
             this.curAskOrder = 0;
@@ -581,8 +617,10 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 BitmapFont font15 = AssetLoader.font15;
                 String text = Localization.getInstance().getCommon().get(QuestionEnum.values()[i].getText())+" ";
                 getMainPanel().drawString(text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, 277 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
-                Constants.glyphLayout.setText(font15, text);
-                getMainPanel().drawString(this.curAddQuestionString, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130 + Constants.glyphLayout.width, 277 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
+                if (!QuestionEnum.values()[i].equals(QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK)) {
+                    Constants.glyphLayout.setText(font15, text);
+                    getMainPanel().drawString(this.curAddQuestionString, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130 + Constants.glyphLayout.width, 277 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
+                }
             }
 
             ApoButton button = getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_REAL);
@@ -627,6 +665,12 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             }
 
             getMainPanel().spriteBatch.end();
+        }
+
+        for (ApoButton button : this.getMainPanel().getButtons()) {
+            if (button.isVisible() && button.isSelect()) {
+                button.render(this.getMainPanel());
+            }
         }
     }
 

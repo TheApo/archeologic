@@ -4,6 +4,7 @@ import com.apogames.Constants;
 import com.apogames.asset.AssetLoader;
 import com.apogames.backend.DrawString;
 import com.apogames.backend.GameScreen;
+import com.apogames.common.Localization;
 import com.apogames.game.archeologic.GameTile;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -19,6 +20,8 @@ public class ApoButtonImageDropdown extends ApoButtonImageWithThree {
 
 	private ArrayList<GameTile> curTiles;
 
+	private ArrayList<String> values;
+
 	private int curTileChose;
 
     public ApoButtonImageDropdown(int x, int y, int width, int height, String function, String text, TextureRegion[] images) {
@@ -26,6 +29,15 @@ public class ApoButtonImageDropdown extends ApoButtonImageWithThree {
 
 		this.orgHeight = height;
 		this.curTiles = new ArrayList<>();
+		this.values = new ArrayList<>();
+	}
+
+	public ArrayList<String> getValues() {
+		return values;
+	}
+
+	public void setValues(ArrayList<String> values) {
+		this.values = new ArrayList<>(values);
 	}
 
 	public void setCurTiles(ArrayList<GameTile> curTiles) {
@@ -33,6 +45,9 @@ public class ApoButtonImageDropdown extends ApoButtonImageWithThree {
 	}
 
 	public int getTileNumber() {
+		if (this.values.size() > 0) {
+			return this.curTileChose;
+		}
 		return this.curTiles.get(this.curTileChose).getTile().getTileNumber();
 	}
 
@@ -43,7 +58,11 @@ public class ApoButtonImageDropdown extends ApoButtonImageWithThree {
 	public void setSelect(boolean select) {
 		super.setSelect(select);
 		if (select) {
-			this.setHeight(curTiles.size() * this.orgHeight);
+			if (this.curTiles.size() > 0) {
+				this.setHeight(curTiles.size() * this.orgHeight);
+			} else if (this.values.size() > 0) {
+				this.setHeight(this.values.size() * this.orgHeight);
+			}
 		} else {
 			this.setHeight(this.orgHeight);
 		}
@@ -78,7 +97,22 @@ public class ApoButtonImageDropdown extends ApoButtonImageWithThree {
 				for (int i = 1; i < this.curTiles.size(); i++) {
 					renderImage(screen, changeX, changeY + i * orgHeight);
 				}
+				for (int i = 1; i < this.values.size(); i++) {
+					renderImage(screen, changeX, changeY + i * orgHeight);
+				}
+
+				int addY = 0;
+				for (String value : this.values) {
+					String v = Localization.getInstance().getCommon().get(value);
+					screen.drawString(v, this.getX() + changeX + this.getWidth() / 2f, addY + this.getY() + changeY + orgHeight / 2f, Constants.COLOR_BLACK, getFont(), DrawString.MIDDLE, true, false);
+
+					addY += this.orgHeight;
+				}
+			} else if (this.values.size() > 0) {
+				String v = Localization.getInstance().getCommon().get(this.values.get(curTileChose));
+				screen.drawString(v, this.getX() + changeX + this.getWidth() / 2f, this.getY() + changeY + orgHeight / 2f, Constants.COLOR_BLACK, getFont(), DrawString.MIDDLE, true, false);
 			}
+
 			if (needNewSpriteBatch) {
 				screen.spriteBatch.end();
 			}
@@ -97,6 +131,9 @@ public class ApoButtonImageDropdown extends ApoButtonImageWithThree {
 	}
 
 	public void renderOutline(GameScreen screen, int changeX, int changeY) {
+		if (this.curTiles.size() == 0) {
+			return;
+		}
 		screen.getRenderer().begin(ShapeRenderer.ShapeType.Filled);
 		screen.getRenderer().setColor(0f, 0f, 0f, 1f);
 		int size = 6;

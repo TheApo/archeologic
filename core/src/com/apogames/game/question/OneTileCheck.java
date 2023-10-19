@@ -1,5 +1,6 @@
 package com.apogames.game.question;
 
+import com.apogames.Constants;
 import com.apogames.backend.GameScreen;
 import com.apogames.common.Localization;
 import com.apogames.help.Helper;
@@ -73,6 +74,7 @@ public class OneTileCheck extends Question {
     @Override
     public void draw(GameScreen screen, int addX, int addY, int size) {
         int startY = addY - this.currentTile.length*size/2;
+        screen.getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
         for (int y = 0; y < currentTile.length; y++) {
             for (int x = 0; x < currentTile[0].length; x++) {
                 if (this.currentTile[y][x] != 0) {

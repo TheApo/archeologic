@@ -38,6 +38,8 @@ import com.apogames.game.menu.Menu;
 import com.apogames.game.question.QuestionEnum;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
+import java.util.ArrayList;
+
 public class ButtonProvider {
 
 	private final MainPanel game;
@@ -276,9 +278,34 @@ public class ButtonProvider {
 			width = 40;
 			height = 40;
 			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - width/2 - 32;
-			y = 250 + 3 * (60);
+			y = 250;
 			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
+			text = "";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL;
+			width = 40;
+			height = 40;
+			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - width/2 - 72;
+			y = 250 + 60;
+			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
+			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
+			text = "";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE;
+			width = 330;
+			height = 40;
+			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - 22;
+			y = 250 + 60;
+			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
+			button.setFont(AssetLoader.font15);
+			ArrayList<String> strings = new ArrayList<>();
+			strings.add("question_horizontal");
+			strings.add("question_vertical");
+			strings.add("question_complete");
+			((ApoButtonImageDropdown)(button)).setValues(strings);
 			this.game.getButtons().add(button);
 
 			text = "";
@@ -286,7 +313,7 @@ public class ButtonProvider {
 			width = 64;
 			height = 64;
 			x = Constants.GAME_WIDTH - width - 25;
-			y = Constants.GAME_HEIGHT - height - 60;
+			y = Constants.GAME_HEIGHT - height - 20;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonXTextureRegion);
 			//ApoButtonColor(x, y, width, height, function, text, Constants.COLOR_BACKGROUND, Constants.COLOR_WHITE);
 			button.setStroke(1);

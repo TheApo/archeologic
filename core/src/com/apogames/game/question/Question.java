@@ -44,4 +44,8 @@ public abstract class Question {
     public void setCompleteCosts(int completeCosts) {
         this.completeCosts = completeCosts;
     }
+
+    public boolean withAskCosts() {
+        return true;
+    }
 }
