@@ -89,12 +89,12 @@ public class AssetLoader {
 
 
 	public static void load() {
-		backgroundTexture = new Texture(Gdx.files.internal("images/background.png"));
+		backgroundTexture = new Texture(Gdx.files.internal("images/background_2.png"));
 		backgroundTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
 		backgroundTextureRegion = new TextureRegion[5];
 		for (int i = 0; i < backgroundTextureRegion.length; i++) {
-			backgroundTextureRegion[i] = new TextureRegion(backgroundTexture, 128 * i, 0, 128, 192);
+			backgroundTextureRegion[i] = new TextureRegion(backgroundTexture, 128 * i, 0, 128, 128);
 			backgroundTextureRegion[i].flip(false, true);
 		}
 

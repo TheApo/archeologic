@@ -57,6 +57,16 @@ public class GameTile {
         return gameX;
     }
 
+    public boolean isNextXAndYSameAsGameXAndY() {
+        int curGameX = (this.nextX - 2 * Constants.TILE_SIZE) / Constants.TILE_SIZE;
+        int curGameY = (this.nextY - 3 * Constants.TILE_SIZE) / Constants.TILE_SIZE;
+        return curGameX == gameX && curGameY == gameY;
+    }
+
+    public byte[][] getBytes() {
+        return bytes;
+    }
+
     public int getGameY() {
         return gameY;
     }
@@ -129,11 +139,12 @@ public class GameTile {
             this.over = false;
             return true;
         }
+        boolean oldOver = this.over;
         this.difX = 0;
         this.difY = 0;
 
         this.over = false;
-        return false;
+        return oldOver;
     }
 
     public void setXAndYToNextXAndNextY() {

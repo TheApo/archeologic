@@ -99,7 +99,7 @@ public class ApoButtonSwitch extends ApoButtonColor {
 						screen.spriteBatch.enableBlending();
 						renderSolvedImage(screen, changeX, changeY);
 						screen.spriteBatch.end();
-						changeY -= getHeight()/6;
+						changeY -= (int)(getHeight()/6f);
 					}
 				}
 				

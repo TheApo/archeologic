@@ -7,7 +7,6 @@ import com.apogames.backend.SequentiallyThinkingScreenModel;
 import com.apogames.common.Localization;
 import com.apogames.entity.ApoButton;
 import com.apogames.game.MainPanel;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import java.util.Locale;
 

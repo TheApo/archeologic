@@ -190,35 +190,38 @@ public class GameScreen implements Screen, InputProcessor {
      * @param delta the delta
      */
     public void think(float delta) {
-        if ((this.buttonFunction != null) && (this.buttonFunction.length() > 0)) {
+        if ((this.buttonFunction != null) && (!this.buttonFunction.isEmpty())) {
             this.model.mouseButtonFunction(this.buttonFunction);
             this.buttonFunction = "";
             buttonClickSound();
         }
-        if (this.clickPressedArray.size() > 0) {
+        if (!this.clickPressedArray.isEmpty()) {
             for (GridPoint2 aClickPressedArray : clickPressedArray) {
                 this.model.mousePressed(aClickPressedArray.x, aClickPressedArray.y, bRightClick);
             }
             clickPressedArray.clear();
-        } else if (this.clickReleasedArray.size() > 0) {
-            for (GridPoint2 aClickReleasedArray : clickReleasedArray) {
-                this.model.mouseButtonReleased(aClickReleasedArray.x, aClickReleasedArray.y, bRightClick);
-            }
-            clickReleasedArray.clear();
-            bRightClick = false;
-        } else if (this.clickDraggedArray.size() > 0) {
+        }
+        if (!this.clickDraggedArray.isEmpty()) {
             for (GridPoint2 aClickDraggedArray : clickDraggedArray) {
                 this.model.mouseDragged(aClickDraggedArray.x, aClickDraggedArray.y, bRightClick);
             }
             clickDraggedArray.clear();
         }
-        if (this.keyPressedArray.size() > 0) {
+        if (!this.clickReleasedArray.isEmpty()) {
+            for (GridPoint2 aClickReleasedArray : clickReleasedArray) {
+                this.model.mouseButtonReleased(aClickReleasedArray.x, aClickReleasedArray.y, bRightClick);
+            }
+            clickDraggedArray.clear();
+            clickReleasedArray.clear();
+            bRightClick = false;
+        }
+        if (!this.keyPressedArray.isEmpty()) {
             for (Integer aKeyPressedArray : keyPressedArray) {
                 this.model.keyPressed(aKeyPressedArray, (char) (aKeyPressedArray.intValue()));
             }
             keyPressedArray.clear();
         }
-        if (this.keyReleasedArray.size() > 0) {
+        if (!this.keyReleasedArray.isEmpty()) {
             for (Integer aKeyReleasedArray : keyReleasedArray) {
                 this.model.keyButtonReleased(aKeyReleasedArray, (char) (aKeyReleasedArray.intValue()));
             }

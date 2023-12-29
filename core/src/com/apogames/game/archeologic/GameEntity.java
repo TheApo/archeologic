@@ -1,6 +1,7 @@
 package com.apogames.game.archeologic;
 
 import com.apogames.Constants;
+import com.apogames.backend.GameScreen;
 import com.apogames.game.knuthAlgoX.AlgorithmX;
 import com.apogames.game.knuthAlgoX.MyPuzzleADayBinary;
 import com.apogames.game.menu.Difficulty;
@@ -15,6 +16,8 @@ public class GameEntity {
     public static final int MAX_SHOWN_QUESTION = 16;
     private Difficulty difficulty = Difficulty.EASY;
     private byte[][] solution;
+
+    private byte[][] currentSolution;
     private byte[][] solutionPossibilities;
 
     private byte[][] realSolution;
@@ -81,6 +84,7 @@ public class GameEntity {
                 startY -= 3 * Constants.TILE_SIZE;
             }
         }
+        this.fillCurrentSolution();
         for (int i = this.questions.size() - 1; i >= this.givenTiles.getDifficultyTiles()[this.difficulty.getGivenTiles()]; i--) {
             this.questions.remove(this.questions.get(i));
         }
@@ -118,6 +122,8 @@ public class GameEntity {
             this.solutionPossibilities = this.possibleSolutionsPossibilities.get(random);
             this.realSolution = new byte[this.solution.length][this.solution[0].length];
 
+            this.currentSolution = new byte[this.solution.length][this.solution[0].length];
+
             this.solutionTiles = new ArrayList<>();
 
             ArrayList<Integer> found = new ArrayList<>();
@@ -133,6 +139,10 @@ public class GameEntity {
                 }
             }
         }
+    }
+
+    public byte[][] getCurrentSolution() {
+        return currentSolution;
     }
 
     public ArrayList<GameTile> getHiddenTiles() {
@@ -327,10 +337,28 @@ public class GameEntity {
         for (GameTile tile : this.currentTiles) {
             tile.isIn(mouseX, mouseY);
             if (tile.click(mouseX, mouseY)) {
+                fillCurrentSolution();
                 break;
             }
         }
 
+    }
+
+    private void fillCurrentSolution() {
+        if (this.solution == null) {
+            return;
+        }
+        this.currentSolution = new byte[this.solution.length][this.solution[0].length];
+        for (GameTile curTile : this.currentTiles) {
+            byte[][] tileBytes = curTile.getBytes();
+            for (int y = curTile.getGameY(); y < curTile.getGameY() + tileBytes.length; y++) {
+                for (int x = curTile.getGameX(); x < curTile.getGameX() + tileBytes[0].length; x++) {
+                    if (x >= 0 && x < this.currentSolution[0].length && y >= 0 && y < this.currentSolution.length) {
+                        this.currentSolution[y][x] = tileBytes[y-curTile.getGameY()][x-curTile.getGameX()];
+                    }
+                }
+            }
+        }
     }
 
     public void mousePressed(int x, int y, boolean isRightButton) {
@@ -346,6 +374,7 @@ public class GameEntity {
         for (GameTile tile : this.currentTiles) {
             //mouseMoved(x, y);
             if (tile.dragTile(x, y)) {
+                this.fillCurrentSolution();
                 break;
             }
         }
@@ -372,6 +401,24 @@ public class GameEntity {
             this.curStartQuestion = 0;
         } else if (this.curStartQuestion + add + MAX_SHOWN_QUESTION <= this.questions.size()) {
             this.curStartQuestion += add;
+        } else if (this.curStartQuestion + add + MAX_SHOWN_QUESTION > this.questions.size()) {
+            this.curStartQuestion = this.questions.size() - MAX_SHOWN_QUESTION;
+            if (this.curStartQuestion < 0) {
+                this.curStartQuestion = 0;
+            }
         }
+    }
+
+    public void renderGivenTile(GameScreen screen) {
+        for (GameTile tile : this.getHiddenTiles()) {
+            if (this.currentSolution[tile.getGameY()][tile.getGameX()] == 0) {
+                screen.spriteBatch.setColor(1, 1, 1, 0.7f);
+                tile.render(screen, false);
+            } else if (this.currentSolution[tile.getGameY()][tile.getGameX()] != this.realSolution[tile.getGameY()][tile.getGameX()]) {
+                screen.spriteBatch.setColor(1, 0, 0, 0.7f);
+                tile.render(screen, false);
+            }
+        }
+        screen.spriteBatch.setColor(1, 1, 1, 1f);
     }
 }
