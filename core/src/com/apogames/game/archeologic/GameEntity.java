@@ -353,8 +353,8 @@ public class GameEntity {
             byte[][] tileBytes = curTile.getBytes();
             for (int y = curTile.getGameY(); y < curTile.getGameY() + tileBytes.length; y++) {
                 for (int x = curTile.getGameX(); x < curTile.getGameX() + tileBytes[0].length; x++) {
-                    if (x >= 0 && x < this.currentSolution[0].length && y >= 0 && y < this.currentSolution.length) {
-                        this.currentSolution[y][x] = tileBytes[y-curTile.getGameY()][x-curTile.getGameX()];
+                    if (x >= 0 && x < this.currentSolution[0].length && y >= 0 && y < this.currentSolution.length && tileBytes[y-curTile.getGameY()][x-curTile.getGameX()] != 0) {
+                        this.currentSolution[y][x] = tileBytes[y - curTile.getGameY()][x - curTile.getGameX()];
                     }
                 }
             }
