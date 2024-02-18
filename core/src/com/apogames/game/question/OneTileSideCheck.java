@@ -43,7 +43,7 @@ public class OneTileSideCheck extends Question {
                 }
             }
         }
-
+        this.setQuestionEnum(QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK);
     }
 
     @Override

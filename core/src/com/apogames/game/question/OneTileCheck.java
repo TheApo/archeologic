@@ -69,6 +69,7 @@ public class OneTileCheck extends Question {
         } else {
             this.cost = 3;
         }
+        this.setQuestionEnum(QuestionEnum.ONE_TILE_CHECK);
     }
 
     @Override

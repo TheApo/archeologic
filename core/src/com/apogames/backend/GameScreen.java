@@ -76,6 +76,7 @@ public class GameScreen implements Screen, InputProcessor {
     private final ArrayList<GridPoint2> clickReleasedArray = new ArrayList<GridPoint2>();
     private final ArrayList<GridPoint2> clickDraggedArray = new ArrayList<GridPoint2>();
     private final ArrayList<GridPoint2> clickPressedArray = new ArrayList<GridPoint2>();
+    private final ArrayList<GridPoint2> mouseMovedArray = new ArrayList<GridPoint2>();
     private final ArrayList<Integer> keyPressedArray = new ArrayList<Integer>();
     private final ArrayList<Integer> keyReleasedArray = new ArrayList<Integer>();
     private boolean bRightClick = false;
@@ -190,6 +191,20 @@ public class GameScreen implements Screen, InputProcessor {
      * @param delta the delta
      */
     public void think(float delta) {
+        if (!this.mouseMovedArray.isEmpty()) {
+            for (GridPoint2 aClickPressedArray : mouseMovedArray) {
+                this.model.mouseMoved(aClickPressedArray.x, aClickPressedArray.y);
+
+                if (this.buttons != null) {
+                    for (ApoButton button : this.buttons) {
+                        if (button.getMove(aClickPressedArray.x, aClickPressedArray.y)) {
+                            break;
+                        }
+                    }
+                }
+            }
+            mouseMovedArray.clear();
+        }
         if ((this.buttonFunction != null) && (!this.buttonFunction.isEmpty())) {
             this.model.mouseButtonFunction(this.buttonFunction);
             this.buttonFunction = "";
@@ -211,6 +226,7 @@ public class GameScreen implements Screen, InputProcessor {
             for (GridPoint2 aClickReleasedArray : clickReleasedArray) {
                 this.model.mouseButtonReleased(aClickReleasedArray.x, aClickReleasedArray.y, bRightClick);
             }
+            clickPressedArray.clear();
             clickDraggedArray.clear();
             clickReleasedArray.clear();
             bRightClick = false;
@@ -456,16 +472,17 @@ public class GameScreen implements Screen, InputProcessor {
         int x = (int) screenCoords.x;
         int y = (int) screenCoords.y;
         if (this.model != null) {
-            this.model.mouseMoved(x, y);
+            mouseMovedArray.add(new GridPoint2(x, y));
+            //this.model.mouseMoved(x, y);
         }
 
-        if (this.buttons != null) {
+        /*if (this.buttons != null) {
             for (ApoButton button : this.buttons) {
                 if (button.getMove(x, y)) {
                     break;
                 }
             }
-        }
+        }*/
 
         return false;
     }

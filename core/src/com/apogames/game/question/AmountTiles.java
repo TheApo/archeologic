@@ -32,6 +32,7 @@ public class AmountTiles extends Question {
             this.answer = differentTiles.size();
             this.setRow(row);
         }
+        this.setQuestionEnum(QuestionEnum.AMOUNT_TILES);
     }
 
     @Override

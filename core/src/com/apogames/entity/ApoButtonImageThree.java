@@ -108,7 +108,7 @@ public class ApoButtonImageThree extends ApoButton {
 		}
 		Constants.glyphLayout.setText(getFont(), text);
 		float h = Constants.glyphLayout.height;
-		if (( this.isBPressed() )) {
+		if (( this.isBPressed() ) || this.isSelect()) {
 			screen.drawString(text, this.getX() + changeX + this.getWidth()/2, this.getY() + changeY + this.getHeight()/2 - h/2, Constants.COLOR_RED_DARK, getFont(), DrawString.MIDDLE, false, false);
 		} else if ( this.isBOver() ) {
 			screen.drawString(text, this.getX() + changeX + this.getWidth()/2, this.getY() + changeY + this.getHeight()/2 - h/2, Constants.COLOR_YELLOW_DARK, getFont(), DrawString.MIDDLE, false, false);

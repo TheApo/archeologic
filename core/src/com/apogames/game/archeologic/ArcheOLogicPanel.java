@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
+    public static final int START_QUESTION_Y = 270;
     public static final String FUNCTION_ARCHEOLOGIC_BACK = "ARCHEOLOGIC_QUIT";
     public static final String FUNCTION_NEW_LEVEL = "ARCHEOLOGIC_NEW_LEVEL";
     public static final String FUNCTION_RESTART = "ARCHEOLOGIC_RESTART";
@@ -40,12 +41,16 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     public static final String FUNCTION_QUESTION_QUESTION_CLOSE = "ARCHEOLOGIC_QUESTION_QUESTION_CLOSE";
     public static final String FUNCTION_HINT_UP = "ARCHEOLOGIC_HINT_UP";
     public static final String FUNCTION_HINT_DOWN = "ARCHEOLOGIC_HINT_DOWN";
+    public static final String FUNCTION_QUESTIONS_ORIGINAL = "ARCHEOLOGIC_QUESTIONS_ORIGINAL";
+    public static final String FUNCTION_QUESTIONS_OTHER = "ARCHEOLOGIC_QUESTIONS_OTHER";
 
     public static final String[] askOrder = new String[] {
             "A", "1", "B", "2", "C", "3", "D", "4", "E", "5"
     };
+    private static final int ORIGINAL_QUESTIONS = 0;
+    private static final int OTHER_QUESTIONS = 1;
 
-    private final Question[] nextQuestions = new Question[QuestionEnum.values().length];
+    private final Question[][] nextQuestions;
 
     private int curAskOrder = 0;
     private int curWantedQuestion = 0;
@@ -59,6 +64,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     private boolean showQuestion = false;
 
+    private int showTabIndex = ORIGINAL_QUESTIONS;
+
     private boolean won = false;
 
     private boolean checkQuestion = false;
@@ -67,8 +74,13 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     private int nextCosts = 0;
 
+    private Won wonEnum = Won.SOLVER;
+
     public ArcheOLogicPanel(final MainPanel game) {
         super(game);
+
+        QuestionEnum[] questionEnumForQuestionTypeOriginal = QuestionEnum.getQuestionEnumForQuestionType(0);
+        nextQuestions = new Question[2][questionEnumForQuestionTypeOriginal.length];
     }
 
     public void setNeededButtonsVisible() {
@@ -98,6 +110,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_CLOSE).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_OTHER).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_ORIGINAL).setVisible(visible);
         for (String s : askOrder) {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_ROW + s).setVisible(visible);
         }
@@ -141,16 +155,26 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     }
 
     private void setAllNextQuestions() {
-        for (int i = 0; i < QuestionEnum.values().length; i++) {
-            this.nextQuestions[i] = getNextQuestion(i);
+        int oldValue = this.showTabIndex;
+        QuestionEnum[] questionEnumForQuestionTypeOriginal = QuestionEnum.getQuestionEnumForQuestionType(0);
+        QuestionEnum[] questionEnumForQuestionTypeOther = QuestionEnum.getQuestionEnumForQuestionType(1);
+        this.showTabIndex = ORIGINAL_QUESTIONS;
+        for (int i = 0; i < questionEnumForQuestionTypeOriginal.length; i++) {
+            this.nextQuestions[0][i] = getNextQuestion(i);
         }
+        this.showTabIndex = OTHER_QUESTIONS;
+        for (int i = 0; i < questionEnumForQuestionTypeOther.length; i++) {
+            this.nextQuestions[1][i] = getNextQuestion(i);
+        }
+        this.showTabIndex = oldValue;
     }
 
     private void setNextCosts() {
-        for (int i = 0; i < QuestionEnum.values().length; i++) {
-            String buttonFunction = FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name();
+        QuestionEnum[] questionEnumForQuestionType = QuestionEnum.getQuestionEnumForQuestionType(showTabIndex);
+        for (int i = 0; i < questionEnumForQuestionType.length; i++) {
+            String buttonFunction = FUNCTION_QUESTION_QUESTION_ASK + questionEnumForQuestionType[i].name();
             if (getMainPanel().getButtonByFunction(buttonFunction).isSelect()) {
-                setNextCosts(this.nextQuestions[i]);
+                setNextCosts(this.nextQuestions[this.showTabIndex][i]);
                 return;
             }
         }
@@ -158,7 +182,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     private void setNextCosts(Question question) {
         int nextAsk = question.withAskCosts() ? getNextCostsAsk() : 0;
-        this.nextCosts = nextAsk + question.getCosts();
+        this.nextCosts = nextAsk + question.getCosts() + question.getAddCostsBecauseLast();
     }
 
     private int getNextCostsAsk() {
@@ -259,6 +283,33 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
     }
 
+    private void changeShowTabIndex(int index) {
+        this.showTabIndex = index;
+        for (QuestionEnum questionEnum : QuestionEnum.values()) {
+            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + questionEnum.name()).setSelect(false);
+            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + questionEnum.name()).setVisible(false);
+        }
+        if (index == ORIGINAL_QUESTIONS) {
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_ORIGINAL).setSelect(true);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_OTHER).setSelect(false);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(true);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(false);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(false);
+        } else {
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_ORIGINAL).setSelect(false);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_OTHER).setSelect(true);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(false);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(true);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(true);
+        }
+        QuestionEnum[] questionEnumForQuestionType = QuestionEnum.getQuestionEnumForQuestionType(index);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + questionEnumForQuestionType[0].name()).setSelect(true);
+
+        for (QuestionEnum questionEnum : questionEnumForQuestionType) {
+            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + questionEnum.name()).setVisible(true);
+        }
+    }
+
     private void setShowQuestion(boolean showQuestion) {
         this.showQuestion = showQuestion;
 
@@ -267,6 +318,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         if (this.showQuestion) {
             getMainPanel().getButtonByFunction(FUNCTION_HINT_UP).setVisible(false);
             getMainPanel().getButtonByFunction(FUNCTION_HINT_DOWN).setVisible(false);
+            this.changeShowTabIndex(showTabIndex);
         }
 
         getMainPanel().getButtonByFunction(FUNCTION_ARCHEOLOGIC_BACK).setVisible(!showQuestion);
@@ -277,20 +329,33 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(!showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_REAL).setVisible(showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_CLOSE).setVisible(showQuestion);
-        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(showQuestion);
-        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(showQuestion);
-        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(showQuestion);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_ORIGINAL).setVisible(showQuestion);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_OTHER).setVisible(showQuestion);
         for (String s : askOrder) {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_ROW + s).setVisible(showQuestion);
         }
-        for (int i = 0; i < QuestionEnum.values().length; i++) {
-            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name()).setVisible(showQuestion);
-        }
+//        for (int i = 0; i < QuestionEnum.values().length; i++) {
+//            if (QuestionEnum.values()[i].getQuestionType() == showTabIndex) {
+//                getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name()).setVisible(showQuestion);
+//            } else {
+//                getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name()).setVisible(false);
+//            }
+//        }
     }
 
     @Override
     public void mouseButtonFunction(String function) {
         if (this.showQuestion) {
+            if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTIONS_ORIGINAL)) {
+                this.changeShowTabIndex(ORIGINAL_QUESTIONS);
+                this.setNextCosts();
+                return;
+            }
+            if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTIONS_OTHER)) {
+                this.changeShowTabIndex(OTHER_QUESTIONS);
+                this.setNextCosts();
+                return;
+            }
             if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_REAL)) {
                 this.addQuestion();
                 return;
@@ -327,15 +392,16 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     return;
                 }
             }
-            for (int i = 0; i < QuestionEnum.values().length; i++) {
-                String buttonFunction = FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name();
+            QuestionEnum[] questionEnumForQuestionType = QuestionEnum.getQuestionEnumForQuestionType(this.showTabIndex);
+            for (int i = 0; i < questionEnumForQuestionType.length; i++) {
+                String buttonFunction = FUNCTION_QUESTION_QUESTION_ASK + questionEnumForQuestionType[i].name();
                 if (function.equals(buttonFunction)) {
                     for (int j = 0; j < QuestionEnum.values().length; j++) {
                         String buttonDeselect = FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[j].name();
                         getMainPanel().getButtonByFunction(buttonDeselect).setSelect(false);
                     }
                     getMainPanel().getButtonByFunction(buttonFunction).setSelect(true);
-                    setNextCosts(this.nextQuestions[i]);
+                    setNextCosts(this.nextQuestions[this.showTabIndex][i]);
                     return;
                 }
             }
@@ -461,6 +527,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             getMainPanel().getButtonByFunction(FUNCTION_FINISH_BACK).setVisible(true);
             getMainPanel().getButtonByFunction(FUNCTION_FINISH_RESTART).setVisible(true);
             getMainPanel().getButtonByFunction(FUNCTION_FINISH_NEW_LEVEL).setVisible(true);
+
+            this.wonEnum = Won.getRankForPoints(this.game.getCosts());
         }
     }
 
@@ -468,8 +536,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         return getNextQuestion(-1);
     }
     private Question getNextQuestion(int selectedQuestion) {
-        for (int i = 0; i < QuestionEnum.values().length; i++) {
-            String buttonFunction = FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name();
+        QuestionEnum[] values = QuestionEnum.getQuestionEnumForQuestionType(this.showTabIndex);
+        for (int i = 0; i < values.length; i++) {
+            String buttonFunction = FUNCTION_QUESTION_QUESTION_ASK + values[i].name();
             if ((getMainPanel().getButtonByFunction(buttonFunction).isSelect() && selectedQuestion == -1) || (selectedQuestion == i)) {
                 int column = -1;
                 int row = -1;
@@ -488,16 +557,16 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 }
 
                 Question nextQuestion = null;
-                if (QuestionEnum.values()[i] == QuestionEnum.EMPTY) {
+                if (values[i] == QuestionEnum.EMPTY) {
                     nextQuestion = new Empty(column, row, this.game.getRealSolution());
-                } else if (QuestionEnum.values()[i] == QuestionEnum.AMOUNT_TILES) {
+                } else if (values[i] == QuestionEnum.AMOUNT_TILES) {
                     nextQuestion = new AmountTiles(column, row, this.game.getSolution());
-                } else if (QuestionEnum.values()[i] == QuestionEnum.SAND_AND_GRASS_CHECK) {
+                } else if (values[i] == QuestionEnum.SAND_AND_GRASS_CHECK) {
                     nextQuestion = new SandAndGrassCheck(column, row, this.game.getRealSolution());
-                } else if (QuestionEnum.values()[i] == QuestionEnum.ONE_TILE_CHECK) {
+                } else if (values[i] == QuestionEnum.ONE_TILE_CHECK) {
                     ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN);
                     nextQuestion = new OneTileCheck(column, row, this.game.getSolution(), this.game.getRealSolution(), buttonByFunction.getTileNumber(), buttonByFunction.getTileArray());
-                } else if (QuestionEnum.values()[i] == QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK) {
+                } else if (values[i] == QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK) {
                     ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL);
 
                     ApoButtonImageDropdown buttonByFunctionString = (ApoButtonImageDropdown)getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE);
@@ -511,10 +580,25 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     }
                 }
 
+                if (nextQuestion != null) {
+                    setAddCostForQuestionOnly(nextQuestion);
+                }
                 return nextQuestion;
             }
         }
         return null;
+    }
+
+    private void setAddCostForQuestionOnly(Question question) {
+        QuestionEnum questionEnum = question.getQuestionEnum();
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < this.nextQuestions[0].length; j++) {
+                if (this.nextQuestions[i][j] != null && this.nextQuestions[i][j].getQuestionEnum().equals(questionEnum)) {
+                    question.setAddCostsBecauseLast(this.nextQuestions[i][j].getAddCostsBecauseLast());
+                    return;
+                }
+            }
+        }
     }
 
     private void addQuestion() {
@@ -523,14 +607,15 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         int completeCost = 0;
 
         if (nextQuestion != null) {
-            completeCost = nextQuestion.getCosts();
-            this.getGame().setCosts(this.getGame().getCosts() + nextQuestion.getCosts());
+            completeCost = nextQuestion.getCosts() + nextQuestion.getAddCostsBecauseLast();
+            this.getGame().setCosts(this.getGame().getCosts() + nextQuestion.getCosts() + nextQuestion.getAddCostsBecauseLast());
             this.game.getQuestions().add(nextQuestion);
 
             if (nextQuestion.withAskCosts()) {
                 completeCost += getNextCostsAsk();
                 this.getGame().setCosts(this.getGame().getCosts() + getNextCostsAsk());
             }
+
         }
 
         this.curAskOrder = this.curWantedQuestion + 1;
@@ -542,11 +627,28 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         if (nextQuestion != null) {
             nextQuestion.setCompleteCosts(completeCost);
+            setAddCostForQuestion(nextQuestion);
         }
 
         this.game.addCurStartQuestion(1);
 
         this.setShowQuestion(false);
+    }
+
+    private void setAddCostForQuestion(Question question) {
+        QuestionEnum questionEnum = question.getQuestionEnum();
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < this.nextQuestions[0].length; j++) {
+                if (this.nextQuestions[i][j] != null && !this.nextQuestions[i][j].getQuestionEnum().equals(questionEnum)) {
+                    this.nextQuestions[i][j].decreaseAddCost();
+                }
+                if (this.nextQuestions[i][j] != null && this.nextQuestions[i][j].getQuestionEnum().equals(questionEnum)) {
+                    this.nextQuestions[i][j].addCostsBecauseLast();
+
+                    question.setAddCostsBecauseLast(this.nextQuestions[i][j].getAddCostsBecauseLast());
+                }
+            }
+        }
     }
 
     private void setNextAskButtonsSelected() {
@@ -664,32 +766,34 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
             getMainPanel().spriteBatch.draw(AssetLoader.backgroundQuestionTextureRegion, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10, 10, AssetLoader.backgroundQuestionTextureRegion.getRegionWidth(), Constants.GAME_HEIGHT - 20);
 
-            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_title"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, 85, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.MIDDLE, true, false);
+            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_title"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() / 2f - 15, 35, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
 
-            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_second"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, 240, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
-            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_third"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, Constants.GAME_HEIGHT - 105, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
+            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_second"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 15, ArcheOLogicPanel.START_QUESTION_Y - 10, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
+            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_third"), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 15, Constants.GAME_HEIGHT - 105, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
 
-            for (int i = 0; i < QuestionEnum.values().length; i++) {
-                getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 85, 275 + i * (50 + 10) - 17, 35, 35);
-                getMainPanel().drawString(String.valueOf(this.nextQuestions[i].getCosts()), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 101, 279 + i * (50 + 10), Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
+            QuestionEnum[] questionEnumForQuestionType = QuestionEnum.getQuestionEnumForQuestionType(showTabIndex);
+            for (int i = 0; i < questionEnumForQuestionType.length; i++) {
+                getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 85, ArcheOLogicPanel.START_QUESTION_Y + 25 + i * (50 + 10) - 17, 35, 35);
+                getMainPanel().drawString(String.valueOf(this.nextQuestions[this.showTabIndex][i].getCostsWithAddCosts()), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 101, ArcheOLogicPanel.START_QUESTION_Y + 29 + i * (50 + 10), Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
 
                 BitmapFont font15 = AssetLoader.font15;
-                String text = Localization.getInstance().getCommon().get(QuestionEnum.values()[i].getText())+" ";
+                String text = Localization.getInstance().getCommon().get(questionEnumForQuestionType[i].getText())+" ";
 
-                float startX = renderTextAndTileQuestion(text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, 277 + i * (50 + 10));
+                float startX = renderTextAndTileQuestion(text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, ArcheOLogicPanel.START_QUESTION_Y + 27 + i * (50 + 10));
 
                 //getMainPanel().drawString(text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, 277 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
-                if (!QuestionEnum.values()[i].equals(QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK)) {
-                    getMainPanel().drawString(this.curAddQuestionString, startX, 277 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
+                if (!questionEnumForQuestionType[i].equals(QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK)) {
+                    getMainPanel().drawString(this.curAddQuestionString, startX, ArcheOLogicPanel.START_QUESTION_Y + 27 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
                 }
-                ApoButton button = getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name());
-                if (button.isSelect() && !QuestionEnum.values()[i].equals(QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK)) {
+                ApoButton button = getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + questionEnumForQuestionType[i].name());
+                if (button.isSelect() && !questionEnumForQuestionType[i].equals(QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK)) {
                     showCoinNextCostAsk = true;
                 }
             }
 
             if (showCoinNextCostAsk) {
                 getMainPanel().drawString(Localization.getInstance().getCommon().get("question_first").split(";")[0], Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, 140, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
+                //getMainPanel().drawString(Localization.getInstance().getCommon().get("question_first").split(";")[1], Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2f - 10, 145, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
 
                 getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() + 80, 140 - 20, 35, 35);
                 getMainPanel().drawString(String.valueOf(this.getNextCostsAsk()), Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() + 80 + 17, 141, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
@@ -728,13 +832,19 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             int height = 300;
             getMainPanel().spriteBatch.draw(AssetLoader.backgroundQuestionTextureRegion, Constants.GAME_WIDTH/2f - size/2f, Constants.GAME_HEIGHT/2f - height/2f, size, height);
 
-            String s = Localization.getInstance().getCommon().get("won");
-            getMainPanel().drawString(s, Constants.GAME_WIDTH/2f, Constants.GAME_HEIGHT/2f - height/2f + 40, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.MIDDLE, true, false);
+            String[] split = Localization.getInstance().getCommon().get(this.wonEnum.getText()).split(";");
+            String s = split[0];
+            getMainPanel().drawString(s, Constants.GAME_WIDTH/2f, Constants.GAME_HEIGHT/2f - height/2f + 45, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
 
             s = Localization.getInstance().getCommon().get("won_text");
             s = s.replace("{x}", String.valueOf(this.game.getQuestions().size()));
             s = s.replace("{y}", String.valueOf(this.game.getCosts()));
             getMainPanel().drawString(s, Constants.GAME_WIDTH/2f, Constants.GAME_HEIGHT/2f - height/2f + 100, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
+
+            for (int i = 1; i < split.length; i++) {
+                s = split[i];
+                getMainPanel().drawString(s, Constants.GAME_WIDTH/2f, Constants.GAME_HEIGHT/2f - height/2f + 140 + 20 * (i - 1), Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
+            }
 
             getMainPanel().spriteBatch.end();
         }

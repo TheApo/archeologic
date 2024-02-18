@@ -27,6 +27,7 @@ public class Empty extends Question {
             }
             this.setRow(row);
         }
+        this.setQuestionEnum(QuestionEnum.EMPTY);
     }
 
     @Override

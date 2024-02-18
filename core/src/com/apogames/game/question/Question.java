@@ -6,10 +6,17 @@ import java.util.ArrayList;
 
 public abstract class Question {
 
+    public static final int ADD_COST = 2;
+    public static final int DECREASE_COST = 1;
+
+    private QuestionEnum questionEnum;
+
     private int row = -1;
     private int column = -1;
 
     private int completeCosts = 0;
+
+    private int addCostsBecauseLast = 0;
 
     private String text;
 
@@ -43,6 +50,37 @@ public abstract class Question {
 
     public void setCompleteCosts(int completeCosts) {
         this.completeCosts = completeCosts;
+    }
+
+    public int getAddCostsBecauseLast() {
+        return addCostsBecauseLast;
+    }
+
+    public void addCostsBecauseLast() {
+        this.addCostsBecauseLast = this.addCostsBecauseLast + ADD_COST;
+    }
+
+    public void decreaseAddCost() {
+        this.addCostsBecauseLast -= DECREASE_COST;
+        if (this.addCostsBecauseLast < 0) {
+            this.addCostsBecauseLast = 0;
+        }
+    }
+
+    public void setAddCostsBecauseLast(int addCostsBecauseLast) {
+        this.addCostsBecauseLast = addCostsBecauseLast;
+    }
+
+    public int getCostsWithAddCosts() {
+        return this.getCosts() + this.getAddCostsBecauseLast();
+    }
+
+    public QuestionEnum getQuestionEnum() {
+        return questionEnum;
+    }
+
+    protected void setQuestionEnum(QuestionEnum questionEnum) {
+        this.questionEnum = questionEnum;
     }
 
     public boolean withAskCosts() {

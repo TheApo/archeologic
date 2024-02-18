@@ -246,22 +246,11 @@ public class ButtonProvider {
 				}
 			}
 
-			QuestionEnum[] enumValues = QuestionEnum.values();
-			for (int i = 0; i < enumValues.length; i++) {
-				text = "";
-				function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_ASK + enumValues[i].name();
-				width = 50;
-				height = 50;
-				x = Constants.GAME_WIDTH - 10 - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() + 30;
-				y = 250 + i * (height + 10);
-				button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
-				button.setFont(AssetLoader.font30);
-				this.game.getButtons().add(button);
+			QuestionEnum[] enumValues = QuestionEnum.getQuestionEnumForQuestionType(0);
+			createAskButtons(enumValues);
 
-				if (i == 0) {
-					button.setSelect(true);
-				}
-			}
+			QuestionEnum[] enumValuesOther = QuestionEnum.getQuestionEnumForQuestionType(1);
+			createAskButtons(enumValuesOther);
 
 			text = "frage";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_REAL;
@@ -273,12 +262,33 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
 
+			text = "ORIGINAL";
+			function = ArcheOLogicPanel.FUNCTION_QUESTIONS_ORIGINAL;
+			width = AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2;
+			height = 64;
+			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - width - 10;
+			y = 50;
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_questions_original");
+			button.setFont(AssetLoader.font25);
+			button.setSelect(true);
+			this.game.getButtons().add(button);
+
+			text = "OTHER";
+			function = ArcheOLogicPanel.FUNCTION_QUESTIONS_OTHER;
+			width = AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2;
+			height = 64;
+			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - 10;
+			y = 50;
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_questions_other");
+			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN;
 			width = 40;
 			height = 40;
 			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - width/2 - 32;
-			y = 250;
+			y = ArcheOLogicPanel.START_QUESTION_Y;
 			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
@@ -288,7 +298,7 @@ public class ButtonProvider {
 			width = 40;
 			height = 40;
 			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - width/2 - 72;
-			y = 250 + 60;
+			y = ArcheOLogicPanel.START_QUESTION_Y;
 			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
@@ -298,7 +308,7 @@ public class ButtonProvider {
 			width = 330;
 			height = 40;
 			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - 22;
-			y = 250 + 60;
+			y = ArcheOLogicPanel.START_QUESTION_Y;
 			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font15);
 			ArrayList<String> strings = new ArrayList<>();
@@ -368,6 +378,31 @@ public class ButtonProvider {
 
 			for (int i = 0; i < this.game.getButtons().size(); i++) {
 				this.game.getButtons().get(i).setBOpaque(false);
+			}
+		}
+	}
+
+	private void createAskButtons(QuestionEnum[] enumValuesOther) {
+		String text;
+		String function;
+		int width;
+		int height;
+		int x;
+		int y;
+		ApoButton button;
+		for (int i = 0; i < enumValuesOther.length; i++) {
+			text = "";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_ASK + enumValuesOther[i].name();
+			width = 50;
+			height = 50;
+			x = Constants.GAME_WIDTH - 10 - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() + 30;
+			y = ArcheOLogicPanel.START_QUESTION_Y + i * (height + 10);
+			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
+			button.setFont(AssetLoader.font30);
+			this.game.getButtons().add(button);
+
+			if (i == 0) {
+				button.setSelect(true);
 			}
 		}
 	}

@@ -36,6 +36,7 @@ public class SandAndGrassCheck extends Question {
             }
             this.setRow(row);
         }
+        this.setQuestionEnum(QuestionEnum.SAND_AND_GRASS_CHECK);
     }
 
     @Override
