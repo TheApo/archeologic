@@ -28,6 +28,8 @@ public class GameTile {
     private float startX = 0;
     private float startY = 0;
 
+    private int genDif = 0;
+
     GameTile(Tile tile) {
         this.tile = tile;
 
@@ -52,6 +54,8 @@ public class GameTile {
         this.gameX = (this.nextX - 2 * Constants.TILE_SIZE) / Constants.TILE_SIZE;
         this.gameY = (this.nextY - 3 * Constants.TILE_SIZE) / Constants.TILE_SIZE;
     }
+
+
 
     public int getGameX() {
         return gameX;
@@ -103,6 +107,10 @@ public class GameTile {
         this.changePosition(this.x, this.y);
     }
 
+    public int getGenDif() {
+        return genDif;
+    }
+
     public boolean isIn(int x, int y) {
         over = false;
         if (x >= this.nextX && (x < this.nextX + bytes[0].length * Constants.TILE_SIZE) &&
@@ -118,7 +126,7 @@ public class GameTile {
     }
 
     public boolean click(int x, int y) {
-        int dif = (int)(Math.abs(this.startX - this.x) + Math.abs(this.startY - this.y));
+        int dif = this.genDif;//(int)(Math.abs(this.startX - this.x) + Math.abs(this.startY - this.y));
         if (this.over && dif < 30) {
             int mouseX = (x - nextX)/Constants.TILE_SIZE;
             int mouseY = (y - nextY)/Constants.TILE_SIZE;
@@ -135,6 +143,7 @@ public class GameTile {
 
             this.difX = 0;
             this.difY = 0;
+            this.genDif = 0;
 
             this.over = false;
             return true;
@@ -142,6 +151,7 @@ public class GameTile {
         boolean oldOver = this.over;
         this.difX = 0;
         this.difY = 0;
+        this.genDif = 0;
 
         this.over = false;
         return oldOver;
@@ -165,6 +175,7 @@ public class GameTile {
 
     public boolean dragTile(int x, int y) {
         if (this.over && (this.difX != 0 || this.difY != 0)) {
+            this.genDif += (int) (Math.abs(x - this.x - difX) + Math.abs(y - this.y - difY));
             this.changePosition(x - this.difX, y - this.difY);
         }
         return this.over;
@@ -178,6 +189,11 @@ public class GameTile {
             curY = this.y;
         }
         render(screen,curX, curY, true);
+    }
+
+    public void renderX(GameScreen screen) {
+        int size = 20;
+        screen.spriteBatch.draw(AssetLoader.xTextureRegion, nextX + Constants.TILE_SIZE/2f - size/2f, nextY + Constants.TILE_SIZE/2f - size/2f, size, size);
     }
 
     public void render(GameScreen screen, boolean withWater) {

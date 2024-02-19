@@ -1,6 +1,7 @@
 package com.apogames.game.archeologic;
 
 import com.apogames.Constants;
+import com.apogames.asset.AssetLoader;
 import com.apogames.backend.GameScreen;
 import com.apogames.game.knuthAlgoX.AlgorithmX;
 import com.apogames.game.knuthAlgoX.MyPuzzleADayBinary;
@@ -21,6 +22,8 @@ public class GameEntity {
     private byte[][] solutionPossibilities;
 
     private byte[][] realSolution;
+
+    private byte[][] errors;
 
     private ArrayList<GameTile> solutionTiles;
 
@@ -121,6 +124,7 @@ public class GameEntity {
             this.solution = this.possibleSolutions.get(random);
             this.solutionPossibilities = this.possibleSolutionsPossibilities.get(random);
             this.realSolution = new byte[this.solution.length][this.solution[0].length];
+            this.errors = new byte[this.solution.length][this.solution[0].length];
 
             this.currentSolution = new byte[this.solution.length][this.solution[0].length];
 
@@ -334,14 +338,45 @@ public class GameEntity {
     }
 
     public void mouseButtonReleased(int mouseX, int mouseY, boolean isRightButton) {
+        boolean found = false;
         for (GameTile tile : this.currentTiles) {
-            tile.isIn(mouseX, mouseY);
-            if (tile.click(mouseX, mouseY)) {
-                fillCurrentSolution();
-                break;
+            //tile.isIn(mouseX, mouseY);
+            if (tile.getGenDif() > 0) {
+                if (tile.click(mouseX, mouseY)) {
+                    fillCurrentSolution();
+                    found = true;
+                    break;
+                }
             }
         }
 
+        if (!found) {
+            for (GameTile tile : this.currentTiles) {
+                if (tile.click(mouseX, mouseY)) {
+                    fillCurrentSolution();
+                    break;
+                }
+            }
+        }
+
+        this.errors = new byte[this.realSolution.length][this.realSolution[0].length];
+        for (GameTile tile : this.currentTiles) {
+            byte[][] bytes = tile.getTile().getPossibilities().get(tile.getCurrentTile());
+
+            checkDoubleSolution(tile.getGameX(), tile.getGameY(), bytes, errors);
+        }
+    }
+
+    private void checkDoubleSolution(int givenX, int givenY, byte[][] possibleTile, byte[][] errors) {
+        for (int y = givenY; y < givenY + possibleTile.length; y++) {
+            for (int x = givenX; x < givenX + possibleTile[0].length; x++) {
+                if (possibleTile[y - givenY][x - givenX] != 0) {
+                    if (x >= 0 && x < errors[0].length && y >= 0 && y < errors.length) {
+                        errors[y][x] += 1;
+                    }
+                }
+            }
+        }
     }
 
     private void fillCurrentSolution() {
@@ -417,8 +452,21 @@ public class GameEntity {
             } else if (this.currentSolution[tile.getGameY()][tile.getGameX()] != this.realSolution[tile.getGameY()][tile.getGameX()]) {
                 screen.spriteBatch.setColor(1, 0, 0, 0.7f);
                 tile.render(screen, false);
+            } else {
+                screen.spriteBatch.setColor(1, 0, 0, 0.5f);
+                tile.renderX(screen);
             }
         }
+
+        for (int y = 0; y < this.errors.length; y++) {
+            for (int x = 0; x < this.errors[0].length; x++) {
+                if (this.errors[y][x] > 1) {
+                    screen.spriteBatch.setColor(1, 0, 0, 0.7f);
+                    screen.spriteBatch.draw(AssetLoader.backgroundTextureRegion[1], (x + 2) * Constants.TILE_SIZE, (y + 3) * Constants.TILE_SIZE, Constants.TILE_SIZE, Constants.TILE_SIZE);
+                }
+            }
+        }
+
         screen.spriteBatch.setColor(1, 1, 1, 1f);
     }
 }

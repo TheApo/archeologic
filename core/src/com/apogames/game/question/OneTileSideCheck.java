@@ -98,7 +98,7 @@ public class OneTileSideCheck extends Question {
 
         String answerNot = "";
         if (this.correct) {
-            answerNot = Localization.getInstance().getCommon().get("question_not");
+            answerNot = Localization.getInstance().getCommon().get("question_not")+" ";
         }
         answer = answer.replace("{x}", answerNot);
         return answer;

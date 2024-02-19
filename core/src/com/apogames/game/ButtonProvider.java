@@ -168,7 +168,7 @@ public class ButtonProvider {
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_CHECK;
 			width = 180;
 			height = 64;
-			x = Constants.GAME_WIDTH - 430 + 20;
+			x = Constants.GAME_WIDTH - 360 + 20;
 			y = Constants.GAME_HEIGHT - 60 - height;
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_check");
 			button.setFont(AssetLoader.font25);
