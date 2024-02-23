@@ -90,8 +90,10 @@ public class GameEntity {
             }
         }
         this.fillCurrentSolution();
-        for (int i = this.questions.size() - 1; i >= this.givenTiles.getDifficultyTiles()[this.difficulty.getGivenTiles()]; i--) {
-            this.questions.remove(this.questions.get(i));
+        if (!this.puzzle) {
+            for (int i = this.questions.size() - 1; i >= this.givenTiles.getDifficultyTiles()[this.difficulty.getGivenTiles()]; i--) {
+                this.questions.remove(this.questions.get(i));
+            }
         }
     }
 

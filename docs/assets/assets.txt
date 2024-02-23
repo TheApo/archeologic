@@ -19,9 +19,9 @@ i:fonts/pirate33.png:fonts/pirate33-84cb24508a6c81f007c0b2bce4a862c3.png:24283:i
 t:fonts/pirate40.fnt:fonts/pirate40-068ce2c6135ed45d55558d430d53bd0b.fnt:11107:application/unknown:1
 i:fonts/pirate40.png:fonts/pirate40-3b70e85b2f8943e83b1be6ed45b6047d.png:28739:image/png:1
 d:i18n:i18n:0:application/unknown:1
-b:i18n/settler.properties:i18n/settler-59c0f4b9896c2c18afadc08422b569ce.properties:3161:application/unknown:1
-b:i18n/settler_de.properties:i18n/settler_de-6f941e39902dfa27afacd28d868815f5.properties:3365:application/unknown:1
-b:i18n/settler_en.properties:i18n/settler_en-7e088fc57f6f8a38b314790a7b89d454.properties:3163:application/unknown:1
+b:i18n/settler.properties:i18n/settler-a6e275a9d605b993a2edf36d835f72ff.properties:3186:application/unknown:1
+b:i18n/settler_de.properties:i18n/settler_de-5b18fb8710af5600167bf05bb84e1ef7.properties:3389:application/unknown:1
+b:i18n/settler_en.properties:i18n/settler_en-a6e275a9d605b993a2edf36d835f72ff.properties:3186:application/unknown:1
 d:images:images:0:application/unknown:1
 i:images/background.png:images/background-e6d0f2487dadea3cdf22d506b32a9d6e.png:165752:image/png:1
 i:images/background_2.png:images/background_2-7eed56f9d1488bca28a8c04201617e87.png:157283:image/png:1

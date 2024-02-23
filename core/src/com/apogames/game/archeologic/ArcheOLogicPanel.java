@@ -699,7 +699,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.won = false;
         this.checkQuestion = false;
         this.game.resetTiles();
-        this.game.setCosts(0);
+        if (!this.puzzle) {
+            this.game.setCosts(0);
+        }
         this.resetCurAsk();
         this.setNeededButtonsVisible();
         for (Question[] nextQuestion : nextQuestions) {
@@ -925,16 +927,21 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, (Constants.GAME_WIDTH - 150), 80, 60, 60);
         getMainPanel().drawString(String.valueOf(this.game.getCosts()), (Constants.GAME_WIDTH - 120), 113, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.MIDDLE, true, false);
 
-        getMainPanel().drawString(Localization.getInstance().getCommon().get("question_order"), Constants.GAME_WIDTH - 600, 170, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.BEGIN, true, false);
-        getMainPanel().drawString(Localization.getInstance().getCommon().get("question_hint"), Constants.GAME_WIDTH - 600, 220, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.BEGIN, true, false);
+        if (!this.puzzle) {
+            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_order"), Constants.GAME_WIDTH - 600, 170, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.BEGIN, true, false);
 
-        for (int i = 0; i < askOrder.length; i++) {
-            float[] color = Constants.COLOR_BLACK;
-            if (i == this.curAskOrder) {
-                color = Constants.COLOR_RED_DARK;
+            for (int i = 0; i < askOrder.length; i++) {
+                float[] color = Constants.COLOR_BLACK;
+                if (i == this.curAskOrder) {
+                    color = Constants.COLOR_RED_DARK;
+                }
+                getMainPanel().drawString(askOrder[i], Constants.GAME_WIDTH - 450 + i * 45, 170, color, AssetLoader.font30, DrawString.MIDDLE, true, false);
             }
-            getMainPanel().drawString(askOrder[i], Constants.GAME_WIDTH - 450 + i * 45, 170, color, AssetLoader.font30, DrawString.MIDDLE, true, false);
+        } else {
+            getMainPanel().drawString(Localization.getInstance().getCommon().get("puzzle_mode"), Constants.GAME_WIDTH - 600, 170, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.BEGIN, true, false);
         }
+
+        getMainPanel().drawString(Localization.getInstance().getCommon().get("question_hint"), Constants.GAME_WIDTH - 600, 220, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.BEGIN, true, false);
 
         for (int i = this.game.getCurStartQuestion(); i < this.game.getCurStartQuestion() + GameEntity.MAX_SHOWN_QUESTION && i < this.game.getQuestions().size(); i++) {
             String text = this.game.getQuestions().get(i).getText();
