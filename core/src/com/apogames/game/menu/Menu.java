@@ -18,6 +18,7 @@ public class Menu extends SequentiallyThinkingScreenModel {
     public static final String FUNCTION_BACK = "MENU_QUIT";
 
     public static final String FUNCTION_PLAY = "MENU_PLAY";
+    public static final String FUNCTION_PUZZLE = "MENU_SOLVED";
     public static final String FUNCTION_AMOUNTTILES_LEFT = "MENU_AMOUNTTILES_LEFT";
     public static final String FUNCTION_AMOUNTTILES_RIGHT = "MENU_AMOUNTTILES_RIGHT";
     public static final String FUNCTION_DIFFICULTY_LEFT = "MENU_DIFFICULTY_LEFT";
@@ -42,6 +43,7 @@ public class Menu extends SequentiallyThinkingScreenModel {
     public void setNeededButtonsVisible() {
         getMainPanel().getButtonByFunction(FUNCTION_BACK).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_PLAY).setVisible(true);
+        getMainPanel().getButtonByFunction(FUNCTION_PUZZLE).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_LANGUAGE).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_AMOUNTTILES_LEFT).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_AMOUNTTILES_RIGHT).setVisible(true);
@@ -126,6 +128,9 @@ public class Menu extends SequentiallyThinkingScreenModel {
                 break;
             case Menu.FUNCTION_PLAY:
                 getMainPanel().changeToGame(this.difficulty, this.amountTiles);
+                break;
+            case Menu.FUNCTION_PUZZLE:
+                getMainPanel().changeToGame(this.difficulty, this.amountTiles, true);
                 break;
             case Menu.FUNCTION_LANGUAGE:
                 this.german = !this.german;

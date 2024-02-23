@@ -145,13 +145,13 @@ public class OneTileCheck extends Question {
             int forest = 0;
             if (getColumn() >= 0) {
                 for (int y = 0; y < solution.length; y++) {
-                    if (currentSolution[y][getColumn()] == 3 && solution[y][getColumn()] == tile) {
+                    if (currentSolution[y][getColumn()] == Constants.SAND && solution[y][getColumn()] == tile) {
                         sand += 1;
                     }
-                    if (currentSolution[y][getColumn()] == 2 && solution[y][getColumn()] == tile) {
+                    if (currentSolution[y][getColumn()] == Constants.GRAS && solution[y][getColumn()] == tile) {
                         grass += 1;
                     }
-                    if (currentSolution[y][getColumn()] == 1 && solution[y][getColumn()] == tile) {
+                    if (currentSolution[y][getColumn()] == Constants.FOREST && solution[y][getColumn()] == tile) {
                         forest += 1;
                     }
                 }
@@ -160,13 +160,13 @@ public class OneTileCheck extends Question {
                 }
             } else if (getRow() >= 0) {
                 for (int x = 0; x < currentSolution[0].length; x++) {
-                    if (currentSolution[getRow()][x] == 3 && solution[getRow()][x] == tile) {
+                    if (currentSolution[getRow()][x] == Constants.SAND && solution[getRow()][x] == tile) {
                         sand += 1;
                     }
-                    if (currentSolution[getRow()][x] == 2 && solution[getRow()][x] == tile) {
+                    if (currentSolution[getRow()][x] == Constants.GRAS && solution[getRow()][x] == tile) {
                         grass += 1;
                     }
-                    if (currentSolution[getRow()][x] == 1 && solution[getRow()][x] == tile) {
+                    if (currentSolution[getRow()][x] == Constants.FOREST && solution[getRow()][x] == tile) {
                         forest += 1;
                     }
                 }

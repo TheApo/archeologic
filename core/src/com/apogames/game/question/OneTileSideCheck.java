@@ -13,7 +13,7 @@ public class OneTileSideCheck extends Question {
 
     private byte[][] solution;
 
-    private boolean correct = true;
+    private boolean notOnBorder = true;
     private byte[][] currentTile;
 
     public OneTileSideCheck(int column, int row, byte[][] solution, int tile, byte[][] currentTile) {
@@ -33,12 +33,12 @@ public class OneTileSideCheck extends Question {
             for (int x = 0; x < this.solution[0].length; x++) {
                 if (this.getRow() >= 0 && (y == 0 || y == this.solution.length - 1)) {
                     if (this.solution[y][x] == tile) {
-                        correct = false;
+                        notOnBorder = false;
                     }
                 }
                 if (this.getColumn() >= 0 && (x == 0 || x == this.solution[0].length - 1)) {
                     if (this.solution[y][x] == tile) {
-                        correct = false;
+                        notOnBorder = false;
                     }
                 }
             }
@@ -97,7 +97,7 @@ public class OneTileSideCheck extends Question {
         }
 
         String answerNot = "";
-        if (this.correct) {
+        if (this.notOnBorder) {
             answerNot = Localization.getInstance().getCommon().get("question_not")+" ";
         }
         answer = answer.replace("{x}", answerNot);
@@ -113,27 +113,44 @@ public class OneTileSideCheck extends Question {
     public ArrayList<Integer> filter(ArrayList<byte[][]> solutionsReal, ArrayList<byte[][]> solutions) {
         ArrayList<Integer> results = new ArrayList<>();
         for (int i = 0; i < solutionsReal.size(); i++) {
-            byte[][] currentSolution = solutionsReal.get(i);
             byte[][] solution = solutions.get(i);
             boolean found = true;
+            int countOnBorder = 0;
             for (int y = 0; y < solution.length; y++) {
                 for (int x = 0; x < solution[0].length; x++) {
-                    if (this.getRow() >= 0 && (y == 0 || y == solution.length - 1)) {
-                        if (solution[y][x] == tile) {
-                            found = false;
-                            break;
+                    if (notOnBorder) {
+                        if (this.getRow() >= 0 && (y == 0 || y == solution.length - 1)) {
+                            if (solution[y][x] == tile) {
+                                found = false;
+                                break;
+                            }
                         }
-                    }
-                    if (this.getColumn() >= 0 && (x == 0 || x == solution[0].length - 1)) {
-                        if (solution[y][x] == tile) {
-                            found = false;
-                            break;
+                        if (this.getColumn() >= 0 && (x == 0 || x == solution[0].length - 1)) {
+                            if (solution[y][x] == tile) {
+                                found = false;
+                                break;
+                            }
+                        }
+                    } else {
+                        if (this.getRow() >= 0 && (y == 0 || y == solution.length - 1)) {
+                            if (solution[y][x] == tile) {
+                                countOnBorder += 1;
+                            }
+                        }
+                        if (this.getColumn() >= 0 && (x == 0 || x == solution[0].length - 1)) {
+                            if (solution[y][x] == tile) {
+                                countOnBorder += 1;
+                            }
                         }
                     }
                 }
                 if (!found) {
                     break;
                 }
+            }
+
+            if (!notOnBorder && countOnBorder == 0) {
+                found = false;
             }
 
             if (found) {

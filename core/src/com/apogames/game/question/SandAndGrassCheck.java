@@ -90,10 +90,10 @@ public class SandAndGrassCheck extends Question {
                 int grass = 0;
                 for (int x = 0; x < currentSolution[0].length; x++) {
                     if (currentSolution[getRow()][x] == 3) {
-                        this.sand += 1;
+                        sand += 1;
                     }
                     if (currentSolution[getRow()][x] == 2) {
-                        this.grass += 1;
+                        grass += 1;
                     }
                 }
                 if (sand != this.sand || grass != this.grass) {

@@ -81,9 +81,21 @@ public class ButtonProvider {
 			function = Menu.FUNCTION_PLAY;
 			width = 164;
 			height = 80;
-			x = Constants.GAME_WIDTH/2 - width/2;
+			x = Constants.GAME_WIDTH/2 - width - 40;
 			y = Constants.GAME_HEIGHT/2 + 110 + 50;
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_play");
+			//ApoButtonColor(x, y, width, height, function, text, Constants.COLOR_BACKGROUND, Constants.COLOR_WHITE);
+			button.setStroke(1);
+			button.setFont(AssetLoader.font30);
+			this.game.getButtons().add(button);
+
+			text = "Puzzle";
+			function = Menu.FUNCTION_PUZZLE;
+			width = 164;
+			height = 80;
+			x = Constants.GAME_WIDTH/2 + 40;
+			y = Constants.GAME_HEIGHT/2 + 110 + 50;
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_puzzle");
 			//ApoButtonColor(x, y, width, height, function, text, Constants.COLOR_BACKGROUND, Constants.COLOR_WHITE);
 			button.setStroke(1);
 			button.setFont(AssetLoader.font30);

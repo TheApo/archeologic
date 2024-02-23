@@ -42,6 +42,8 @@ public class GameEntity {
 
     private int costs = 0;
 
+    private boolean puzzle = false;
+
     public GameEntity() {
         init();
     }
@@ -106,7 +108,8 @@ public class GameEntity {
         int ySize = 5;
 
         byte[][] goal = new byte[ySize][xSize];
-        int size = this.givenTiles.getDifficultyTiles()[this.difficulty.getGivenTiles()];
+        int add = this.puzzle ? 2 : 0;
+        int size = this.givenTiles.getDifficultyTiles()[this.difficulty.getGivenTiles() + add];
         prefillGoal(goal, size);
 
         MyPuzzleADayBinary myPuzzleADayBinary = new MyPuzzleADayBinary(givenTiles.getAllTiles());
@@ -142,6 +145,7 @@ public class GameEntity {
                     }
                 }
             }
+            System.out.println();
         }
     }
 
@@ -211,10 +215,15 @@ public class GameEntity {
         return true;
     }
 
-    public void setNewLevel(Difficulty difficulty) {
+    public void setNewLevel(Difficulty difficulty, boolean puzzle) {
         this.difficulty = difficulty;
+        this.puzzle = puzzle;
 
         this.choseNewSolution();
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
     }
 
     public void prefillGoal(byte[][] goal, int size) {
@@ -289,6 +298,18 @@ public class GameEntity {
             }
             this.possibleSolutionsReal.add(realSolution);
         }
+    }
+
+    public ArrayList<byte[][]> getPossibleSolutions() {
+        return possibleSolutions;
+    }
+
+    public ArrayList<byte[][]> getPossibleSolutionsPossibilities() {
+        return possibleSolutionsPossibilities;
+    }
+
+    public ArrayList<byte[][]> getPossibleSolutionsReal() {
+        return possibleSolutionsReal;
     }
 
     private void placeInReal(int givenX, int givenY, byte[][] realSolution, byte[][] givenArray, byte possibility) {

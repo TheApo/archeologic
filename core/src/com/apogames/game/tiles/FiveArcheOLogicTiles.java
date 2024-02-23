@@ -70,6 +70,6 @@ public class FiveArcheOLogicTiles extends GivenTiles {
 
     @Override
     public int[] getDifficultyTiles() {
-        return new int[] {3, 2};
+        return new int[] {3, 2, 2, 1};
     }
 }

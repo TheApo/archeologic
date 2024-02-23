@@ -17,6 +17,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.util.ArrayList;
+
 public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     public static final int START_QUESTION_Y = 270;
@@ -76,6 +78,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     private Won wonEnum = Won.SOLVER;
 
+    private boolean puzzle = false;
+
     public ArcheOLogicPanel(final MainPanel game) {
         super(game);
 
@@ -91,6 +95,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_TEST).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_CHECK).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(true);
+        if (this.puzzle) {
+            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
+        }
     }
 
     private void setAllButtonVisible(boolean visible) {
@@ -117,6 +124,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
         for (int i = 0; i < QuestionEnum.values().length; i++) {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name()).setVisible(visible);
+        }
+        if (this.puzzle) {
+            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
         }
 
         getMainPanel().getButtonByFunction(FUNCTION_HINT_UP).setVisible(false);
@@ -154,6 +164,192 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.setNeededButtonsVisible();
     }
 
+    public void setPuzzle(boolean puzzle) {
+        this.puzzle = puzzle;
+        if (this.puzzle) {
+            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
+            this.setUpPuzzle();
+        }
+    }
+
+    private void setUpPuzzle() {
+        int hints = (int)(Math.random() * 2) + 4;
+        ArrayList<Integer> chosenList = new ArrayList<>();
+        setUpPuzzle(new ArrayList<Integer>(), 0, hints, chosenList);
+    }
+
+    private void setUpPuzzle(ArrayList<Integer> indexList, int count, int hints, ArrayList<Integer> chosenList) {
+        ArrayList<byte[][]> possibleSolutions;
+        ArrayList<byte[][]> possibleSolutionsPossibilities;
+        ArrayList<byte[][]> possibleSolutionsReal;
+        if (indexList.isEmpty()) {
+            possibleSolutions = this.game.getPossibleSolutions();
+            possibleSolutionsPossibilities = this.game.getPossibleSolutionsPossibilities();
+            possibleSolutionsReal = this.game.getPossibleSolutionsReal();
+        } else {
+            possibleSolutions = new ArrayList<>();
+            possibleSolutionsPossibilities = new ArrayList<>();
+            possibleSolutionsReal = new ArrayList<>();
+
+            for (int integer : indexList) {
+                possibleSolutions.add(this.game.getPossibleSolutions().get(integer));
+                possibleSolutionsPossibilities.add(this.game.getPossibleSolutionsPossibilities().get(integer));
+                possibleSolutionsReal.add(this.game.getPossibleSolutionsReal().get(integer));
+            }
+        }
+
+        int randomQuestion = -1;
+        if (this.getGame().getDifficulty() == Difficulty.EASY && count < hints) {
+            do {
+                randomQuestion = (int) (Math.random() * 5);
+            } while (chosenList.contains(randomQuestion));
+            chosenList.add(randomQuestion);
+        }
+
+        int smallest = possibleSolutions.size() + 1;
+        Question pickedQuestion = null;
+        ArrayList<Integer> filterResult = null;
+        if (randomQuestion == 0 || randomQuestion == -1) {
+            for (int i = 0; i < 5; i++) {
+                Question question = new AmountTiles(i, -1, this.game.getSolution());
+                ArrayList<Integer> filter = question.filter(possibleSolutions, possibleSolutionsPossibilities);
+
+                if (filter.size() < smallest && !filter.isEmpty()) {
+                    smallest = filter.size();
+                    pickedQuestion = question;
+                    filterResult = new ArrayList<>(filter);
+                }
+
+                Question questionR = new AmountTiles(-1, 1, this.game.getSolution());
+                ArrayList<Integer> filter1 = questionR.filter(possibleSolutions, possibleSolutionsPossibilities);
+
+                if (filter1.size() < smallest && !filter1.isEmpty()) {
+                    smallest = filter1.size();
+                    pickedQuestion = questionR;
+                    filterResult = new ArrayList<>(filter1);
+                }
+            }
+        }
+
+        if (randomQuestion == 1 || randomQuestion == -1) {
+            for (int i = 0; i < 5; i++) {
+                Question question = new Empty(i, -1, this.game.getSolution());
+                ArrayList<Integer> filter = question.filter(possibleSolutions, possibleSolutionsPossibilities);
+
+                if (filter.size() < smallest && !filter.isEmpty()) {
+                    smallest = filter.size();
+                    pickedQuestion = question;
+                    filterResult = new ArrayList<>(filter);
+                }
+
+                Question questionR = new Empty(-1, 1, this.game.getSolution());
+                ArrayList<Integer> filter1 = questionR.filter(possibleSolutions, possibleSolutionsPossibilities);
+
+                if (filter1.size() < smallest && !filter1.isEmpty()) {
+                    smallest = filter1.size();
+                    pickedQuestion = questionR;
+                    filterResult = new ArrayList<>(filter1);
+                }
+            }
+        }
+
+        if (randomQuestion == 2 || randomQuestion == -1) {
+            for (int i = 0; i < 5; i++) {
+                Question question = new SandAndGrassCheck(i, -1, this.game.getRealSolution());
+                ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutionsPossibilities);
+
+                if (filter.size() < smallest && !filter.isEmpty()) {
+                    smallest = filter.size();
+                    pickedQuestion = question;
+                    filterResult = new ArrayList<>(filter);
+                }
+
+                Question questionR = new SandAndGrassCheck(-1, i, this.game.getRealSolution());
+                ArrayList<Integer> filter1 = questionR.filter(possibleSolutionsReal, possibleSolutionsPossibilities);
+
+                if (filter1.size() < smallest && !filter1.isEmpty()) {
+                    smallest = filter1.size();
+                    pickedQuestion = questionR;
+                    filterResult = new ArrayList<>(filter1);
+                }
+            }
+        }
+
+        if (randomQuestion == 3 || randomQuestion == -1) {
+            for (int t = 0; t < this.game.getCurrentTiles().size(); t++) {
+                for (int i = 0; i < 5; i++) {
+                    Question question = new OneTileCheck(i, -1, this.game.getSolution(), this.game.getRealSolution(), this.game.getCurrentTiles().get(t).getTile().getTileNumber(), this.game.getCurrentTiles().get(t).getTile().getPossibilities().get(0));
+                    ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutions);
+
+                    if (filter.size() < smallest && !filter.isEmpty()) {
+                        smallest = filter.size();
+                        pickedQuestion = question;
+                        filterResult = new ArrayList<>(filter);
+                    }
+
+                    Question questionR = new OneTileCheck(-1, i, this.game.getSolution(), this.game.getRealSolution(), this.game.getCurrentTiles().get(t).getTile().getTileNumber(), this.game.getCurrentTiles().get(t).getTile().getPossibilities().get(0));
+                    ArrayList<Integer> filter1 = questionR.filter(possibleSolutionsReal, possibleSolutions);
+
+                    if (filter1.size() < smallest && !filter1.isEmpty()) {
+                        smallest = filter1.size();
+                        pickedQuestion = questionR;
+                        filterResult = new ArrayList<>(filter1);
+                    }
+                }
+            }
+        }
+
+        if (randomQuestion == 4 || randomQuestion == -1) {
+            for (int t = 0; t < this.game.getCurrentTiles().size(); t++) {
+                for (int i = 0; i < 3; i++) {
+                    int column = -1;
+                    int row = -1;
+                    if (i == 0 || i > 1) {
+                        column = 0;
+                    }
+                    if (i >= 1) {
+                        row = 0;
+                    }
+                    Question question = new OneTileSideCheck(column, row, this.game.getSolution(), this.game.getCurrentTiles().get(t).getTile().getTileNumber(), this.game.getCurrentTiles().get(t).getTile().getPossibilities().get(0));
+                    ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutions);
+
+                    if (filter.size() < smallest && !filter.isEmpty()) {
+                        smallest = filter.size();
+                        pickedQuestion = question;
+                        filterResult = new ArrayList<>(filter);
+                    }
+                }
+            }
+        }
+
+        if (this.getGame().getDifficulty() == Difficulty.EASY && count < hints) {
+            this.addQuestion(pickedQuestion);
+            setUpPuzzleNext(indexList, count, hints, chosenList, filterResult);
+        } else {
+            if (smallest != indexList.size()) {
+                this.addQuestion(pickedQuestion);
+            }
+
+            if (smallest > 1 && filterResult != null && smallest != indexList.size()) {
+                setUpPuzzleNext(indexList, count, hints, chosenList, filterResult);
+            } else {
+                System.out.println("Anzahl Möglichkeiten left: " + smallest);
+            }
+        }
+    }
+
+    private void setUpPuzzleNext(ArrayList<Integer> indexList, int count, int hints, ArrayList<Integer> chosenList, ArrayList<Integer> filterResult) {
+        if (!indexList.isEmpty()) {
+            ArrayList<Integer> result = new ArrayList<>();
+            for (int resultInteger : filterResult) {
+                result.add(indexList.get(resultInteger));
+            }
+            setUpPuzzle(result, count + 1, hints, chosenList);
+        } else {
+            setUpPuzzle(filterResult, count + 1, hints, chosenList);
+        }
+    }
+
     private void setAllNextQuestions() {
         int oldValue = this.showTabIndex;
         QuestionEnum[] questionEnumForQuestionTypeOriginal = QuestionEnum.getQuestionEnumForQuestionType(0);
@@ -189,9 +385,10 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         return this.curAskOrder != this.curWantedQuestion ? 2 : 1;
     }
 
-    public void setNewLevel(Difficulty difficulty) {
-        this.game.setNewLevel(difficulty);
+    public void setNewLevel(Difficulty difficulty, boolean puzzle) {
+        this.game.setNewLevel(difficulty, puzzle);
 
+        this.puzzle = puzzle;
         this.won = false;
         this.checkQuestion = false;
 
@@ -203,6 +400,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         setAllNextQuestions();
         setNextCosts();
+
+        this.setPuzzle(this.puzzle);
     }
 
     public GameEntity getGame() {
@@ -232,6 +431,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         buttonByFunction.setCurTiles(this.game.getCurrentTiles());
 
         setNeededButtonsVisible();
+
+        this.setPuzzle(this.puzzle);
     }
 
     @Override
@@ -333,6 +534,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_OTHER).setVisible(showQuestion);
         for (String s : askOrder) {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_ROW + s).setVisible(showQuestion);
+        }
+        if (this.puzzle) {
+            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
         }
 //        for (int i = 0; i < QuestionEnum.values().length; i++) {
 //            if (QuestionEnum.values()[i].getQuestionType() == showTabIndex) {
@@ -498,6 +702,13 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.game.setCosts(0);
         this.resetCurAsk();
         this.setNeededButtonsVisible();
+        for (Question[] nextQuestion : nextQuestions) {
+            for (int j = 0; j < nextQuestions[0].length; j++) {
+                if (nextQuestion[j] != null) {
+                    nextQuestion[j].setAddCostsBecauseLast(0);
+                }
+            }
+        }
     }
 
     private void resetCurAsk() {
@@ -602,8 +813,10 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     }
 
     private void addQuestion() {
-        Question nextQuestion = getNextQuestion();
+        addQuestion(getNextQuestion());
+    }
 
+    private void addQuestion(Question nextQuestion) {
         int completeCost = 0;
 
         if (nextQuestion != null) {
