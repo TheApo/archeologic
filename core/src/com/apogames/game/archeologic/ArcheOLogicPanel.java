@@ -233,8 +233,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         if (randomQuestion == 1 || randomQuestion == -1) {
             for (int i = 0; i < 5; i++) {
-                Question question = new Empty(i, -1, this.game.getSolution());
-                ArrayList<Integer> filter = question.filter(possibleSolutions, possibleSolutionsPossibilities);
+                Question question = new Empty(i, -1, this.game.getRealSolution());
+                ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutionsPossibilities);
 
                 if (filter.size() < smallest && !filter.isEmpty()) {
                     smallest = filter.size();
@@ -242,8 +242,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     filterResult = new ArrayList<>(filter);
                 }
 
-                Question questionR = new Empty(-1, 1, this.game.getSolution());
-                ArrayList<Integer> filter1 = questionR.filter(possibleSolutions, possibleSolutionsPossibilities);
+                Question questionR = new Empty(-1, 1, this.game.getRealSolution());
+                ArrayList<Integer> filter1 = questionR.filter(possibleSolutionsReal, possibleSolutionsPossibilities);
 
                 if (filter1.size() < smallest && !filter1.isEmpty()) {
                     smallest = filter1.size();
