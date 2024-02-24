@@ -73,8 +73,9 @@ public class ButtonProvider {
 			y = Constants.GAME_HEIGHT - height - 60;
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonXTextureRegion);
 			//ApoButtonColor(x, y, width, height, function, text, Constants.COLOR_BACKGROUND, Constants.COLOR_WHITE);
+			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "Menu");
 			button.setStroke(1);
-			button.setFont(AssetLoader.font40);
+			button.setFont(AssetLoader.font20);
 			this.game.getButtons().add(button);
 
 			text = "Play";
@@ -194,6 +195,17 @@ public class ButtonProvider {
 			y = Constants.GAME_HEIGHT - 60 - height;
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_question");
 			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
+
+			text = "next hint";
+			function = ArcheOLogicPanel.FUNCTION_QUESTIONS_NEXT_HINT;
+			width = 200;
+			height = 64;
+			x = Constants.GAME_WIDTH - width - 410;
+			y = Constants.GAME_HEIGHT - 60 - height;
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_next_hint");
+			button.setFont(AssetLoader.font20);
 			this.game.getButtons().add(button);
 
 			text = "";

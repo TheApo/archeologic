@@ -44,6 +44,8 @@ public class GameEntity {
 
     private boolean puzzle = false;
 
+    private int maxReset;
+
     public GameEntity() {
         init();
     }
@@ -92,6 +94,10 @@ public class GameEntity {
         this.fillCurrentSolution();
         if (!this.puzzle) {
             for (int i = this.questions.size() - 1; i >= this.givenTiles.getDifficultyTiles()[this.difficulty.getGivenTiles()]; i--) {
+                this.questions.remove(this.questions.get(i));
+            }
+        } else {
+            for (int i = this.questions.size() - 1; i >= this.maxReset; i--) {
                 this.questions.remove(this.questions.get(i));
             }
         }
@@ -257,6 +263,16 @@ public class GameEntity {
         }
     }
 
+    public boolean isEveryTileIn() {
+        for (GameTile tile : this.currentTiles) {
+            byte[][] bytes = tile.getTile().getPossibilities().get(tile.getCurrentTile());
+            if (tile.getGameX() < 0 || tile.getGameX() + bytes[0].length > this.solution[0].length ||
+                    tile.getGameY() < 0 || tile.getGameY() + bytes.length > this.solution.length) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public boolean isWon() {
         for (GameTile tile : this.currentTiles) {
@@ -491,5 +507,9 @@ public class GameEntity {
         }
 
         screen.spriteBatch.setColor(1, 1, 1, 1f);
+    }
+
+    public void setMaxReset(int smallest) {
+        this.maxReset = smallest;
     }
 }
