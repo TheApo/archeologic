@@ -38,6 +38,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     public static final String FUNCTION_QUESTION_QUESTION_ASK = "ARCHEOLOGIC_QUESTION_QUESTION_";
     public static final String FUNCTION_QUESTION_QUESTION_REAL = "ARCHEOLOGIC_QUESTION_QUESTION_REAL";
     public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN";
+    public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE";
     public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN_HORIZONTAL";
     public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN_STRING_SIDE";
     public static final String FUNCTION_QUESTION_QUESTION_CLOSE = "ARCHEOLOGIC_QUESTION_QUESTION_CLOSE";
@@ -52,6 +53,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     };
     private static final int ORIGINAL_QUESTIONS = 0;
     private static final int OTHER_QUESTIONS = 1;
+    private static final int MAX_REPEAT = 20;
 
     private final Question[][] nextQuestions;
 
@@ -116,6 +118,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_FINISH_NEW_LEVEL).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_REAL).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_CLOSE).setVisible(visible);
@@ -153,6 +156,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN));
             buttonByFunction.setCurTiles(this.game.getCurrentTiles());
 
+            buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE));
+            buttonByFunction.setCurTiles(this.game.getCurrentTiles());
+
             buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL));
             buttonByFunction.setCurTiles(this.game.getCurrentTiles());
 
@@ -161,6 +167,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         this.won = false;
         this.checkQuestion = false;
+        this.resetCurAsk();
 
         this.getMainPanel().resetSize(Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
 
@@ -177,7 +184,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     }
 
     private void setUpPuzzle(boolean addRandom) {
-        int hints = (int)(Math.random() * 2) + 4;
+        int hints = (int)(Math.random() * 1) + 6;
         ArrayList<Integer> chosenList = new ArrayList<>();
         setUpPuzzle(new ArrayList<Integer>(), 0, hints, chosenList, addRandom);
     }
@@ -205,24 +212,34 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         int randomQuestion = -1;
         if ((this.getGame().getDifficulty() == Difficulty.EASY && count < hints) || (addRandom)) {
             do {
-                randomQuestion = (int) (Math.random() * 5);
+                randomQuestion = (int) (Math.random() * 6);
             } while (chosenList.contains(randomQuestion));
             chosenList.add(randomQuestion);
         }
 
-        int smallest = possibleSolutions.size() + 1;
+        int smallest = possibleSolutions.size();
+        if (smallest == 1 && randomQuestion == -1) {
+            this.game.setMaxReset(this.game.getQuestions().size());
+            return;
+        }
         Question pickedQuestion = null;
         ArrayList<Integer> filterResult = null;
         if (randomQuestion == 0 || randomQuestion == -1) {
-            if (randomQuestion == 0) {
-                int choose = (int)(Math.random() * 10);
+            if (randomQuestion == 0 && count > 2) {
+                int counterRepeat = 0;
+                ArrayList<Integer> filter;
                 Question question;
-                if (choose%2 == 0) {
-                    question = new AmountTiles(choose/2, -1, this.game.getSolution());
-                } else {
-                    question = new AmountTiles(-1, (choose-1)/2, this.game.getSolution());
-                }
-                ArrayList<Integer> filter = question.filter(possibleSolutions, possibleSolutionsPossibilities);
+                do {
+                    int choose = (int) (Math.random() * 10);
+
+                    if (choose % 2 == 0) {
+                        question = new AmountTiles(choose / 2, -1, this.game.getSolution());
+                    } else {
+                        question = new AmountTiles(-1, (choose - 1) / 2, this.game.getSolution());
+                    }
+                    filter = question.filter(possibleSolutions, possibleSolutionsPossibilities);
+                    counterRepeat += 1;
+                } while ((filter.size() == smallest && smallest != 1) && counterRepeat < MAX_REPEAT);
                 smallest = filter.size();
                 pickedQuestion = question;
                 filterResult = new ArrayList<>(filter);
@@ -231,7 +248,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     Question question = new AmountTiles(i, -1, this.game.getSolution());
                     ArrayList<Integer> filter = question.filter(possibleSolutions, possibleSolutionsPossibilities);
 
-                    if (filter.size() < smallest && !filter.isEmpty()) {
+                    if ((filter.size() < smallest && !filter.isEmpty()) || (filter.size() == smallest && filterResult == null)) {
                         smallest = filter.size();
                         pickedQuestion = question;
                         filterResult = new ArrayList<>(filter);
@@ -250,15 +267,20 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
 
         if (randomQuestion == 1 || randomQuestion == -1) {
-            if (randomQuestion == 1) {
-                int choose = (int)(Math.random() * 10);
+            if (randomQuestion == 1 && count > 2) {
+                int counterRepeat = 0;
+                ArrayList<Integer> filter;
                 Question question;
-                if (choose%2 == 0) {
-                    question = new Empty(choose/2, -1, this.game.getRealSolution());
-                } else {
-                    question = new Empty(-1, (choose-1)/2, this.game.getRealSolution());
-                }
-                ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutionsPossibilities);
+                do {
+                    int choose = (int) (Math.random() * 10);
+                    if (choose % 2 == 0) {
+                        question = new Empty(choose / 2, -1, this.game.getRealSolution());
+                    } else {
+                        question = new Empty(-1, (choose - 1) / 2, this.game.getRealSolution());
+                    }
+                    filter = question.filter(possibleSolutionsReal, possibleSolutionsPossibilities);
+                    counterRepeat += 1;
+                } while ((filter.size() == smallest && smallest != 1) && counterRepeat < MAX_REPEAT);
                 smallest = filter.size();
                 pickedQuestion = question;
                 filterResult = new ArrayList<>(filter);
@@ -267,7 +289,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     Question question = new Empty(i, -1, this.game.getRealSolution());
                     ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutionsPossibilities);
 
-                    if (filter.size() < smallest && !filter.isEmpty()) {
+                    if ((filter.size() < smallest && !filter.isEmpty()) || (filter.size() == smallest && filterResult == null)) {
                         smallest = filter.size();
                         pickedQuestion = question;
                         filterResult = new ArrayList<>(filter);
@@ -286,15 +308,20 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
 
         if (randomQuestion == 2 || randomQuestion == -1) {
-            if (randomQuestion == 2) {
-                int choose = (int)(Math.random() * 10);
+            if (randomQuestion == 2 && count > 2) {
+                int counterRepeat = 0;
+                ArrayList<Integer> filter;
                 Question question;
-                if (choose%2 == 0) {
-                    question = new SandAndGrassCheck(choose/2, -1, this.game.getRealSolution());
-                } else {
-                    question = new SandAndGrassCheck(-1, (choose-1)/2, this.game.getRealSolution());
-                }
-                ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutionsPossibilities);
+                do {
+                    int choose = (int) (Math.random() * 10);
+                    if (choose % 2 == 0) {
+                        question = new SandAndGrassCheck(choose / 2, -1, this.game.getRealSolution());
+                    } else {
+                        question = new SandAndGrassCheck(-1, (choose - 1) / 2, this.game.getRealSolution());
+                    }
+                    filter = question.filter(possibleSolutionsReal, possibleSolutionsPossibilities);
+                    counterRepeat += 1;
+                } while ((filter.size() == smallest && smallest != 1) && counterRepeat < MAX_REPEAT);
                 smallest = filter.size();
                 pickedQuestion = question;
                 filterResult = new ArrayList<>(filter);
@@ -303,7 +330,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     Question question = new SandAndGrassCheck(i, -1, this.game.getRealSolution());
                     ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutionsPossibilities);
 
-                    if (filter.size() < smallest && !filter.isEmpty()) {
+                    if ((filter.size() < smallest && !filter.isEmpty()) || (filter.size() == smallest && filterResult == null)) {
                         smallest = filter.size();
                         pickedQuestion = question;
                         filterResult = new ArrayList<>(filter);
@@ -322,16 +349,21 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
 
         if (randomQuestion == 3 || randomQuestion == -1) {
-            if (randomQuestion == 3) {
-                int t = (int)(Math.random() * this.game.getCurrentTiles().size());
-                int i = (int)(Math.random() * 5);
+            if (randomQuestion == 3 && count > 2) {
+                int counterRepeat = 0;
+                ArrayList<Integer> filter;
                 Question question;
-                if (Math.random() * 100 > 50) {
-                    question = new OneTileCheck(i, -1, this.game.getSolution(), this.game.getRealSolution(), this.game.getCurrentTiles().get(t).getTile().getTileNumber(), this.game.getCurrentTiles().get(t).getTile().getPossibilities().get(0));
-                } else {
-                    question = new OneTileCheck(-1, i, this.game.getSolution(), this.game.getRealSolution(), this.game.getCurrentTiles().get(t).getTile().getTileNumber(), this.game.getCurrentTiles().get(t).getTile().getPossibilities().get(0));
-                }
-                ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutions);
+                do {
+                    int t = (int) (Math.random() * this.game.getCurrentTiles().size());
+                    int i = (int) (Math.random() * 5);
+                    if (Math.random() * 100 > 50) {
+                        question = new OneTileCheck(i, -1, this.game.getSolution(), this.game.getRealSolution(), this.game.getCurrentTiles().get(t).getTile().getTileNumber(), this.game.getCurrentTiles().get(t).getTile().getPossibilities().get(0));
+                    } else {
+                        question = new OneTileCheck(-1, i, this.game.getSolution(), this.game.getRealSolution(), this.game.getCurrentTiles().get(t).getTile().getTileNumber(), this.game.getCurrentTiles().get(t).getTile().getPossibilities().get(0));
+                    }
+                    filter = question.filter(possibleSolutionsReal, possibleSolutions);
+                    counterRepeat += 1;
+                } while ((filter.size() == smallest && smallest != 1) && counterRepeat < MAX_REPEAT);
                 smallest = filter.size();
                 pickedQuestion = question;
                 filterResult = new ArrayList<>(filter);
@@ -341,7 +373,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                         Question question = new OneTileCheck(i, -1, this.game.getSolution(), this.game.getRealSolution(), this.game.getCurrentTiles().get(t).getTile().getTileNumber(), this.game.getCurrentTiles().get(t).getTile().getPossibilities().get(0));
                         ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutions);
 
-                        if (filter.size() < smallest && !filter.isEmpty()) {
+                        if ((filter.size() < smallest && !filter.isEmpty()) || (filter.size() == smallest && filterResult == null)) {
                             smallest = filter.size();
                             pickedQuestion = question;
                             filterResult = new ArrayList<>(filter);
@@ -361,19 +393,25 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
 
         if (randomQuestion == 4 || randomQuestion == -1) {
-            if (randomQuestion == 4) {
-                int t = (int)(Math.random() * this.game.getCurrentTiles().size());
-                int i = (int)(Math.random() * 3);
-                int column = -1;
-                int row = -1;
-                if (i == 0 || i > 1) {
-                    column = 0;
-                }
-                if (i >= 1) {
-                    row = 0;
-                }
-                Question question = new OneTileSideCheck(column, row, this.game.getSolution(), this.game.getCurrentTiles().get(t).getTile().getTileNumber(), this.game.getCurrentTiles().get(t).getTile().getPossibilities().get(0));
-                ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutions);
+            if (randomQuestion == 4 && count > 2) {
+                int counterRepeat = 0;
+                ArrayList<Integer> filter;
+                Question question;
+                do {
+                    int t = (int) (Math.random() * this.game.getCurrentTiles().size());
+                    int i = (int) (Math.random() * 3);
+                    int column = -1;
+                    int row = -1;
+                    if (i == 0 || i > 1) {
+                        column = 0;
+                    }
+                    if (i >= 1) {
+                        row = 0;
+                    }
+                    question = new OneTileSideCheck(column, row, this.game.getSolution(), this.game.getCurrentTiles().get(t).getTile().getTileNumber(), this.game.getCurrentTiles().get(t).getTile().getPossibilities().get(0));
+                    filter = question.filter(possibleSolutionsReal, possibleSolutions);
+                    counterRepeat += 1;
+                } while ((filter.size() == smallest && smallest != 1) && counterRepeat < MAX_REPEAT);
                 smallest = filter.size();
                 pickedQuestion = question;
                 filterResult = new ArrayList<>(filter);
@@ -391,7 +429,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                         Question question = new OneTileSideCheck(column, row, this.game.getSolution(), this.game.getCurrentTiles().get(t).getTile().getTileNumber(), this.game.getCurrentTiles().get(t).getTile().getPossibilities().get(0));
                         ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutions);
 
-                        if (filter.size() < smallest && !filter.isEmpty()) {
+                        if ((filter.size() < smallest && !filter.isEmpty()) || (filter.size() == smallest && filterResult == null)) {
                             smallest = filter.size();
                             pickedQuestion = question;
                             filterResult = new ArrayList<>(filter);
@@ -401,6 +439,35 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             }
         }
 
+        if (randomQuestion == 5 || randomQuestion == -1) {
+            if (randomQuestion == 5 && count > 2) {
+                int counterRepeat = 0;
+                ArrayList<Integer> filter;
+                Question question;
+                do {
+                    int tile = (int)(Math.random() * this.game.getCurrentTiles().size());
+                    question = new EmptyNextTile(this.game.getSolution(), this.game.getRealSolution(), this.game.getCurrentTiles().get(tile).getTile().getTileNumber(), this.game.getCurrentTiles().get(tile).getTile().getPossibilities().get(0));
+                    filter = question.filter(possibleSolutions, possibleSolutionsReal);
+                    counterRepeat += 1;
+                } while ((filter.size() == smallest && smallest != 1) && counterRepeat < MAX_REPEAT);
+                smallest = filter.size();
+                pickedQuestion = question;
+                filterResult = new ArrayList<>(filter);
+            } else {
+                for (int i = 0; i < this.game.getCurrentTiles().size(); i++) {
+                    Question question = new EmptyNextTile(this.game.getSolution(), this.game.getRealSolution(), this.game.getCurrentTiles().get(i).getTile().getTileNumber(), this.game.getCurrentTiles().get(i).getTile().getPossibilities().get(0));
+                    ArrayList<Integer> filter = question.filter(possibleSolutions, possibleSolutionsReal);
+
+                    if ((filter.size() < smallest && !filter.isEmpty()) || (filter.size() == smallest && filterResult == null)) {
+                        smallest = filter.size();
+                        pickedQuestion = question;
+                        filterResult = new ArrayList<>(filter);
+                    }
+                }
+            }
+        }
+
+        System.out.println("Anzahl Möglichkeiten left: " + smallest+" startedWith: "+possibleSolutions.size()+" hints: "+hints+" count: "+count);
         if (addRandom) {
             this.addQuestion(pickedQuestion);
         } else if (this.getGame().getDifficulty() == Difficulty.EASY && count < hints) {
@@ -468,13 +535,19 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     }
 
     public void setNewLevel(Difficulty difficulty, boolean puzzle) {
+        this.puzzle = puzzle;
+
         this.game.setNewLevel(difficulty, puzzle);
 
-        this.puzzle = puzzle;
+        this.resetCurAsk();
+
         this.won = false;
         this.checkQuestion = false;
 
         ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN));
+        buttonByFunction.setCurTiles(this.game.getCurrentTiles());
+
+        buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE));
         buttonByFunction.setCurTiles(this.game.getCurrentTiles());
 
         buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL));
@@ -507,6 +580,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.resetTiles();
 
         ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN));
+        buttonByFunction.setCurTiles(this.game.getCurrentTiles());
+
+        buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE));
         buttonByFunction.setCurTiles(this.game.getCurrentTiles());
 
         buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL));
@@ -576,12 +652,14 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_ORIGINAL).setSelect(true);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_OTHER).setSelect(false);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(true);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE).setVisible(false);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(false);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(false);
         } else {
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_ORIGINAL).setSelect(false);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_OTHER).setSelect(true);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(false);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE).setVisible(true);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(true);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(true);
         }
@@ -656,27 +734,34 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 mouseButtonFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.ONE_TILE_CHECK.name());
                 return;
             }
+            if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE)) {
+                setAllNextQuestions();
+                mouseButtonFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.EMPTY_NEXT_TILE.name());
+                return;
+            }
             if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL) || function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE)) {
                 setAllNextQuestions();
                 mouseButtonFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK.name());
                 return;
             }
-            for (String s : askOrder) {
-                String buttonFunction = ArcheOLogicPanel.FUNCTION_QUESTION_ROW + s;
-                if (function.equals(buttonFunction)) {
-                    for (int i = 0; i < askOrder.length; i++) {
-                        String deselectAll = askOrder[i];
-                        String buttonDeselect = ArcheOLogicPanel.FUNCTION_QUESTION_ROW + deselectAll;
-                        getMainPanel().getButtonByFunction(buttonDeselect).setSelect(false);
-                        if (buttonDeselect.equals(buttonFunction)) {
-                            this.curWantedQuestion = i;
+            if (this.showTabIndex != OTHER_QUESTIONS) {
+                for (String s : askOrder) {
+                    String buttonFunction = ArcheOLogicPanel.FUNCTION_QUESTION_ROW + s;
+                    if (function.equals(buttonFunction)) {
+                        for (int i = 0; i < askOrder.length; i++) {
+                            String deselectAll = askOrder[i];
+                            String buttonDeselect = ArcheOLogicPanel.FUNCTION_QUESTION_ROW + deselectAll;
+                            getMainPanel().getButtonByFunction(buttonDeselect).setSelect(false);
+                            if (buttonDeselect.equals(buttonFunction)) {
+                                this.curWantedQuestion = i;
+                            }
                         }
+                        setCurAddQuestionString(s);
+                        getMainPanel().getButtonByFunction(buttonFunction).setSelect(true);
+                        setAllNextQuestions();
+                        setNextCosts();
+                        return;
                     }
-                    setCurAddQuestionString(s);
-                    getMainPanel().getButtonByFunction(buttonFunction).setSelect(true);
-                    setAllNextQuestions();
-                    setNextCosts();
-                    return;
                 }
             }
             QuestionEnum[] questionEnumForQuestionType = QuestionEnum.getQuestionEnumForQuestionType(this.showTabIndex);
@@ -862,6 +947,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 Question nextQuestion = null;
                 if (values[i] == QuestionEnum.EMPTY) {
                     nextQuestion = new Empty(column, row, this.game.getRealSolution());
+                } else if (values[i] == QuestionEnum.EMPTY_NEXT_TILE) {
+                    ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE);
+                    nextQuestion = new EmptyNextTile(this.game.getSolution(), this.game.getRealSolution(), buttonByFunction.getTileNumber(), buttonByFunction.getTileArray());
                 } else if (values[i] == QuestionEnum.AMOUNT_TILES) {
                     nextQuestion = new AmountTiles(column, row, this.game.getSolution());
                 } else if (values[i] == QuestionEnum.SAND_AND_GRASS_CHECK) {
@@ -1092,11 +1180,11 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 float startX = renderTextAndTileQuestion(text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, ArcheOLogicPanel.START_QUESTION_Y + 27 + i * (50 + 10));
 
                 //getMainPanel().drawString(text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, 277 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
-                if (!questionEnumForQuestionType[i].equals(QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK)) {
+                if (this.showTabIndex != OTHER_QUESTIONS) {
                     getMainPanel().drawString(this.curAddQuestionString, startX, ArcheOLogicPanel.START_QUESTION_Y + 27 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
                 }
                 ApoButton button = getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + questionEnumForQuestionType[i].name());
-                if (button.isSelect() && !questionEnumForQuestionType[i].equals(QuestionEnum.HORIZONTAL_VERTICAL_BORDER_CHECK)) {
+                if (button.isSelect() && this.showTabIndex != OTHER_QUESTIONS) {
                     showCoinNextCostAsk = true;
                 }
             }
@@ -1171,7 +1259,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
 
         for (ApoButton button : this.getMainPanel().getButtons()) {
-            if (!showCoinNextCostAsk && this.showQuestion && button.getFunction().startsWith(FUNCTION_QUESTION_ROW)) {
+            if (!showCoinNextCostAsk && this.showQuestion && this.showTabIndex == OTHER_QUESTIONS) {
                 continue;
             }
             if (button.isVisible() && button.isSelect()) {

@@ -19,15 +19,13 @@ i:fonts/pirate33.png:fonts/pirate33-84cb24508a6c81f007c0b2bce4a862c3.png:24283:i
 t:fonts/pirate40.fnt:fonts/pirate40-068ce2c6135ed45d55558d430d53bd0b.fnt:11107:application/unknown:1
 i:fonts/pirate40.png:fonts/pirate40-3b70e85b2f8943e83b1be6ed45b6047d.png:28739:image/png:1
 d:i18n:i18n:0:application/unknown:1
-b:i18n/settler.properties:i18n/settler-082d92b5b8aa68f3b253a07304fab17f.properties:3350:application/unknown:1
-b:i18n/settler_de.properties:i18n/settler_de-15f0b3cbaef1e83dcd1f85dcfd7f1d21.properties:3548:application/unknown:1
-b:i18n/settler_en.properties:i18n/settler_en-082d92b5b8aa68f3b253a07304fab17f.properties:3350:application/unknown:1
+b:i18n/settler.properties:i18n/settler-8da54adf222461c012b6826d96ae120a.properties:3556:application/unknown:1
+b:i18n/settler_de.properties:i18n/settler_de-4e0c1a3bd4aa31efa76ca6a83ed4c800.properties:3762:application/unknown:1
+b:i18n/settler_en.properties:i18n/settler_en-535b501acd14b4fd0b82f248b363fc32.properties:3557:application/unknown:1
 d:images:images:0:application/unknown:1
-i:images/background.png:images/background-e6d0f2487dadea3cdf22d506b32a9d6e.png:165752:image/png:1
 i:images/background_2.png:images/background_2-7eed56f9d1488bca28a8c04201617e87.png:157283:image/png:1
 i:images/background_main.png:images/background_main-3dfa48c705f66681ab89dcc65b594f0c.png:693210:image/png:1
 i:images/background_question.png:images/background_question-0ef538a663b2342e1b1d4d74389e8bb4.png:288291:image/png:1
-i:images/background_small.png:images/background_small-d8b99a21da8616f1b7cc63c280e9cec8.png:34878:image/png:1
 i:images/board_main.png:images/board_main-c584b5ce1021d22a7cdaa61547d7bf9d.png:795386:image/png:1
 i:images/buttons_blanco.png:images/buttons_blanco-76e260537cd174cd8aae004a858c8c1f.png:24490:image/png:1
 i:images/buttons_blanco_small.png:images/buttons_blanco_small-476fd0a0ca070c5d17ba09bd22b8bda8.png:13354:image/png:1
@@ -37,7 +35,6 @@ i:images/buttons_left.png:images/buttons_left-b66faeed634b24ab4bf303db39f191fe.p
 i:images/buttons_restart.png:images/buttons_restart-4b8f96297c2979419ce0279e18aaaf04.png:4567:image/png:1
 i:images/buttons_right.png:images/buttons_right-7542b169e47811ef4a5dbdd3dae3d185.png:2874:image/png:1
 i:images/buttons_x.png:images/buttons_x-3253acc790744958892b5b46a2b4466f.png:4234:image/png:1
-i:images/circles.png:images/circles-6d41cf1af38614a9e50d4b33d0499aea.png:11920:image/png:1
 i:images/coin.png:images/coin-80354f02d97c0219f96910238a2845a7.png:29123:image/png:1
 i:images/gameboard.png:images/gameboard-129b034eb3cd1f751fb04dd27b11f369.png:393068:image/png:1
 i:images/hud_menu.png:images/hud_menu-fa7066d3bc081a505ea2489b0e434529.png:211101:image/png:1

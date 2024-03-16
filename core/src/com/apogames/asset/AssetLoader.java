@@ -78,8 +78,6 @@ public class AssetLoader {
 	public static TextureRegion[] buttonBlancoSmallTextureRegion;
 	private static Texture coinTexture;
 	public static TextureRegion coinTextureRegion;
-	private static Texture circlesTexture;
-	public static TextureRegion[] circlesTextureRegion;
 	public static BitmapFont font40;
 	public static BitmapFont font20;
 	public static BitmapFont font15;
@@ -228,15 +226,6 @@ public class AssetLoader {
 			buttonBlancoSmallTextureRegion[i].flip(false, true);
 		}
 
-		circlesTexture = new Texture(Gdx.files.internal("images/circles.png"));
-		circlesTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-
-		circlesTextureRegion = new TextureRegion[6];
-		for (int i = 0; i < circlesTextureRegion.length; i++) {
-			circlesTextureRegion[i] = new TextureRegion(circlesTexture, 64 * i, 0, 64, 64);
-			circlesTextureRegion[i].flip(false, true);
-		}
-
 		font40 = new BitmapFont(Gdx.files.internal("fonts/pirate40.fnt"), Gdx.files.internal("fonts/pirate40.png"), true);
 		font20 = new BitmapFont(Gdx.files.internal("fonts/pirate20.fnt"), Gdx.files.internal("fonts/pirate20.png"), true);
 		font15 = new BitmapFont(Gdx.files.internal("fonts/pirate15.fnt"), Gdx.files.internal("fonts/pirate15.png"), true);
@@ -246,7 +235,6 @@ public class AssetLoader {
 
 	public static void dispose() {
 		backgroundTexture.dispose();
-		circlesTexture.dispose();
 		backgroundMainTexture.dispose();
 		backgroundQuestionTexture.dispose();
 		boardMainTexture.dispose();

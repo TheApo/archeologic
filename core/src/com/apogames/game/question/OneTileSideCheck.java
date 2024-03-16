@@ -76,7 +76,7 @@ public class OneTileSideCheck extends Question {
 
     @Override
     public int getCosts() {
-        return 4;
+        return 2;
     }
 
     public boolean withAskCosts() {

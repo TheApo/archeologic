@@ -24,7 +24,7 @@ public class MainPanel extends GameScreen {
 
     public MainPanel() {
         super();
-        if ((this.getButtons() == null) || (this.getButtons().size() == 0)) {
+        if ((this.getButtons() == null) || (this.getButtons().isEmpty())) {
             ButtonProvider button = new ButtonProvider(this);
             button.init();
         }
@@ -36,6 +36,7 @@ public class MainPanel extends GameScreen {
 
         if (this.game == null) {
             this.game = new ArcheOLogicPanel(this);
+            this.changeModel(this.game);
         }
         if (this.menu == null) {
             this.menu = new Menu(this);
@@ -53,10 +54,10 @@ public class MainPanel extends GameScreen {
     }
 
     public void changeToGame(Difficulty difficulty, int amountTiles, boolean puzzle) {
-        this.changeModel(this.game);
-
         this.game.getGame().setGivenTiles(amountTiles);
         this.game.setNewLevel(difficulty, puzzle);
+
+        this.changeModel(this.game);
     }
 
     /**
