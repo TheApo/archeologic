@@ -328,6 +328,26 @@ public class ButtonProvider {
 			this.game.getButtons().add(button);
 
 			text = "";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE;
+			width = 40;
+			height = 40;
+			x = Constants.GAME_WIDTH - 460;
+			y = ArcheOLogicPanel.START_QUESTION_Y + 60 * 2;
+			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
+			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
+			text = "";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE_OTHER;
+			width = 40;
+			height = 40;
+			x = Constants.GAME_WIDTH - 305;
+			y = ArcheOLogicPanel.START_QUESTION_Y + 60 * 2;
+			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
+			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
+			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL;
 			width = 40;
 			height = 40;

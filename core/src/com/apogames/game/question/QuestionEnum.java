@@ -6,6 +6,7 @@ public enum QuestionEnum {
     ONE_TILE_CHECK("question_enum_one_tile", 0, 0),
     HORIZONTAL_VERTICAL_BORDER_CHECK("question_enum_horizontal_border", 1, 0),
     EMPTY_NEXT_TILE("question_enum_empty_next_tile", 1, 1),
+    TILE_NEXT_TILE("question_enum_tile_next_tile", 1, 2),
     EMPTY("question_enum_empty", 0, 1),
     AMOUNT_TILES("question_enum_amount_tiles", 0, 2),
     SAND_AND_GRASS_CHECK("question_enum_sand_and_grass", 0, 3);

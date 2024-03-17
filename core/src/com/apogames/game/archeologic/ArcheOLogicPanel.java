@@ -39,6 +39,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     public static final String FUNCTION_QUESTION_QUESTION_REAL = "ARCHEOLOGIC_QUESTION_QUESTION_REAL";
     public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN";
     public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE";
+    public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE";
+    public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE_OTHER = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE_OTHER";
     public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN_HORIZONTAL";
     public static final String FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE = "ARCHEOLOGIC_QUESTION_QUESTION_DROPDOWN_STRING_SIDE";
     public static final String FUNCTION_QUESTION_QUESTION_CLOSE = "ARCHEOLOGIC_QUESTION_QUESTION_CLOSE";
@@ -98,10 +100,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_TEST).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_CHECK).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(true);
-        if (this.puzzle) {
-            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
-            getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_NEXT_HINT).setVisible(true);
-        }
+        setPuzzleButtonVisibility();
     }
 
     private void setAllButtonVisible(boolean visible) {
@@ -119,6 +118,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_REAL).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE_OTHER).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_CLOSE).setVisible(visible);
@@ -130,10 +131,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         for (int i = 0; i < QuestionEnum.values().length; i++) {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name()).setVisible(visible);
         }
-        if (this.puzzle) {
-            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
-            getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_NEXT_HINT).setVisible(true);
-        }
+        setPuzzleButtonVisibility();
 
         getMainPanel().getButtonByFunction(FUNCTION_HINT_UP).setVisible(false);
         getMainPanel().getButtonByFunction(FUNCTION_HINT_DOWN).setVisible(false);
@@ -153,15 +151,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         if (this.game == null) {
             this.game = new GameEntity();
 
-            ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN));
-            buttonByFunction.setCurTiles(this.game.getCurrentTiles());
-
-            buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE));
-            buttonByFunction.setCurTiles(this.game.getCurrentTiles());
-
-            buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL));
-            buttonByFunction.setCurTiles(this.game.getCurrentTiles());
-
+            setCurTilesForButtons();
         }
         this.curAddQuestionString = Localization.getInstance().getCommon().get("question_add_column")+" A?";
 
@@ -174,11 +164,23 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.setNeededButtonsVisible();
     }
 
+    private void setCurTilesForButtons() {
+        setCurTileInButton(FUNCTION_QUESTION_QUESTION_DROPDOWN);
+        setCurTileInButton(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE);
+        setCurTileInButton(FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE);
+        setCurTileInButton(FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE_OTHER);
+        setCurTileInButton(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL);
+    }
+
+    private void setCurTileInButton(String buttonString) {
+        ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(buttonString));
+        buttonByFunction.setCurTiles(this.game.getCurrentTiles());
+    }
+
     public void setPuzzle(boolean puzzle) {
         this.puzzle = puzzle;
         if (this.puzzle) {
-            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
-            getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_NEXT_HINT).setVisible(true);
+            this.setPuzzleButtonVisibility();
             this.setUpPuzzle(false);
         }
     }
@@ -209,10 +211,11 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             }
         }
 
+        int maxOptimum = 3;
         int randomQuestion = -1;
         if ((this.getGame().getDifficulty() == Difficulty.EASY && count < hints) || (addRandom)) {
             do {
-                randomQuestion = (int) (Math.random() * 6);
+                randomQuestion = (int) (Math.random() * 7);
             } while (chosenList.contains(randomQuestion));
             chosenList.add(randomQuestion);
         }
@@ -225,7 +228,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         Question pickedQuestion = null;
         ArrayList<Integer> filterResult = null;
         if (randomQuestion == 0 || randomQuestion == -1) {
-            if (randomQuestion == 0 && count > 2) {
+            if (randomQuestion == 0 && count > maxOptimum) {
                 int counterRepeat = 0;
                 ArrayList<Integer> filter;
                 Question question;
@@ -267,7 +270,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
 
         if (randomQuestion == 1 || randomQuestion == -1) {
-            if (randomQuestion == 1 && count > 2) {
+            if (randomQuestion == 1 && count > maxOptimum) {
                 int counterRepeat = 0;
                 ArrayList<Integer> filter;
                 Question question;
@@ -308,7 +311,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
 
         if (randomQuestion == 2 || randomQuestion == -1) {
-            if (randomQuestion == 2 && count > 2) {
+            if (randomQuestion == 2 && count > maxOptimum) {
                 int counterRepeat = 0;
                 ArrayList<Integer> filter;
                 Question question;
@@ -349,7 +352,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
 
         if (randomQuestion == 3 || randomQuestion == -1) {
-            if (randomQuestion == 3 && count > 2) {
+            if (randomQuestion == 3 && count > maxOptimum) {
                 int counterRepeat = 0;
                 ArrayList<Integer> filter;
                 Question question;
@@ -393,7 +396,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
 
         if (randomQuestion == 4 || randomQuestion == -1) {
-            if (randomQuestion == 4 && count > 2) {
+            if (randomQuestion == 4 && count > maxOptimum) {
                 int counterRepeat = 0;
                 ArrayList<Integer> filter;
                 Question question;
@@ -440,7 +443,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
 
         if (randomQuestion == 5 || randomQuestion == -1) {
-            if (randomQuestion == 5 && count > 2) {
+            if (randomQuestion == 5 && count > maxOptimum) {
                 int counterRepeat = 0;
                 ArrayList<Integer> filter;
                 Question question;
@@ -462,6 +465,40 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                         smallest = filter.size();
                         pickedQuestion = question;
                         filterResult = new ArrayList<>(filter);
+                    }
+                }
+            }
+        }
+
+        if (randomQuestion == 6 || randomQuestion == -1) {
+            if (randomQuestion == 6 && count > maxOptimum) {
+                int counterRepeat = 0;
+                ArrayList<Integer> filter;
+                Question question;
+                do {
+                    int tile = (int)(Math.random() * this.game.getCurrentTiles().size());
+                    int otherTile;
+                    do {
+                        otherTile = (int)(Math.random() * this.game.getCurrentTiles().size());
+                    } while (otherTile == tile);
+                    question = new TileNextTile(this.game.getSolution(), this.game.getCurrentTiles().get(tile).getTile().getTileNumber(), this.game.getCurrentTiles().get(tile).getTile().getPossibilities().get(0), this.game.getCurrentTiles().get(otherTile).getTile().getTileNumber(), this.game.getCurrentTiles().get(otherTile).getTile().getPossibilities().get(0));
+                    filter = question.filter(possibleSolutions, possibleSolutionsReal);
+                    counterRepeat += 1;
+                } while ((filter.size() == smallest && smallest != 1) && counterRepeat < MAX_REPEAT);
+                smallest = filter.size();
+                pickedQuestion = question;
+                filterResult = new ArrayList<>(filter);
+            } else {
+                for (int i = 0; i < this.game.getCurrentTiles().size(); i++) {
+                    for (int j = i + 1; j < this.game.getCurrentTiles().size(); j++) {
+                        Question question = new TileNextTile(this.game.getSolution(), this.game.getCurrentTiles().get(i).getTile().getTileNumber(), this.game.getCurrentTiles().get(i).getTile().getPossibilities().get(0), this.game.getCurrentTiles().get(j).getTile().getTileNumber(), this.game.getCurrentTiles().get(j).getTile().getPossibilities().get(0));
+                        ArrayList<Integer> filter = question.filter(possibleSolutions, possibleSolutionsReal);
+
+                        if ((filter.size() < smallest && !filter.isEmpty()) || (filter.size() == smallest && filterResult == null)) {
+                            smallest = filter.size();
+                            pickedQuestion = question;
+                            filterResult = new ArrayList<>(filter);
+                        }
                     }
                 }
             }
@@ -544,17 +581,11 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.won = false;
         this.checkQuestion = false;
 
-        ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN));
-        buttonByFunction.setCurTiles(this.game.getCurrentTiles());
-
-        buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE));
-        buttonByFunction.setCurTiles(this.game.getCurrentTiles());
-
-        buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL));
-        buttonByFunction.setCurTiles(this.game.getCurrentTiles());
+        setCurTilesForButtons();
 
         setAllNextQuestions();
         setNextCosts();
+        this.resetTiles();
 
         this.setPuzzle(this.puzzle);
     }
@@ -579,14 +610,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.game.choseNewSolution();
         this.resetTiles();
 
-        ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN));
-        buttonByFunction.setCurTiles(this.game.getCurrentTiles());
-
-        buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE));
-        buttonByFunction.setCurTiles(this.game.getCurrentTiles());
-
-        buttonByFunction = (ApoButtonImageDropdown)(this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL));
-        buttonByFunction.setCurTiles(this.game.getCurrentTiles());
+        setCurTilesForButtons();
 
         setNeededButtonsVisible();
 
@@ -653,6 +677,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_OTHER).setSelect(false);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(true);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE).setVisible(false);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE).setVisible(false);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE_OTHER).setVisible(false);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(false);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(false);
         } else {
@@ -660,6 +686,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_OTHER).setSelect(true);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN).setVisible(false);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE).setVisible(true);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE).setVisible(true);
+            this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE_OTHER).setVisible(true);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL).setVisible(true);
             this.getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE).setVisible(true);
         }
@@ -695,10 +723,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         for (String s : askOrder) {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_ROW + s).setVisible(showQuestion);
         }
-        if (this.puzzle) {
-            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
-            getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_NEXT_HINT).setVisible(true);
-        }
+        setPuzzleButtonVisibility();
 //        for (int i = 0; i < QuestionEnum.values().length; i++) {
 //            if (QuestionEnum.values()[i].getQuestionType() == showTabIndex) {
 //                getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name()).setVisible(showQuestion);
@@ -706,6 +731,15 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 //                getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name()).setVisible(false);
 //            }
 //        }
+    }
+
+    private void setPuzzleButtonVisibility() {
+        if (this.puzzle) {
+            getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
+            if (this.game.getDifficulty() == Difficulty.EASY) {
+                getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_NEXT_HINT).setVisible(true);
+            }
+        }
     }
 
     @Override
@@ -737,6 +771,16 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE)) {
                 setAllNextQuestions();
                 mouseButtonFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.EMPTY_NEXT_TILE.name());
+                return;
+            }
+            if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE)) {
+                setAllNextQuestions();
+                mouseButtonFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.TILE_NEXT_TILE.name());
+                return;
+            }
+            if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE_OTHER)) {
+                setAllNextQuestions();
+                mouseButtonFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.TILE_NEXT_TILE.name());
                 return;
             }
             if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL) || function.equals(ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE)) {
@@ -880,7 +924,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.resetCurAsk();
         this.setNeededButtonsVisible();
         for (Question[] nextQuestion : nextQuestions) {
-            for (int j = 0; j < nextQuestions[0].length; j++) {
+            for (int j = 0; j < nextQuestion.length; j++) {
                 if (nextQuestion[j] != null) {
                     nextQuestion[j].setAddCostsBecauseLast(0);
                 }
@@ -950,6 +994,10 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 } else if (values[i] == QuestionEnum.EMPTY_NEXT_TILE) {
                     ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE);
                     nextQuestion = new EmptyNextTile(this.game.getSolution(), this.game.getRealSolution(), buttonByFunction.getTileNumber(), buttonByFunction.getTileArray());
+                } else if (values[i] == QuestionEnum.TILE_NEXT_TILE) {
+                    ApoButtonImageDropdown buttonByFunction = (ApoButtonImageDropdown)getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE);
+                    ApoButtonImageDropdown buttonOtherByFunction = (ApoButtonImageDropdown)getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE_OTHER);
+                    nextQuestion = new TileNextTile(this.game.getSolution(), buttonByFunction.getTileNumber(), buttonByFunction.getTileArray(), buttonOtherByFunction.getTileNumber(), buttonOtherByFunction.getTileArray());
                 } else if (values[i] == QuestionEnum.AMOUNT_TILES) {
                     nextQuestion = new AmountTiles(column, row, this.game.getSolution());
                 } else if (values[i] == QuestionEnum.SAND_AND_GRASS_CHECK) {
