@@ -6,6 +6,7 @@ import com.apogames.common.Localization;
 import com.apogames.help.Helper;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class TileNextTile extends Question {
 
@@ -131,9 +132,12 @@ public class TileNextTile extends Question {
             }
         }
 
-        addX += 150;
+        addX += 130;
+        if (Localization.getInstance().getLocale() != Locale.ENGLISH && Localization.getInstance().getLocale() != Locale.UK && Localization.getInstance().getLocale() != Locale.US) {
+            addX += 50;
+        }
         if (!this.next) {
-            addX += 60;
+            addX += 50;
         }
         extraAddY = 0;
         if (this.currentOtherTile.length == 1) {

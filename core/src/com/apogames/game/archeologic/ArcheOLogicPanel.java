@@ -574,6 +574,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     public void setNewLevel(Difficulty difficulty, boolean puzzle) {
         this.puzzle = puzzle;
 
+        this.resetTiles();
         this.game.setNewLevel(difficulty, puzzle);
 
         this.resetCurAsk();
@@ -585,7 +586,6 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         setAllNextQuestions();
         setNextCosts();
-        this.resetTiles();
 
         this.setPuzzle(this.puzzle);
     }
