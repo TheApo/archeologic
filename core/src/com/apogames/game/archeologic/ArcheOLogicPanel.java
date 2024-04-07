@@ -213,7 +213,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         int maxOptimum = 3;
         int randomQuestion = -1;
-        if ((this.getGame().getDifficulty() == Difficulty.EASY && count < hints) || (addRandom)) {
+        if ((this.getGame().getDifficulty() != Difficulty.HARD && count < hints) || (addRandom)) {
             do {
                 randomQuestion = (int) (Math.random() * 7);
             } while (chosenList.contains(randomQuestion));
@@ -507,7 +507,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         System.out.println("Anzahl Möglichkeiten left: " + smallest+" startedWith: "+possibleSolutions.size()+" hints: "+hints+" count: "+count);
         if (addRandom) {
             this.addQuestion(pickedQuestion);
-        } else if (this.getGame().getDifficulty() == Difficulty.EASY && count < hints) {
+        } else if (this.getGame().getDifficulty() != Difficulty.HARD && count < hints) {
             this.addQuestion(pickedQuestion);
             setUpPuzzleNext(indexList, count, hints, chosenList, filterResult);
         } else {
@@ -607,8 +607,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         this.won = false;
         this.checkQuestion = false;
 
-        this.game.choseNewSolution();
         this.resetTiles();
+        this.game.choseNewSolution();
 
         setCurTilesForButtons();
 
@@ -736,7 +736,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     private void setPuzzleButtonVisibility() {
         if (this.puzzle) {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
-            if (this.game.getDifficulty() == Difficulty.EASY) {
+            if (this.game.getDifficulty() != Difficulty.HARD) {
                 getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_NEXT_HINT).setVisible(true);
             }
         }
@@ -1164,7 +1164,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 getMainPanel().drawString(askOrder[i], Constants.GAME_WIDTH - 450 + i * 45, 170, color, AssetLoader.font30, DrawString.MIDDLE, true, false);
             }
         } else {
-            getMainPanel().drawString(Localization.getInstance().getCommon().get("puzzle_mode"), Constants.GAME_WIDTH - 600, 170, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.BEGIN, true, false);
+            getMainPanel().drawString(Localization.getInstance().getCommon().get("puzzle_mode") + " - " + this.game.getDifficulty().getText(), Constants.GAME_WIDTH - 600, 170, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.BEGIN, true, false);
         }
 
         getMainPanel().drawString(Localization.getInstance().getCommon().get("question_hint"), Constants.GAME_WIDTH - 600, 220, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.BEGIN, true, false);

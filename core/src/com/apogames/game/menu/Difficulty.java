@@ -2,9 +2,10 @@ package com.apogames.game.menu;
 
 public enum Difficulty {
 
-    EASY("Normal", 0),
+    EASY("Easy", 0),
+    MEDIUM("Medium", 1),
 
-    HARD("Hard", 1);
+    HARD("Hard", 2);
 
     private final String text;
 

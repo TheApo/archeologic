@@ -2,7 +2,7 @@ package com.apogames.game.tiles;
 
 public class ArcheOLogicTiles extends GivenTiles {
 
-    private final byte[][] tileOneByte = new byte[][] {
+    private final byte[][] tileFourByte = new byte[][] {
             {2, 0},
             {1, 0},
             {1, 1},
@@ -19,7 +19,7 @@ public class ArcheOLogicTiles extends GivenTiles {
             {2, 0},
     };
 
-    private final byte[][] tileFourByte = new byte[][] {
+    private final byte[][] tileOneByte = new byte[][] {
             {2, 0},
             {1, 1},
             {0, 1},
@@ -72,7 +72,7 @@ public class ArcheOLogicTiles extends GivenTiles {
 
     @Override
     public int[] getDifficultyTiles() {
-        return new int[] {5, 3, 4, 3};
+        return new int[] {5, 4, 3, 3, 4, 3};
     }
 
 }

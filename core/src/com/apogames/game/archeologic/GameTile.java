@@ -30,6 +30,8 @@ public class GameTile {
 
     private int genDif = 0;
 
+    private boolean fixed = false;
+
     GameTile(Tile tile) {
         this.tile = tile;
 
@@ -38,6 +40,14 @@ public class GameTile {
 
     public Tile getTile() {
         return tile;
+    }
+
+    public boolean isFixed() {
+        return fixed;
+    }
+
+    public void setFixed(boolean fixed) {
+        this.fixed = fixed;
     }
 
     public void changePosition(float x, float y) {
@@ -55,7 +65,9 @@ public class GameTile {
         this.gameY = (this.nextY - 3 * Constants.TILE_SIZE) / Constants.TILE_SIZE;
     }
 
-
+    public void setTileGamePosition(int gameX, int gameY) {
+        this.changePosition((gameX + 2) * Constants.TILE_SIZE, (gameY + 3) * Constants.TILE_SIZE);
+    }
 
     public int getGameX() {
         return gameX;
@@ -236,6 +248,8 @@ public class GameTile {
         screen.getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
         if (over) {
             screen.getRenderer().setColor(Constants.COLOR_YELLOW[0], Constants.COLOR_YELLOW[1], Constants.COLOR_YELLOW[2], 1f);
+        } else if (isFixed()) {
+            screen.getRenderer().setColor(Constants.COLOR_GREY[0], Constants.COLOR_GREY[1], Constants.COLOR_GREY[2], 1f);
         } else {
             return;
         }

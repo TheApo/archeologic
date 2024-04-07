@@ -204,6 +204,8 @@ public class Menu extends SequentiallyThinkingScreenModel {
 
         getMainPanel().drawString(this.difficulty.getText(), Constants.GAME_WIDTH/2f, buttonDifficultyLeft.getY() + buttonDifficultyLeft.getHeight()/2, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.MIDDLE, true, false);
 
+        getMainPanel().drawString("Version: "+Constants.VERSION, Constants.GAME_WIDTH/2f, Constants.GAME_HEIGHT - 20f, Constants.COLOR_WHITE, AssetLoader.font15, DrawString.MIDDLE, false, false);
+
         getMainPanel().spriteBatch.end();
 
         for (ApoButton button : this.getMainPanel().getButtons()) {

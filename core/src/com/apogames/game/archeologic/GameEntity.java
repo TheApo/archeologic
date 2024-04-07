@@ -5,6 +5,7 @@ import com.apogames.asset.AssetLoader;
 import com.apogames.backend.GameScreen;
 import com.apogames.game.knuthAlgoX.AlgorithmX;
 import com.apogames.game.knuthAlgoX.MyPuzzleADayBinary;
+import com.apogames.game.knuthAlgoX.PlacedTileHelper;
 import com.apogames.game.menu.Difficulty;
 import com.apogames.game.question.OneSpecificPosition;
 import com.apogames.game.question.Question;
@@ -46,6 +47,9 @@ public class GameEntity {
 
     private int maxReset;
 
+    private byte[][] placedTileInSolution;
+    private ArrayList<PlacedTileHelper> tiles = new ArrayList<>();
+
     public GameEntity() {
         init();
     }
@@ -83,8 +87,9 @@ public class GameEntity {
         int startY = 9 * Constants.TILE_SIZE;
 
         for (GameTile tile : this.currentTiles) {
-            tile.changePosition(startX, startY);
-
+            if (!tile.isFixed()) {
+                tile.changePosition(startX, startY);
+            }
             startX += (tile.getTile().getPossibilities().get(tile.getCurrentTile())[0].length) * Constants.TILE_SIZE;
             if (startX >= 11 * Constants.TILE_SIZE) {
                 startX = 8 * Constants.TILE_SIZE;
@@ -107,7 +112,16 @@ public class GameEntity {
         return questions;
     }
 
+    public byte[][] getPlacedTileInSolution() {
+        return placedTileInSolution;
+    }
+
     public void choseNewSolution() {
+        for (GameTile tile : this.currentTiles) {
+            tile.setFixed(false);
+        }
+        this.resetTiles();
+
         this.costs = 0;
         this.questions.clear();
         this.curStartQuestion = 0;
@@ -116,11 +130,31 @@ public class GameEntity {
         int ySize = 5;
 
         byte[][] goal = new byte[ySize][xSize];
-        int add = this.puzzle ? 2 : 0;
+        int add = this.puzzle ? 3 : 0;
         int size = this.givenTiles.getDifficultyTiles()[this.difficulty.getGivenTiles() + add];
-        prefillGoal(goal, size);
 
         MyPuzzleADayBinary myPuzzleADayBinary = new MyPuzzleADayBinary(givenTiles.getAllTiles());
+        this.placedTileInSolution = new byte[ySize][xSize];
+        this.tiles.clear();
+        if (this.puzzle && this.difficulty == Difficulty.EASY) {
+            int tiles = 1;
+            if (this.givenTiles.getMaxTile() == 7) {
+                tiles = 2;
+            }
+            myPuzzleADayBinary.setRandomSolution(xSize, ySize, tiles);
+            this.placedTileInSolution = myPuzzleADayBinary.getRandomSolution();
+            this.tiles = new ArrayList<>(myPuzzleADayBinary.getUsedTiles());
+            for (GameTile tile : this.currentTiles) {
+                for (PlacedTileHelper help : this.tiles) {
+                    if (tile.getTile().getTileNumber() == help.getTileNumber()) {
+                        tile.setFixed(true);
+                        tile.setCurrentTile(help.getPossibility());
+                        tile.setTileGamePosition(help.getPlacedX(), help.getPlacedY());
+                    }
+                }
+            }
+        }
+        prefillGoal(goal, size);
         byte[][] matrix = myPuzzleADayBinary.getMatrix(goal);
 
         AlgorithmX algoX = new AlgorithmX();
@@ -153,7 +187,6 @@ public class GameEntity {
                     }
                 }
             }
-            System.out.println();
         }
     }
 
@@ -252,7 +285,7 @@ public class GameEntity {
         while (count > 0) {
             int x = (int)(Math.random() * goal[0].length);
             int y = (int)(Math.random() * goal.length);
-            if (goal[y][x] == 0) {
+            if (goal[y][x] == 0 && this.placedTileInSolution[y][x] == 0) {
                 goal[y][x] = values.remove((int)(Math.random() * values.size()));
                 GameTile gameTile = new GameTile(new Tile(1, new byte[][]{{goal[y][x]}}));
                 gameTile.changePosition((2 + x) * Constants.TILE_SIZE, (3+y) * Constants.TILE_SIZE);
@@ -380,6 +413,9 @@ public class GameEntity {
         boolean found = false;
         for (GameTile tile : this.currentTiles) {
             //tile.isIn(mouseX, mouseY);
+            if (tile.isFixed()) {
+                continue;
+            }
             if (tile.getGenDif() > 0) {
                 if (tile.click(mouseX, mouseY)) {
                     fillCurrentSolution();
@@ -391,6 +427,9 @@ public class GameEntity {
 
         if (!found) {
             for (GameTile tile : this.currentTiles) {
+                if (tile.isFixed()) {
+                    continue;
+                }
                 if (tile.click(mouseX, mouseY)) {
                     fillCurrentSolution();
                     break;
@@ -438,6 +477,9 @@ public class GameEntity {
     public void mousePressed(int x, int y, boolean isRightButton) {
         mouseMoved(x, y);
         for (GameTile tile : this.currentTiles) {
+            if (tile.isFixed()) {
+                continue;
+            }
             if (tile.pressMouse(x, y)) {
                 break;
             }
@@ -447,6 +489,9 @@ public class GameEntity {
     public void mouseDragged(int x, int y, boolean isRightButton) {
         for (GameTile tile : this.currentTiles) {
             //mouseMoved(x, y);
+            if (tile.isFixed()) {
+                continue;
+            }
             if (tile.dragTile(x, y)) {
                 this.fillCurrentSolution();
                 break;
