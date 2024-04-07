@@ -9,7 +9,8 @@ public enum QuestionEnum {
     TILE_NEXT_TILE("question_enum_tile_next_tile", 1, 2),
     EMPTY("question_enum_empty", 0, 1),
     AMOUNT_TILES("question_enum_amount_tiles", 0, 2),
-    SAND_AND_GRASS_CHECK("question_enum_sand_and_grass", 0, 3);
+    SAND_AND_GRASS_CHECK("question_enum_sand_and_grass", 0, 3),
+    CORNER_BORDER_CHECK("question_enum_corner_border", 1, 3);
 
     private final String text;
 

@@ -358,6 +358,16 @@ public class ButtonProvider {
 			this.game.getButtons().add(button);
 
 			text = "";
+			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_CORNER;
+			width = 40;
+			height = 40;
+			x = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth()/2 - width/2 - 72;
+			y = ArcheOLogicPanel.START_QUESTION_Y + 60 * 3;
+			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
+			button.setFont(AssetLoader.font25);
+			this.game.getButtons().add(button);
+
+			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE;
 			width = 330;
 			height = 40;
