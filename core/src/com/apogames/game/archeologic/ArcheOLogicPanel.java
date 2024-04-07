@@ -615,6 +615,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         setNeededButtonsVisible();
 
         this.setPuzzle(this.puzzle);
+
+        this.mouseMoved(0, 0);
     }
 
     @Override
@@ -744,6 +746,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     @Override
     public void mouseButtonFunction(String function) {
+        this.isPressed = false;
         if (this.showQuestion) {
             if (function.equals(ArcheOLogicPanel.FUNCTION_QUESTIONS_ORIGINAL)) {
                 this.changeShowTabIndex(ORIGINAL_QUESTIONS);

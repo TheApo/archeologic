@@ -10,6 +10,7 @@ import com.apogames.game.menu.Difficulty;
 import com.apogames.game.question.OneSpecificPosition;
 import com.apogames.game.question.Question;
 import com.apogames.game.tiles.*;
+import com.badlogic.gdx.Gdx;
 
 import java.util.ArrayList;
 

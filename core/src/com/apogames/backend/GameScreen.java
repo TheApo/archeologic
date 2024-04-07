@@ -208,6 +208,9 @@ public class GameScreen implements Screen, InputProcessor {
         if ((this.buttonFunction != null) && (!this.buttonFunction.isEmpty())) {
             this.model.mouseButtonFunction(this.buttonFunction);
             this.buttonFunction = "";
+            clickPressedArray.clear();
+            clickDraggedArray.clear();
+            clickReleasedArray.clear();
             buttonClickSound();
         }
         if (!this.clickPressedArray.isEmpty()) {
