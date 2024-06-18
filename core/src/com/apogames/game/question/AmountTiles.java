@@ -61,10 +61,10 @@ public class AmountTiles extends Question {
     }
 
     @Override
-    public ArrayList<Integer> filter(ArrayList<byte[][]> solutionsReal, ArrayList<byte[][]> solutions) {
+    public ArrayList<Integer> filter(ArrayList<byte[][]> solutionsReal, ArrayList<byte[][]> possibleSolutionsPossibilities, ArrayList<byte[][]> possibleSolutions) {
         ArrayList<Integer> results = new ArrayList<>();
-        for (int i = 0; i < solutionsReal.size(); i++) {
-            byte[][] currentSolution = solutionsReal.get(i);
+        for (int i = 0; i < possibleSolutions.size(); i++) {
+            byte[][] currentSolution = possibleSolutions.get(i);
             boolean found = true;
             if (getColumn() >= 0) {
                 HashSet<Byte> differentTiles = new HashSet<>();

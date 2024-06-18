@@ -113,6 +113,8 @@ public class GameEntity {
         return questions;
     }
 
+
+
     public byte[][] getPlacedTileInSolution() {
         return placedTileInSolution;
     }
@@ -329,6 +331,13 @@ public class GameEntity {
             }
         }
         return true;
+    }
+
+    public void makeQuestionErrorWhenWrong() {
+        for (Question question : this.questions) {
+            //question.filter();
+
+        }
     }
 
     public void setAllSolutions(ArrayList<byte[][]> possibleSolutions, ArrayList<byte[][]> possibleSolutionsPossibilities) {

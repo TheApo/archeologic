@@ -77,7 +77,7 @@ public class TileNextTile extends Question {
     }
 
     @Override
-    public ArrayList<Integer> filter(ArrayList<byte[][]> solutions, ArrayList<byte[][]> solutionsReal) {
+    public ArrayList<Integer> filter(ArrayList<byte[][]> solutionsReal, ArrayList<byte[][]> possibleSolutionsPossibilities, ArrayList<byte[][]> solutions) {
         ArrayList<Integer> results = new ArrayList<>();
         for (int i = 0; i < solutionsReal.size(); i++) {
             byte[][] currentSolution = solutions.get(i);

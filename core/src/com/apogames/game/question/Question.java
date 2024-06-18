@@ -11,6 +11,7 @@ public abstract class Question {
 
     private QuestionEnum questionEnum;
 
+    private boolean correct = true;
     private int row = -1;
     private int column = -1;
 
@@ -36,13 +37,21 @@ public abstract class Question {
         this.column = column;
     }
 
+    public boolean isCorrect() {
+        return correct;
+    }
+
+    public void setCorrect(boolean correct) {
+        this.correct = correct;
+    }
+
     public abstract void draw(GameScreen screen, int x, int y, int size);
     public abstract int getCosts();
     public abstract String getText();
 
     public abstract String getAnswer();
 
-    public abstract ArrayList<Integer> filter(ArrayList<byte[][]> solutionsReal, ArrayList<byte[][]> solutions);
+    public abstract ArrayList<Integer> filter(ArrayList<byte[][]> possibleSolutionsReal, ArrayList<byte[][]> possibleSolutionsPossibilities, ArrayList<byte[][]> possibleSolutions);
 
     public int getCompleteCosts() {
         return completeCosts;
