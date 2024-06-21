@@ -20,6 +20,7 @@ public class TileNextTile extends Question {
     private byte[][] currentOtherTile;
 
     public TileNextTile(byte[][] solution, int tile, byte[][] currentTile, int otherTile, byte[][] currentOtherTile) {
+        super();
         for (int y = 0; y < solution.length; y++) {
             for (int x = 0; x < solution[0].length; x++) {
                 if (solution[y][x] == otherTile) {

@@ -1,10 +1,15 @@
 package com.apogames.game.question;
 
+import com.apogames.Constants;
+import com.apogames.asset.AssetLoader;
+import com.apogames.backend.DrawString;
 import com.apogames.backend.GameScreen;
+import com.apogames.entity.ApoEntity;
+import com.apogames.game.archeologic.ArcheOLogicPanel;
 
 import java.util.ArrayList;
 
-public abstract class Question {
+public abstract class Question extends ApoEntity {
 
     public static final int ADD_COST = 2;
     public static final int DECREASE_COST = 1;
@@ -20,6 +25,12 @@ public abstract class Question {
     private int addCostsBecauseLast = 0;
 
     private String text;
+
+    private boolean error = false;
+
+    public Question() {
+        super(0, 0, 300, 100);
+    }
 
     public int getRow() {
         return row;
@@ -94,5 +105,42 @@ public abstract class Question {
 
     public boolean withAskCosts() {
         return true;
+    }
+
+    public boolean hasErrors() {
+        return this.error;
+    }
+
+    public void setError(boolean error) {
+        this.error = error;
+    }
+
+    public void click(int x, int y) {
+        if (this.intersects(x, y)) {
+            this.setSelect(!this.isSelect());
+        }
+    }
+
+    public void render(GameScreen screen, int changeX, int changeY) {
+        ArcheOLogicPanel.renderTextAndTileQuestion(screen, text, (int)(this.getX() + changeX), (int)(this.getY() + changeY));
+
+        if (getCompleteCosts() > 0) {
+            screen.spriteBatch.draw(AssetLoader.coinTextureRegion, (Constants.GAME_WIDTH - 109), 238 + (i - this.game.getCurStartQuestion()) * 25, 20, 20);
+            screen.drawString(String.valueOf(getCompleteCosts()), Constants.GAME_WIDTH - 100, 250 + (i - this.game.getCurStartQuestion()) * 25, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
+        }
+    }
+
+    public void renderFilled(GameScreen screen, int changeX, int changeY) {
+        screen.getRenderer().setColor(Constants.COLOR_BLUE_BRIGHT[0], Constants.COLOR_BLUE_BRIGHT[1], Constants.COLOR_BLUE_BRIGHT[2], 1f);
+        screen.getRenderer().roundedRect(getX() + changeX, getY() + changeY, getWidth(), getHeight(), 5);
+    }
+
+    public void renderLine(GameScreen screen, int changeX, int changeY) {
+        if (this.error) {
+            screen.getRenderer().setColor(Constants.COLOR_RED[0], Constants.COLOR_RED[1], Constants.COLOR_RED[2], 1f);
+        } else {
+            screen.getRenderer().setColor(Constants.COLOR_WHITE[0], Constants.COLOR_WHITE[1], Constants.COLOR_WHITE[2], 1f);
+        }
+        screen.getRenderer().roundedRectLine(getX() + changeX, getY() + changeY, getWidth(), getHeight(), 5);
     }
 }

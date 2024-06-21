@@ -11,6 +11,7 @@ public class SandAndGrassCheck extends Question {
     private int grass = 0;
 
     public SandAndGrassCheck(int column, int row, byte[][] solution) {
+        super();
         if (column >= 0) {
             this.sand = 0;
             this.grass = 0;

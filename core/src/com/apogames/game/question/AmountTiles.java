@@ -11,6 +11,7 @@ public class AmountTiles extends Question {
     private int answer = 0;
 
     public AmountTiles(int column, int row, byte[][] solution) {
+        super();
         if (column >= 0) {
             this.answer = 0;
             HashSet<Byte> differentTiles = new HashSet<>();

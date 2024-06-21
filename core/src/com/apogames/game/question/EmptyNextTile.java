@@ -16,6 +16,7 @@ public class EmptyNextTile extends Question {
     private byte[][] currentTile;
 
     public EmptyNextTile(byte[][] solution, byte[][] solutionReal, int tile, byte[][] currentTile) {
+        super();
         for (int y = 0; y < solution.length; y++) {
             for (int x = 0; x < solution[0].length; x++) {
                 if (solutionReal[y][x] == 0) {

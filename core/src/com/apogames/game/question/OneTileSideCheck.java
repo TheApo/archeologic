@@ -17,6 +17,7 @@ public class OneTileSideCheck extends Question {
     private byte[][] currentTile;
 
     public OneTileSideCheck(int column, int row, byte[][] solution, int tile, byte[][] currentTile) {
+        super();
         this.tile = tile;
 
         this.currentTile = Helper.clone(currentTile);

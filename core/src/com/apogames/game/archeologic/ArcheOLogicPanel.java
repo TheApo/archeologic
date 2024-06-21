@@ -3,6 +3,7 @@ package com.apogames.game.archeologic;
 import com.apogames.Constants;
 import com.apogames.asset.AssetLoader;
 import com.apogames.backend.DrawString;
+import com.apogames.backend.GameScreen;
 import com.apogames.backend.SequentiallyThinkingScreenModel;
 import com.apogames.common.Localization;
 import com.apogames.entity.ApoButton;
@@ -1222,12 +1223,13 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         for (int i = this.game.getCurStartQuestion(); i < this.game.getCurStartQuestion() + GameEntity.MAX_SHOWN_QUESTION && i < this.game.getQuestions().size(); i++) {
             String text = this.game.getQuestions().get(i).getText();
+            int costs = this.game.getQuestions().get(i).getCompleteCosts();
 
-            renderTextAndTileQuestion(text, Constants.GAME_WIDTH - 575, 250 + (i - this.game.getCurStartQuestion()) * 25);
+            renderTextAndTileQuestion(getMainPanel(), text, Constants.GAME_WIDTH - 575, 250 + (i - this.game.getCurStartQuestion()) * 25);
 
-            if (this.game.getQuestions().get(i).getCompleteCosts() > 0) {
+            if (costs > 0) {
                 getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, (Constants.GAME_WIDTH - 109), 238 + (i - this.game.getCurStartQuestion()) * 25, 20, 20);
-                getMainPanel().drawString(String.valueOf(this.game.getQuestions().get(i).getCompleteCosts()), Constants.GAME_WIDTH - 100, 250 + (i - this.game.getCurStartQuestion()) * 25, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
+                getMainPanel().drawString(String.valueOf(costs), Constants.GAME_WIDTH - 100, 250 + (i - this.game.getCurStartQuestion()) * 25, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
             }
         }
 
@@ -1276,7 +1278,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 BitmapFont font15 = AssetLoader.font15;
                 String text = Localization.getInstance().getCommon().get(questionEnumForQuestionType[i].getText())+" ";
 
-                float startX = renderTextAndTileQuestion(text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, ArcheOLogicPanel.START_QUESTION_Y + 27 + i * (50 + 10));
+                float startX = renderTextAndTileQuestion(getMainPanel(), text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, ArcheOLogicPanel.START_QUESTION_Y + 27 + i * (50 + 10));
 
                 //getMainPanel().drawString(text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, 277 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
                 if (this.showTabIndex != OTHER_QUESTIONS) {
@@ -1380,7 +1382,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
     }
 
-    private float renderTextAndTileQuestion(String text, int realStartX, int y) {
+    public static float renderTextAndTileQuestion(GameScreen screen, String text, int realStartX, int y) {
         boolean run = true;
         float startX = realStartX;
         int startIndex = 0;
@@ -1392,7 +1394,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 startIndex = startIndex + nextIndex + 2;
                 Constants.glyphLayout.setText(AssetLoader.font15, curText);
             }
-            getMainPanel().drawString(curText, startX, y, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.BEGIN, true, false);
+            screen.drawString(curText, startX, y, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.BEGIN, true, false);
 
             if (nextIndex > 0) {
                 startX += Constants.glyphLayout.width + 30;
@@ -1405,7 +1407,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 } else if (text.charAt(startIndex - 1) == 'W') {
                     value =  3;
                 }
-                getMainPanel().spriteBatch.draw(AssetLoader.backgroundTextureRegion[value], startX - 25, y - 11, 20, 20);
+                screen.spriteBatch.draw(AssetLoader.backgroundTextureRegion[value], startX - 25, y - 11, 20, 20);
             } else {
                 Constants.glyphLayout.setText(AssetLoader.font15, curText);
                 startX += Constants.glyphLayout.width;

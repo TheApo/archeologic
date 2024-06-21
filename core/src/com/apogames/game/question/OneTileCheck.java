@@ -20,6 +20,7 @@ public class OneTileCheck extends Question {
     private byte[][] currentTile;
 
     public OneTileCheck(int column, int row, byte[][] solution, byte[][] realSolution, int tile, byte[][] currentTile) {
+        super();
         this.tile = tile;
         this.currentTile = Helper.clone(currentTile);
 

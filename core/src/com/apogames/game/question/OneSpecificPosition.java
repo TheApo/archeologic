@@ -10,6 +10,7 @@ public class OneSpecificPosition extends Question {
     private int answer = 0;
 
     public OneSpecificPosition(int column, int row, byte[][] solution) {
+        super();
         this.answer = solution[row][column];
         this.setColumn(column);
         this.setRow(row);

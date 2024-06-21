@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class ErrorQuestion extends Question {
 
     public ErrorQuestion() {
+        super();
     }
 
     @Override

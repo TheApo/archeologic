@@ -17,6 +17,7 @@ public class OneTileCornerCheck extends Question {
     private byte[][] currentTile;
 
     public OneTileCornerCheck(byte[][] solution, int tile, byte[][] currentTile) {
+        super();
         this.tile = tile;
 
         this.currentTile = Helper.clone(currentTile);
