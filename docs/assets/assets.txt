@@ -19,9 +19,9 @@ i:fonts/pirate33.png:fonts/pirate33-84cb24508a6c81f007c0b2bce4a862c3.png:24283:i
 t:fonts/pirate40.fnt:fonts/pirate40-068ce2c6135ed45d55558d430d53bd0b.fnt:11107:application/unknown:1
 i:fonts/pirate40.png:fonts/pirate40-3b70e85b2f8943e83b1be6ed45b6047d.png:28739:image/png:1
 d:i18n:i18n:0:application/unknown:1
-b:i18n/settler.properties:i18n/settler-cb01084b7a5ccd7f82d27b54561144c5.properties:3812:application/unknown:1
-b:i18n/settler_de.properties:i18n/settler_de-2196a839ba6355bf55ae20653b620f87.properties:4057:application/unknown:1
-b:i18n/settler_en.properties:i18n/settler_en-4b590b813fbfb6c90fa2a281f385ab9f.properties:3843:application/unknown:1
+b:i18n/settler.properties:i18n/settler-53a7850462860f7b3ab3b2bdb7953c07.properties:3860:application/unknown:1
+b:i18n/settler_de.properties:i18n/settler_de-b1e953b0c7e7f7b7708da51721f4babc.properties:4101:application/unknown:1
+b:i18n/settler_en.properties:i18n/settler_en-a6d75305df6e493b3c476c3cc8af51be.properties:3891:application/unknown:1
 d:images:images:0:application/unknown:1
 i:images/background_2.png:images/background_2-7eed56f9d1488bca28a8c04201617e87.png:157283:image/png:1
 i:images/background_main.png:images/background_main-3dfa48c705f66681ab89dcc65b594f0c.png:693210:image/png:1
@@ -37,6 +37,7 @@ i:images/buttons_right.png:images/buttons_right-7542b169e47811ef4a5dbdd3dae3d185
 i:images/buttons_x.png:images/buttons_x-3253acc790744958892b5b46a2b4466f.png:4234:image/png:1
 i:images/coin.png:images/coin-80354f02d97c0219f96910238a2845a7.png:29123:image/png:1
 i:images/gameboard.png:images/gameboard-129b034eb3cd1f751fb04dd27b11f369.png:393068:image/png:1
+i:images/gameboard_little.png:images/gameboard_little-8fa971d9fc7154abefe84e3560dc2ef3.png:25018:image/png:1
 i:images/hud_menu.png:images/hud_menu-fa7066d3bc081a505ea2489b0e434529.png:211101:image/png:1
 i:images/water.png:images/water-cea5df4c6c21116267351a03a609aa7c.png:112332:image/png:1
 i:images/x.png:images/x-1892c8ce1483fd5b33fe51bc9bc2c54a.png:7908:image/png:1
