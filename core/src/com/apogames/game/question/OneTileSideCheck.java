@@ -113,7 +113,7 @@ public class OneTileSideCheck extends Question {
     @Override
     public ArrayList<Integer> filter(ArrayList<byte[][]> solutionsReal, ArrayList<byte[][]> possibleSolutionsPossibilities, ArrayList<byte[][]> solutions) {
         ArrayList<Integer> results = new ArrayList<>();
-        for (int i = 0; i < solutionsReal.size(); i++) {
+        for (int i = 0; i < solutions.size(); i++) {
             byte[][] solution = solutions.get(i);
             boolean found = true;
             int countOnBorder = 0;

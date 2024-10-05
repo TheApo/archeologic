@@ -16,6 +16,10 @@ public class OneSpecificPosition extends Question {
         this.setRow(row);
     }
 
+    public int getOneSpecificPositionAnswer() {
+        return this.answer;
+    }
+
     @Override
     public int getCosts() {
         return 0;

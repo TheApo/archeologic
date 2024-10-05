@@ -10,6 +10,8 @@ import java.util.Arrays;
 
 public class MyPuzzleADayBinary {
 
+    private final static int MAX_COUNTER = 100;
+
     public static final byte[][] GOAL = new byte[][] {
             {0,0,0,0,0},
             {0,0,0,3,0},
@@ -42,6 +44,8 @@ public class MyPuzzleADayBinary {
 
     private final ArrayList<PlacedTileHelper> usedTiles = new ArrayList<>();
 
+    private int placeInCounter = 0;
+
     public MyPuzzleADayBinary(ArrayList<Tile> allTiles) {
         this.allTiles = new ArrayList<>(allTiles);
     }
@@ -58,6 +62,10 @@ public class MyPuzzleADayBinary {
         return randomSolution;
     }
 
+    public byte[][] getRandomRealSolution() {
+        return randomRealSolution;
+    }
+
     public byte[][] getMatrix(byte[][] goal) {
         if (this.randomSolution == null) {
             this.randomSolution = new byte[goal.length][goal[0].length];
@@ -66,16 +74,21 @@ public class MyPuzzleADayBinary {
         return getMatrix(goal, this.randomSolution, this.randomRealSolution);
     }
 
-    public void setRandomSolution(int sizeX, int sizeY, int tileSize) {
+    public boolean setRandomSolution(int sizeX, int sizeY, int tileSize) {
         this.randomSolution = new byte[sizeY][sizeX];
         this.randomRealSolution = new byte[sizeY][sizeX];
         int count = 0;
         this.usedTiles.clear();
         while (count < tileSize) {
             byte[][] randomTile = getRandomTile(usedTiles);
+            placeInCounter = 0;
             placeTileInRandomSolution(randomTile);
+            if (this.placeInCounter >= MAX_COUNTER) {
+                return false;
+            }
             count += 1;
         }
+        return true;
     }
 
     private byte[][] copy(byte[][] array) {
@@ -91,6 +104,9 @@ public class MyPuzzleADayBinary {
     }
 
     private void placeTileInRandomSolution(byte[][] randomTile) {
+        if (placeInCounter > MAX_COUNTER) {
+            return;
+        }
         byte[][] nextRandomSolution = copy(this.randomSolution);
         byte[][] nextRealRandomSolution = copy(this.randomRealSolution);
 
@@ -100,6 +116,7 @@ public class MyPuzzleADayBinary {
         for (int y = startY; y < startY + randomTile.length; y++) {
             for (int x = startX; x < startX + randomTile[0].length; x++) {
                 if (randomTile[y - startY][x - startX] != 0 && nextRandomSolution[y][x] != 0) {
+                    placeInCounter += 1;
                     placeTileInRandomSolution(randomTile);
                     return;
                 } else if (randomTile[y - startY][x - startX] != 0) {

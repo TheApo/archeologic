@@ -7,20 +7,27 @@ import com.apogames.game.knuthAlgoX.AlgorithmX;
 import com.apogames.game.knuthAlgoX.MyPuzzleADayBinary;
 import com.apogames.game.knuthAlgoX.PlacedTileHelper;
 import com.apogames.game.menu.Difficulty;
+import com.apogames.game.question.AllOneSpecificPosition;
 import com.apogames.game.question.OneSpecificPosition;
 import com.apogames.game.question.Question;
 import com.apogames.game.tiles.*;
-import com.badlogic.gdx.Gdx;
+import com.apogames.help.Helper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameEntity {
 
     public static final int MAX_SHOWN_QUESTION = 16;
     private Difficulty difficulty = Difficulty.EASY;
     private byte[][] solution;
+    private byte[][] solutionReal;
 
-    private byte[][] currentSolution;
+    private byte[][] currentSolutionReal;
+    private byte[][] currentSolutionPossibility;
+    private byte[][] currentSolutionTile;
+
+
     private byte[][] solutionPossibilities;
 
     private byte[][] realSolution;
@@ -139,13 +146,21 @@ public class GameEntity {
         MyPuzzleADayBinary myPuzzleADayBinary = new MyPuzzleADayBinary(givenTiles.getAllTiles());
         this.placedTileInSolution = new byte[ySize][xSize];
         this.tiles.clear();
-        if (this.puzzle && this.difficulty == Difficulty.EASY) {
+        if (this.puzzle && (this.difficulty == Difficulty.EASY || this.difficulty == Difficulty.NEWBIE)) {
             int tiles = 1;
-            if (this.givenTiles.getMaxTile() == 7) {
-                tiles = 2;
+            if (this.difficulty == Difficulty.NEWBIE) {
+                tiles += 1;
+                size -= 1;
             }
-            myPuzzleADayBinary.setRandomSolution(xSize, ySize, tiles);
-            this.placedTileInSolution = myPuzzleADayBinary.getRandomSolution();
+            if (this.givenTiles.getMaxTile() == 7) {
+                tiles += 1;
+            }
+            if (!myPuzzleADayBinary.setRandomSolution(xSize, ySize, tiles)) {
+                choseNewSolution();
+                return;
+            }
+            this.placedTileInSolution = Helper.clone(myPuzzleADayBinary.getRandomSolution());
+            goal = Helper.clone(myPuzzleADayBinary.getRandomRealSolution());
             this.tiles = new ArrayList<>(myPuzzleADayBinary.getUsedTiles());
             for (GameTile tile : this.currentTiles) {
                 for (PlacedTileHelper help : this.tiles) {
@@ -163,7 +178,13 @@ public class GameEntity {
         AlgorithmX algoX = new AlgorithmX();
         algoX.run(xSize, ySize, givenTiles.getAllTiles().size(), givenTiles.getMaxTile(), matrix);
 
-        if (algoX.allSolutions.size() < 10) {
+        int minSolutions = 10;
+        if (this.difficulty == Difficulty.NEWBIE) {
+            minSolutions = 4;
+        }
+        //System.out.println(size + " " + algoX.allSolutions.size());
+
+        if (algoX.allSolutions.size() < minSolutions) {
             choseNewSolution();
         } else {
             this.setAllSolutions(algoX.allSolutions, algoX.allValueSolutions);
@@ -171,12 +192,21 @@ public class GameEntity {
             int random = (int) (Math.random() * this.possibleSolutions.size());
             this.solution = this.possibleSolutions.get(random);
             this.solutionPossibilities = this.possibleSolutionsPossibilities.get(random);
+            this.solutionReal = this.possibleSolutionsReal.get(random);
             this.realSolution = new byte[this.solution.length][this.solution[0].length];
             this.errors = new byte[this.solution.length][this.solution[0].length];
 
-            this.currentSolution = new byte[this.solution.length][this.solution[0].length];
+            this.currentSolutionReal = new byte[this.solution.length][this.solution[0].length];
+            this.currentSolutionPossibility = new byte[this.solution.length][this.solution[0].length];
+            this.currentSolutionTile = new byte[this.solution.length][this.solution[0].length];
 
             this.solutionTiles = new ArrayList<>();
+
+            if (!checkIfQuestionFitToSolution()) {
+                System.out.println("Uff irgendwie Fehler");
+                choseNewSolution();
+                return;
+            }
 
             ArrayList<Integer> found = new ArrayList<>();
             for (int y = 0; y < this.solution.length; y++) {
@@ -193,8 +223,26 @@ public class GameEntity {
         }
     }
 
-    public byte[][] getCurrentSolution() {
-        return currentSolution;
+    private boolean checkIfQuestionFitToSolution() {
+        ArrayList<byte[][]> possibleSolutionsReal = new ArrayList<>();
+        possibleSolutionsReal.add(this.solutionReal);
+        ArrayList<byte[][]> possibleSolutionsPossibilities = new ArrayList<>();
+        possibleSolutionsPossibilities.add(this.solutionPossibilities);
+        ArrayList<byte[][]> possibleSolutionsTile = new ArrayList<>();
+        possibleSolutionsTile.add(this.solution);
+
+        for (Question question : this.questions) {
+            ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutionsPossibilities, possibleSolutionsTile);
+
+            if (filter.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public byte[][] getCurrentSolutionReal() {
+        return currentSolutionReal;
     }
 
     public ArrayList<GameTile> getHiddenTiles() {
@@ -273,6 +321,7 @@ public class GameEntity {
     public void prefillGoal(byte[][] goal, int size) {
         int count = size;
         this.getHiddenTiles().clear();
+        this.getQuestions().clear();
         ArrayList<Byte> values = new ArrayList<>();
         for (GameTile tile : this.currentTiles) {
             byte[][] bytes = tile.getTile().getPossibilities().get(0);
@@ -285,6 +334,7 @@ public class GameEntity {
             }
         }
 
+        List<OneSpecificPosition> allOneSpecificPositions = new ArrayList<>();
         while (count > 0) {
             int x = (int)(Math.random() * goal[0].length);
             int y = (int)(Math.random() * goal.length);
@@ -293,10 +343,13 @@ public class GameEntity {
                 GameTile gameTile = new GameTile(new Tile(1, new byte[][]{{goal[y][x]}}));
                 gameTile.changePosition((2 + x) * Constants.TILE_SIZE, (3+y) * Constants.TILE_SIZE);
                 this.getHiddenTiles().add(gameTile);
-                this.getQuestions().add(new OneSpecificPosition(x, y, goal));
+                OneSpecificPosition question = new OneSpecificPosition(x, y, goal);
+                //this.getQuestions().add(question);
+                allOneSpecificPositions.add(question);
                 count -= 1;
             }
         }
+        this.getQuestions().add(new AllOneSpecificPosition(allOneSpecificPositions));
     }
 
     public boolean isEveryTileIn() {
@@ -333,9 +386,27 @@ public class GameEntity {
         return true;
     }
 
-    public void makeQuestionErrorWhenWrong() {
+    public void resetErrors() {
         for (Question question : this.questions) {
-            //question.filter();
+            question.setError(false);
+        }
+    }
+
+    public void makeQuestionErrorWhenWrong() {
+        ArrayList<byte[][]> possibleSolutionsReal = new ArrayList<>();
+        possibleSolutionsReal.add(this.currentSolutionReal);
+        ArrayList<byte[][]> possibleSolutionsPossibilities = new ArrayList<>();
+        possibleSolutionsPossibilities.add(this.currentSolutionPossibility);
+        ArrayList<byte[][]> possibleSolutionsTile = new ArrayList<>();
+        possibleSolutionsTile.add(this.currentSolutionTile);
+
+        for (Question question : this.questions) {
+            ArrayList<Integer> filter = question.filter(possibleSolutionsReal, possibleSolutionsPossibilities, possibleSolutionsTile);
+
+            question.setError(false);
+            if (filter.isEmpty()) {
+                question.setError(true);
+            }
 
         }
     }
@@ -430,6 +501,7 @@ public class GameEntity {
                 if (tile.click(mouseX, mouseY)) {
                     fillCurrentSolution();
                     found = true;
+                    this.resetErrors();
                     break;
                 }
             }
@@ -471,13 +543,17 @@ public class GameEntity {
         if (this.solution == null) {
             return;
         }
-        this.currentSolution = new byte[this.solution.length][this.solution[0].length];
+        this.currentSolutionReal = new byte[this.solution.length][this.solution[0].length];
+        this.currentSolutionPossibility = new byte[this.solution.length][this.solution[0].length];
+        this.currentSolutionTile = new byte[this.solution.length][this.solution[0].length];
         for (GameTile curTile : this.currentTiles) {
             byte[][] tileBytes = curTile.getBytes();
             for (int y = curTile.getGameY(); y < curTile.getGameY() + tileBytes.length; y++) {
                 for (int x = curTile.getGameX(); x < curTile.getGameX() + tileBytes[0].length; x++) {
-                    if (x >= 0 && x < this.currentSolution[0].length && y >= 0 && y < this.currentSolution.length && tileBytes[y-curTile.getGameY()][x-curTile.getGameX()] != 0) {
-                        this.currentSolution[y][x] = tileBytes[y - curTile.getGameY()][x - curTile.getGameX()];
+                    if (x >= 0 && x < this.currentSolutionReal[0].length && y >= 0 && y < this.currentSolutionReal.length && tileBytes[y-curTile.getGameY()][x-curTile.getGameX()] != 0) {
+                        this.currentSolutionReal[y][x] = tileBytes[y - curTile.getGameY()][x - curTile.getGameX()];
+                        this.currentSolutionPossibility[y][x] = (byte)(curTile.getCurrentTile() + 1);
+                        this.currentSolutionTile[y][x] = (byte)curTile.getTile().getTileNumber();
                     }
                 }
             }
@@ -540,10 +616,10 @@ public class GameEntity {
 
     public void renderGivenTile(GameScreen screen) {
         for (GameTile tile : this.getHiddenTiles()) {
-            if (this.currentSolution[tile.getGameY()][tile.getGameX()] == 0) {
+            if (this.currentSolutionReal[tile.getGameY()][tile.getGameX()] == 0) {
                 screen.spriteBatch.setColor(1, 1, 1, 0.7f);
                 tile.render(screen, false);
-            } else if (this.currentSolution[tile.getGameY()][tile.getGameX()] != this.realSolution[tile.getGameY()][tile.getGameX()]) {
+            } else if (this.currentSolutionReal[tile.getGameY()][tile.getGameX()] != this.realSolution[tile.getGameY()][tile.getGameX()]) {
                 screen.spriteBatch.setColor(1, 0, 0, 0.7f);
                 tile.render(screen, false);
             } else {

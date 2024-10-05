@@ -208,6 +208,16 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font20);
 			this.game.getButtons().add(button);
 
+			text = "Help";
+			function = ArcheOLogicPanel.FUNCTION_QUESTIONS_HELP;
+			width = 200;
+			height = 64;
+			x = Constants.GAME_WIDTH - width - 410;
+			y = Constants.GAME_HEIGHT - 60 - height;
+			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_help");
+			button.setFont(AssetLoader.font20);
+			this.game.getButtons().add(button);
+
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_RESTART;
 			width = 64;

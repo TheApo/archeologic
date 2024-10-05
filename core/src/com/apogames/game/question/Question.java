@@ -16,7 +16,6 @@ public abstract class Question extends ApoEntity {
 
     private QuestionEnum questionEnum;
 
-    private boolean correct = true;
     private int row = -1;
     private int column = -1;
 
@@ -29,7 +28,7 @@ public abstract class Question extends ApoEntity {
     private boolean error = false;
 
     public Question() {
-        super(0, 0, 300, 100);
+        super(-1, -1, 200, 150);
     }
 
     public int getRow() {
@@ -48,21 +47,13 @@ public abstract class Question extends ApoEntity {
         this.column = column;
     }
 
-    public boolean isCorrect() {
-        return correct;
-    }
-
-    public void setCorrect(boolean correct) {
-        this.correct = correct;
-    }
-
     public abstract void draw(GameScreen screen, int x, int y, int size);
     public abstract int getCosts();
     public abstract String getText();
 
     public abstract String getAnswer();
 
-    public abstract ArrayList<Integer> filter(ArrayList<byte[][]> possibleSolutionsReal, ArrayList<byte[][]> possibleSolutionsPossibilities, ArrayList<byte[][]> possibleSolutions);
+    public abstract ArrayList<Integer> filter(ArrayList<byte[][]> possibleSolutionsReal, ArrayList<byte[][]> possibleSolutionsPossibilities, ArrayList<byte[][]> possibleSolutionsTile);
 
     public int getCompleteCosts() {
         return completeCosts;
@@ -122,25 +113,35 @@ public abstract class Question extends ApoEntity {
     }
 
     public void render(GameScreen screen, int changeX, int changeY) {
-        ArcheOLogicPanel.renderTextAndTileQuestion(screen, text, (int)(this.getX() + changeX), (int)(this.getY() + changeY));
+        ArcheOLogicPanel.renderTextAndTileQuestion(screen, text, (int)(this.getX() + changeX), (int)(this.getY() + changeY), this.error);
 
-        if (getCompleteCosts() > 0) {
-            screen.spriteBatch.draw(AssetLoader.coinTextureRegion, (Constants.GAME_WIDTH - 109), 238 + (i - this.game.getCurStartQuestion()) * 25, 20, 20);
-            screen.drawString(String.valueOf(getCompleteCosts()), Constants.GAME_WIDTH - 100, 250 + (i - this.game.getCurStartQuestion()) * 25, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
-        }
+//        if (getCompleteCosts() > 0) {
+//            screen.spriteBatch.draw(AssetLoader.coinTextureRegion, (Constants.GAME_WIDTH - 109), 238 + (i - this.game.getCurStartQuestion()) * 25, 20, 20);
+//            screen.drawString(String.valueOf(getCompleteCosts()), Constants.GAME_WIDTH - 100, 250 + (i - this.game.getCurStartQuestion()) * 25, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
+//        }
     }
 
     public void renderFilled(GameScreen screen, int changeX, int changeY) {
-        screen.getRenderer().setColor(Constants.COLOR_BLUE_BRIGHT[0], Constants.COLOR_BLUE_BRIGHT[1], Constants.COLOR_BLUE_BRIGHT[2], 1f);
-        screen.getRenderer().roundedRect(getX() + changeX, getY() + changeY, getWidth(), getHeight(), 5);
+        if (this.getX() >= 0) {
+            screen.getRenderer().setColor(Constants.COLOR_BLUE_BRIGHT[0], Constants.COLOR_BLUE_BRIGHT[1], Constants.COLOR_BLUE_BRIGHT[2], 1f);
+            screen.getRenderer().roundedRect(getX() + changeX, getY() + changeY, getWidth(), getHeight(), 5);
+        }
     }
 
     public void renderLine(GameScreen screen, int changeX, int changeY) {
-        if (this.error) {
-            screen.getRenderer().setColor(Constants.COLOR_RED[0], Constants.COLOR_RED[1], Constants.COLOR_RED[2], 1f);
-        } else {
-            screen.getRenderer().setColor(Constants.COLOR_WHITE[0], Constants.COLOR_WHITE[1], Constants.COLOR_WHITE[2], 1f);
+        if (this.getX() >= 0) {
+            if (this.error) {
+                screen.getRenderer().setColor(Constants.COLOR_RED[0], Constants.COLOR_RED[1], Constants.COLOR_RED[2], 1f);
+            } else {
+                screen.getRenderer().setColor(Constants.COLOR_WHITE[0], Constants.COLOR_WHITE[1], Constants.COLOR_WHITE[2], 1f);
+            }
+            screen.getRenderer().roundedRectLine(getX() + changeX, getY() + changeY, getWidth(), getHeight(), 5);
         }
-        screen.getRenderer().roundedRectLine(getX() + changeX, getY() + changeY, getWidth(), getHeight(), 5);
+    }
+
+    public void renderSprite(GameScreen screen, int changeX, int changeY) {
+        if (this.getX() >= 0) {
+
+        }
     }
 }

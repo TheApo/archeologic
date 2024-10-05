@@ -51,6 +51,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     public static final String FUNCTION_QUESTIONS_ORIGINAL = "ARCHEOLOGIC_QUESTIONS_ORIGINAL";
     public static final String FUNCTION_QUESTIONS_OTHER = "ARCHEOLOGIC_QUESTIONS_OTHER";
     public static final String FUNCTION_QUESTIONS_NEXT_HINT = "ARCHEOLOGIC_QUESTIONS_NEXT_HINT";
+    public static final String FUNCTION_QUESTIONS_HELP = "ARCHEOLOGIC_QUESTIONS_HELP";
 
     public static final String[] askOrder = new String[] {
             "A", "1", "B", "2", "C", "3", "D", "4", "E", "5"
@@ -536,7 +537,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             }
         }
 
-        System.out.println("Anzahl Möglichkeiten left: " + smallest+" startedWith: "+possibleSolutions.size()+" hints: "+hints+" count: "+count);
+        //System.out.println("Anzahl Möglichkeiten left: " + smallest+" startedWith: "+possibleSolutions.size()+" hints: "+hints+" count: "+count);
         if (addRandom) {
             this.addQuestion(pickedQuestion);
         } else if (this.getGame().getDifficulty() != Difficulty.HARD && count < hints) {
@@ -551,7 +552,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 setUpPuzzleNext(indexList, count, hints, chosenList, filterResult);
             } else {
                 this.game.setMaxReset(this.game.getQuestions().size());
-                System.out.println("Anzahl Möglichkeiten left: " + smallest);
+                //System.out.println("Anzahl Möglichkeiten left: " + smallest);
             }
         }
     }
@@ -620,6 +621,13 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         setNextCosts();
 
         this.setPuzzle(this.puzzle);
+
+        int i = 0;
+        for (Question nextQuestion : this.game.getQuestions()) {
+            nextQuestion.setX((int) (i % 3f) * 200);
+            nextQuestion.setY((int) (i / 3f) * 150);
+            i += 1;
+        }
     }
 
     public GameEntity getGame() {
@@ -679,6 +687,11 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             }
         } else {
             this.game.mouseButtonReleased(mouseX, mouseY, isRightButton);
+//            if (this.game.getDifficulty() == Difficulty.EASY) {
+//
+//            }
+
+//            this.game.makeQuestionErrorWhenWrong();
         }
     }
 
@@ -773,7 +786,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         if (this.puzzle) {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
             if (this.game.getDifficulty() != Difficulty.HARD) {
-                getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_NEXT_HINT).setVisible(true);
+//                getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_NEXT_HINT).setVisible(true);
+                getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_HELP).setVisible(true);
             }
         }
     }
@@ -915,6 +929,14 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 case ArcheOLogicPanel.FUNCTION_QUESTIONS_NEXT_HINT:
                     this.setUpPuzzle(true);
                     break;
+                case ArcheOLogicPanel.FUNCTION_QUESTIONS_HELP:
+                    this.game.makeQuestionErrorWhenWrong();
+
+                    Question nextQuestion = new HelpQuestion();
+                    nextQuestion.setCompleteCosts(nextQuestion.getCosts());
+                    this.game.setCosts(this.getGame().getCosts() + nextQuestion.getCosts());
+                    this.game.getQuestions().add(nextQuestion);
+                    break;
                 case ArcheOLogicPanel.FUNCTION_QUESTION_CHECK:
                     if (this.game.isEveryTileIn()) {
                         setCheckQuestion(true, Localization.getInstance().getCommon().get("demand_solve").split(";"), DemandQuestion.SOLVING);
@@ -958,7 +980,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     }
 
     private void setQuestionRedWhenError() {
-
+        this.game.makeQuestionErrorWhenWrong();
     }
 
     private void resetTiles() {
@@ -1014,6 +1036,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     private Question getNextQuestion() {
         return getNextQuestion(-1);
     }
+
     private Question getNextQuestion(int selectedQuestion) {
         QuestionEnum[] values = QuestionEnum.getQuestionEnumForQuestionType(this.showTabIndex);
         for (int i = 0; i < values.length; i++) {
@@ -1100,6 +1123,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         int completeCost = 0;
 
         if (nextQuestion != null) {
+
             completeCost = nextQuestion.getCosts() + nextQuestion.getAddCostsBecauseLast();
             this.getGame().setCosts(this.getGame().getCosts() + nextQuestion.getCosts() + nextQuestion.getAddCostsBecauseLast());
             this.game.getQuestions().add(nextQuestion);
@@ -1182,7 +1206,6 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     @Override
     public void render() {
-
         getMainPanel().spriteBatch.begin();
 
         getMainPanel().spriteBatch.draw(AssetLoader.backgroundMainTextureRegion, 0, 0);
@@ -1225,7 +1248,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             String text = this.game.getQuestions().get(i).getText();
             int costs = this.game.getQuestions().get(i).getCompleteCosts();
 
-            renderTextAndTileQuestion(getMainPanel(), text, Constants.GAME_WIDTH - 575, 250 + (i - this.game.getCurStartQuestion()) * 25);
+            renderTextAndTileQuestion(getMainPanel(), text, Constants.GAME_WIDTH - 575, 250 + (i - this.game.getCurStartQuestion()) * 25, this.game.getQuestions().get(i).hasErrors());
 
             if (costs > 0) {
                 getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, (Constants.GAME_WIDTH - 109), 238 + (i - this.game.getCurStartQuestion()) * 25, 20, 20);
@@ -1243,6 +1266,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
         getMainPanel().getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
         for (int i = this.game.getCurStartQuestion(); i < this.game.getCurStartQuestion() + GameEntity.MAX_SHOWN_QUESTION && i < this.game.getQuestions().size(); i++) {
+            //this.game.getQuestions().get(i).renderFilled(getMainPanel(), Constants.GAME_WIDTH - 600, 250 + (i-this.game.getCurStartQuestion()) * 25);
             this.game.getQuestions().get(i).draw(getMainPanel(), Constants.GAME_WIDTH - 600, 250 + (i-this.game.getCurStartQuestion()) * 25, 6);
         }
 
@@ -1278,7 +1302,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 BitmapFont font15 = AssetLoader.font15;
                 String text = Localization.getInstance().getCommon().get(questionEnumForQuestionType[i].getText())+" ";
 
-                float startX = renderTextAndTileQuestion(getMainPanel(), text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, ArcheOLogicPanel.START_QUESTION_Y + 27 + i * (50 + 10));
+                float startX = renderTextAndTileQuestion(getMainPanel(), text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, ArcheOLogicPanel.START_QUESTION_Y + 27 + i * (50 + 10), false);
 
                 //getMainPanel().drawString(text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, 277 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
                 if (this.showTabIndex != OTHER_QUESTIONS) {
@@ -1382,7 +1406,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         }
     }
 
-    public static float renderTextAndTileQuestion(GameScreen screen, String text, int realStartX, int y) {
+    public static float renderTextAndTileQuestion(GameScreen screen, String text, int realStartX, int y, boolean error) {
         boolean run = true;
         float startX = realStartX;
         int startIndex = 0;
@@ -1394,7 +1418,11 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 startIndex = startIndex + nextIndex + 2;
                 Constants.glyphLayout.setText(AssetLoader.font15, curText);
             }
-            screen.drawString(curText, startX, y, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.BEGIN, true, false);
+            float[] color = Constants.COLOR_BLACK;
+            if (error) {
+                color = Constants.COLOR_RED;
+            }
+            screen.drawString(curText, startX, y, color, AssetLoader.font15, DrawString.BEGIN, true, false);
 
             if (nextIndex > 0) {
                 startX += Constants.glyphLayout.width + 30;

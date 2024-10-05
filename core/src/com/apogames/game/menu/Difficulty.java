@@ -2,6 +2,7 @@ package com.apogames.game.menu;
 
 public enum Difficulty {
 
+    NEWBIE("Newbie", 0),
     EASY("Easy", 0),
     MEDIUM("Medium", 1),
 
