@@ -1,5 +1,8 @@
 package com.apogames.game.question;
 
+import com.apogames.Constants;
+import com.apogames.asset.AssetLoader;
+import com.apogames.backend.DrawString;
 import com.apogames.backend.GameScreen;
 import com.apogames.common.Localization;
 
@@ -20,6 +23,10 @@ public class HelpQuestion extends Question {
         return 1;
     }
 
+    public boolean withAskCosts() {
+        return false;
+    }
+
     @Override
     public String getText() {
         return getAnswer();
@@ -37,5 +44,15 @@ public class HelpQuestion extends Question {
             results.add(i);
         }
         return results;
+    }
+
+    public void renderSprite(GameScreen screen, int changeX, int changeY) {
+        if (this.getX() < 0) {
+            return;
+        }
+        super.renderSprite(screen, changeX, changeY);
+        float startX = getX() + changeX + getWidth()/2f;
+        float startY = getY() + changeY + 40;
+        screen.drawString(Localization.getInstance().getCommon().get("demand_question_help"), startX, startY, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.MIDDLE, true, false);
     }
 }

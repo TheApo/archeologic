@@ -116,6 +116,12 @@ public class EmptyNextTile extends Question {
         }
     }
 
+    public void renderFilled(GameScreen screen, int changeX, int changeY) {
+        super.renderFilled(screen, changeX, changeY);
+
+        super.renderIsleFilled(screen, changeX, changeY, 20, this.currentTile);
+    }
+
     public void renderSprite(GameScreen screen, int changeX, int changeY) {
         if (this.getX() >= 0) {
             super.renderSprite(screen, changeX, changeY);

@@ -32,9 +32,9 @@ public class Menu extends SequentiallyThinkingScreenModel {
 
     private boolean german = true;
 
-    private int amountTiles = 6;
+    private int amountTiles = 5;
 
-    private Difficulty difficulty = Difficulty.EASY;
+    private Difficulty difficulty = Difficulty.NEWBIE;
 
     public Menu(final MainPanel game) {
         super(game);

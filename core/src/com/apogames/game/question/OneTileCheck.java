@@ -191,6 +191,8 @@ public class OneTileCheck extends Question {
 
         super.renderFilled(screen, changeX, changeY);
 
+        super.renderIsleFilled(screen, changeX - 70, changeY + 10, 15, this.currentTile);
+
         int size = 80;
         float startX = getX() + changeX + getWidth()/2f - size/2f;
         float startY = getY() + changeY + 5;

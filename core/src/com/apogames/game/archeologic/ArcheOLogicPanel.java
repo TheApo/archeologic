@@ -695,11 +695,6 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             }
         } else {
             this.game.mouseButtonReleased(mouseX, mouseY, isRightButton);
-//            if (this.game.getDifficulty() == Difficulty.EASY) {
-//
-//            }
-
-//            this.game.makeQuestionErrorWhenWrong();
         }
     }
 
@@ -781,20 +776,12 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_ROW + s).setVisible(showQuestion);
         }
         setPuzzleButtonVisibility();
-//        for (int i = 0; i < QuestionEnum.values().length; i++) {
-//            if (QuestionEnum.values()[i].getQuestionType() == showTabIndex) {
-//                getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name()).setVisible(showQuestion);
-//            } else {
-//                getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_ASK + QuestionEnum.values()[i].name()).setVisible(false);
-//            }
-//        }
     }
 
     private void setPuzzleButtonVisibility() {
         if (this.puzzle) {
             getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(false);
             if (this.game.getDifficulty() != Difficulty.HARD) {
-//                getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_NEXT_HINT).setVisible(true);
                 getMainPanel().getButtonByFunction(FUNCTION_QUESTIONS_HELP).setVisible(true);
             }
         }
@@ -895,9 +882,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                             setWon(true);
                         } else {
                             Question nextQuestion = new ErrorQuestion();
-                            nextQuestion.setCompleteCosts(nextQuestion.getCosts());
-                            this.game.setCosts(this.getGame().getCosts() + nextQuestion.getCosts());
-                            this.game.getQuestions().add(nextQuestion);
+                            this.addQuestion(nextQuestion);
                             setQuestionRedWhenError();
                             setCheckQuestion(true, Localization.getInstance().getCommon().get("demand_error").split(";"), DemandQuestion.ERROR);
                         }
@@ -926,10 +911,10 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     resetTiles();
                     break;
                 case ArcheOLogicPanel.FUNCTION_HINT_UP:
-                    this.game.addCurStartQuestion(-1);
+                    this.game.addCurStartQuestion(-3);
                     break;
                 case ArcheOLogicPanel.FUNCTION_HINT_DOWN:
-                    this.game.addCurStartQuestion(1);
+                    this.game.addCurStartQuestion(3);
                     break;
                 case ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION:
                     this.setShowQuestion(true);
@@ -941,9 +926,8 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     this.game.makeQuestionErrorWhenWrong();
 
                     Question nextQuestion = new HelpQuestion();
-                    nextQuestion.setCompleteCosts(nextQuestion.getCosts());
-                    this.game.setCosts(this.getGame().getCosts() + nextQuestion.getCosts());
-                    this.game.getQuestions().add(nextQuestion);
+                    this.addQuestion(nextQuestion);
+                    this.setQuestionsOnPosition();
                     break;
                 case ArcheOLogicPanel.FUNCTION_QUESTION_CHECK:
                     if (this.game.isEveryTileIn()) {
@@ -982,6 +966,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                     //this.setButtonsVisible(false);
                     this.setShowQuestion(false);
                     this.game.addCurStartQuestion(1000);
+                    this.setQuestionsOnPosition();
                     break;
             }
         }
@@ -1131,7 +1116,6 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         int completeCost = 0;
 
         if (nextQuestion != null) {
-
             completeCost = nextQuestion.getCosts() + nextQuestion.getAddCostsBecauseLast();
             this.getGame().setCosts(this.getGame().getCosts() + nextQuestion.getCosts() + nextQuestion.getAddCostsBecauseLast());
             this.game.getQuestions().add(nextQuestion);
@@ -1155,7 +1139,9 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             setAddCostForQuestion(nextQuestion);
         }
 
-        this.game.addCurStartQuestion(1);
+        this.game.addCurStartQuestion(3);
+
+        this.setQuestionsOnPosition();
 
         this.setShowQuestion(false);
     }
@@ -1199,7 +1185,13 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
     }
 
     public void mouseWheelChanged(int changed) {
-        this.game.addCurStartQuestion(changed);
+        int add = changed;
+        if (add < 3 && add >= 0) {
+            add = 3;
+        } else if (add > -3 && add < 0) {
+            add = -3;
+        }
+        this.game.addCurStartQuestion(add);
     }
 
     @Override
@@ -1229,25 +1221,25 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             tile.renderShadow(getMainPanel());
         }
 
-        if (this.puzzle) {
+        //if (this.puzzle) {
             for (int i = this.game.getCurStartQuestion(); i < this.game.getCurStartQuestion() + GameEntity.MAX_SHOWN_QUESTION && i < this.game.getQuestions().size(); i++) {
                 getMainPanel().getRenderer().setColor(Constants.COLOR_WHITE[0], Constants.COLOR_WHITE[1], Constants.COLOR_WHITE[2], 0.2f);
-                this.game.getQuestions().get(i).renderFilled(getMainPanel(), Constants.GAME_WIDTH - 620, 210);
+                this.game.getQuestions().get(i).renderFilled(getMainPanel(), Constants.GAME_WIDTH - 620, 210 - (int)(this.game.getQuestions().get(i).getHeight() * this.game.getCurStartQuestion() / 3));
             }
-        }
+        //}
 
         getMainPanel().getRenderer().end();
         Gdx.graphics.getGL20().glDisable(GL20.GL_BLEND);
 
-        if (this.puzzle) {
+        //if (this.puzzle) {
             getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Line);
 
             for (int i = this.game.getCurStartQuestion(); i < this.game.getCurStartQuestion() + GameEntity.MAX_SHOWN_QUESTION && i < this.game.getQuestions().size(); i++) {
-                this.game.getQuestions().get(i).renderLine(getMainPanel(), Constants.GAME_WIDTH - 620, 210);
+                this.game.getQuestions().get(i).renderLine(getMainPanel(), Constants.GAME_WIDTH - 620, 210 - (int)(this.game.getQuestions().get(i).getHeight() * this.game.getCurStartQuestion() / 3));
             }
 
             getMainPanel().getRenderer().end();
-        }
+        //}
 
         getMainPanel().spriteBatch.begin();
 
@@ -1266,51 +1258,51 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 }
                 getMainPanel().drawString(askOrder[i], Constants.GAME_WIDTH - 450 + i * 45, 170, color, AssetLoader.font30, DrawString.MIDDLE, true, false);
             }
-            getMainPanel().drawString(Localization.getInstance().getCommon().get("question_hint"), Constants.GAME_WIDTH - 600, 220, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.BEGIN, true, false);
+            //getMainPanel().drawString(Localization.getInstance().getCommon().get("question_hint"), Constants.GAME_WIDTH - 600, 220, Constants.COLOR_BLACK, AssetLoader.font25, DrawString.BEGIN, true, false);
         } else {
             getMainPanel().drawString(Localization.getInstance().getCommon().get("puzzle_mode") + " - " + this.game.getDifficulty().getText(), Constants.GAME_WIDTH - 600, 170, Constants.COLOR_BLACK, AssetLoader.font30, DrawString.BEGIN, true, false);
         }
 
 
-        for (int i = this.game.getCurStartQuestion(); i < this.game.getCurStartQuestion() + GameEntity.MAX_SHOWN_QUESTION && i < this.game.getQuestions().size(); i++) {
-            String text = this.game.getQuestions().get(i).getText();
-            int costs = this.game.getQuestions().get(i).getCompleteCosts();
-
-            if (this.puzzle) {
-                //renderTextAndTileQuestion(getMainPanel(), text, (int)(Constants.GAME_WIDTH - 600 + i%3 * this.game.getQuestions().get(i).getWidth()), 340 + (int)(i / 3f) * (int)this.game.getQuestions().get(i).getHeight(), this.game.getQuestions().get(i).hasErrors());
-            } else {
-                renderTextAndTileQuestion(getMainPanel(), text, Constants.GAME_WIDTH - 575, 250 + (i - this.game.getCurStartQuestion()) * 25, this.game.getQuestions().get(i).hasErrors());
-
-                if (costs > 0) {
-                    getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, (Constants.GAME_WIDTH - 109), 238 + (i - this.game.getCurStartQuestion()) * 25, 20, 20);
-                    getMainPanel().drawString(String.valueOf(costs), Constants.GAME_WIDTH - 100, 250 + (i - this.game.getCurStartQuestion()) * 25, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
-                }
-            }
-        }
+//        for (int i = this.game.getCurStartQuestion(); i < this.game.getCurStartQuestion() + GameEntity.MAX_SHOWN_QUESTION && i < this.game.getQuestions().size(); i++) {
+//            String text = this.game.getQuestions().get(i).getText();
+//            int costs = this.game.getQuestions().get(i).getCompleteCosts();
+//
+//            if (this.puzzle) {
+//                //renderTextAndTileQuestion(getMainPanel(), text, (int)(Constants.GAME_WIDTH - 600 + i%3 * this.game.getQuestions().get(i).getWidth()), 340 + (int)(i / 3f) * (int)this.game.getQuestions().get(i).getHeight(), this.game.getQuestions().get(i).hasErrors());
+//            } else {
+//                renderTextAndTileQuestion(getMainPanel(), text, Constants.GAME_WIDTH - 575, 250 + (i - this.game.getCurStartQuestion()) * 25, this.game.getQuestions().get(i).hasErrors());
+//
+//                if (costs > 0) {
+//                    getMainPanel().spriteBatch.draw(AssetLoader.coinTextureRegion, (Constants.GAME_WIDTH - 109), 238 + (i - this.game.getCurStartQuestion()) * 25, 20, 20);
+//                    getMainPanel().drawString(String.valueOf(costs), Constants.GAME_WIDTH - 100, 250 + (i - this.game.getCurStartQuestion()) * 25, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
+//                }
+//            }
+//        }
 
         for (GameTile tile : this.game.getCurrentTiles()) {
             tile.render(getMainPanel());
         }
 
-        if (this.puzzle) {
+        //if (this.puzzle) {
             for (int i = this.game.getCurStartQuestion(); i < this.game.getCurStartQuestion() + GameEntity.MAX_SHOWN_QUESTION && i < this.game.getQuestions().size(); i++) {
-                this.game.getQuestions().get(i).renderSprite(getMainPanel(), Constants.GAME_WIDTH - 620, 210);
+                this.game.getQuestions().get(i).renderSprite(getMainPanel(), Constants.GAME_WIDTH - 620, 210 - (int)(this.game.getQuestions().get(i).getHeight() * this.game.getCurStartQuestion() / 3));
             }
-        }
+        //}
 
         getMainPanel().spriteBatch.end();
 
         getMainPanel().getRenderer().begin(ShapeRenderer.ShapeType.Filled);
 
-        getMainPanel().getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
-        for (int i = this.game.getCurStartQuestion(); i < this.game.getCurStartQuestion() + GameEntity.MAX_SHOWN_QUESTION && i < this.game.getQuestions().size(); i++) {
-            //this.game.getQuestions().get(i).renderFilled(getMainPanel(), Constants.GAME_WIDTH - 600, 250 + (i-this.game.getCurStartQuestion()) * 25);
-            if (this.puzzle) {
-
-            } else {
-                this.game.getQuestions().get(i).draw(getMainPanel(), Constants.GAME_WIDTH - 600, 250 + (i - this.game.getCurStartQuestion()) * 25, 6);
-            }
-        }
+//        getMainPanel().getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
+//        for (int i = this.game.getCurStartQuestion(); i < this.game.getCurStartQuestion() + GameEntity.MAX_SHOWN_QUESTION && i < this.game.getQuestions().size(); i++) {
+//            //this.game.getQuestions().get(i).renderFilled(getMainPanel(), Constants.GAME_WIDTH - 600, 250 + (i-this.game.getCurStartQuestion()) * 25);
+//            if (this.puzzle) {
+//
+//            } else {
+//                this.game.getQuestions().get(i).draw(getMainPanel(), Constants.GAME_WIDTH - 600, 250 + (i - this.game.getCurStartQuestion()) * 25, 6);
+//            }
+//        }
 
         for (GameTile tile : this.game.getCurrentTiles()) {
             tile.renderLine(getMainPanel());

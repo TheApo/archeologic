@@ -18,7 +18,7 @@ import java.util.List;
 
 public class GameEntity {
 
-    public static final int MAX_SHOWN_QUESTION = 16;
+    public static final int MAX_SHOWN_QUESTION = 9;
     private Difficulty difficulty = Difficulty.EASY;
     private byte[][] solution;
     private byte[][] solutionReal;
@@ -608,6 +608,10 @@ public class GameEntity {
             this.curStartQuestion += add;
         } else if (this.curStartQuestion + add + MAX_SHOWN_QUESTION > this.questions.size()) {
             this.curStartQuestion = this.questions.size() - MAX_SHOWN_QUESTION;
+            if (this.curStartQuestion % 3 != 0) {
+                this.curStartQuestion = (this.curStartQuestion+3)/3;
+                this.curStartQuestion *= 3;
+            }
             if (this.curStartQuestion < 0) {
                 this.curStartQuestion = 0;
             }

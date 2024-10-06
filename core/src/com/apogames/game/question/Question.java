@@ -172,4 +172,18 @@ public abstract class Question extends ApoEntity {
             }
         }
     }
+
+    public void renderIsleFilled(GameScreen screen, int changeX, int changeY, int size, byte[][] tile) {
+        float startX = changeX + getX() + getWidth()/2 - tile[0].length * size / 2f;
+        float startY = changeY + getY() + 10;
+
+        screen.getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
+        for (int y = 0; y < tile.length; y++) {
+            for (int x = 0; x < tile[0].length; x++) {
+                if (tile[y][x] != 0) {
+                    screen.getRenderer().rect(startX + x * size - 1, startY + y * size - 1, size + 2, size + 2);
+                }
+            }
+        }
+    }
 }
