@@ -1,5 +1,7 @@
 package com.apogames.game.question;
 
+import com.apogames.Constants;
+import com.apogames.asset.AssetLoader;
 import com.apogames.backend.GameScreen;
 import com.apogames.common.Localization;
 
@@ -93,5 +95,40 @@ public class Empty extends Question {
     @Override
     public void draw(GameScreen screen, int x, int y, int size) {
 
+    }
+
+    public void renderFilled(GameScreen screen, int changeX, int changeY) {
+        if (this.getX() < 0) {
+            return;
+        }
+
+        super.renderFilled(screen, changeX, changeY);
+
+        int size = 80;
+        float startX = getX() + changeX + getWidth()/2f - size/2f;
+        float startY = getY() + changeY + 5;
+
+        float calc = size / (float) AssetLoader.boardTextureLittleRegion.getRegionWidth();
+
+        float[] color = Constants.COLOR_BLUE_DARK;
+        screen.getRenderer().setColor(color[0], color[1], color[2], 1f);
+
+        if (this.getColumn() >= 0) {
+            screen.getRenderer().rect(startX + 18 * calc + this.getColumn() * 17 * calc, startY + 18 * calc, 17 * calc, 5 * 17 * calc);
+        }
+        if (this.getRow() >= 0) {
+            screen.getRenderer().rect(startX + 18 * calc, startY + 18 * calc + this.getRow() * 17 * calc, 5 * 17 * calc, 17 * calc);
+        }
+    }
+
+    public void renderSprite(GameScreen screen, int changeX, int changeY) {
+        if (this.getX() < 0) {
+            return;
+        }
+        super.renderSprite(screen, changeX, changeY);
+        int size = 80;
+        float startX = getX() + changeX + getWidth()/2f - size/2f;
+        float startY = getY() + changeY + 5;
+        screen.spriteBatch.draw(AssetLoader.boardTextureLittleRegion, startX, startY, size, size);
     }
 }

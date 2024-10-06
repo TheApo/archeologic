@@ -154,4 +154,12 @@ public class TileNextTile extends Question {
             }
         }
     }
+
+    public void renderSprite(GameScreen screen, int changeX, int changeY) {
+        super.renderSprite(screen, changeX, changeY);
+
+        super.renderIsle(screen, changeX - 40, changeY + 10, 15, this.currentTile);
+
+        super.renderIsle(screen, changeX + 10, changeY + 10, 15, this.currentOtherTile);
+    }
 }

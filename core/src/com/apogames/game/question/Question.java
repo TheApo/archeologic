@@ -114,17 +114,11 @@ public abstract class Question extends ApoEntity {
 
     public void render(GameScreen screen, int changeX, int changeY) {
         ArcheOLogicPanel.renderTextAndTileQuestion(screen, text, (int)(this.getX() + changeX), (int)(this.getY() + changeY), this.error);
-
-//        if (getCompleteCosts() > 0) {
-//            screen.spriteBatch.draw(AssetLoader.coinTextureRegion, (Constants.GAME_WIDTH - 109), 238 + (i - this.game.getCurStartQuestion()) * 25, 20, 20);
-//            screen.drawString(String.valueOf(getCompleteCosts()), Constants.GAME_WIDTH - 100, 250 + (i - this.game.getCurStartQuestion()) * 25, Constants.COLOR_BLACK, AssetLoader.font15, DrawString.MIDDLE, true, false);
-//        }
     }
 
     public void renderFilled(GameScreen screen, int changeX, int changeY) {
         if (this.getX() >= 0) {
-            screen.getRenderer().setColor(Constants.COLOR_BLUE_BRIGHT[0], Constants.COLOR_BLUE_BRIGHT[1], Constants.COLOR_BLUE_BRIGHT[2], 1f);
-            screen.getRenderer().roundedRect(getX() + changeX, getY() + changeY, getWidth(), getHeight(), 5);
+            screen.getRenderer().roundedRect(getX() + changeX, getY() + changeY, getWidth() - 2, getHeight() - 2, 5);
         }
     }
 
@@ -133,15 +127,49 @@ public abstract class Question extends ApoEntity {
             if (this.error) {
                 screen.getRenderer().setColor(Constants.COLOR_RED[0], Constants.COLOR_RED[1], Constants.COLOR_RED[2], 1f);
             } else {
-                screen.getRenderer().setColor(Constants.COLOR_WHITE[0], Constants.COLOR_WHITE[1], Constants.COLOR_WHITE[2], 1f);
+                screen.getRenderer().setColor(Constants.COLOR_BLACK[0], Constants.COLOR_BLACK[1], Constants.COLOR_BLACK[2], 1f);
             }
-            screen.getRenderer().roundedRectLine(getX() + changeX, getY() + changeY, getWidth(), getHeight(), 5);
+            screen.getRenderer().roundedRectLine(getX() + changeX, getY() + changeY, getWidth() - 2, getHeight() - 2, 5);
         }
     }
 
     public void renderSprite(GameScreen screen, int changeX, int changeY) {
         if (this.getX() >= 0) {
+            if (getCompleteCosts() > 0) {
+                screen.spriteBatch.draw(AssetLoader.coinTextureRegion, getX() + changeX + getWidth() - 35, getY() + changeY + 5, 30, 30);
+                screen.drawString(String.valueOf(getCompleteCosts()), getX() + changeX + getWidth() - 35 + 14, getY() + changeY + 5 + 17, Constants.COLOR_BLACK, AssetLoader.font20, DrawString.MIDDLE, true, false);
+            }
+            renderTextAndTile(screen, changeX, changeY);
+        }
+    }
 
+    public void renderTextAndTile(GameScreen screen, int changeX, int changeY) {
+        if (this.getX() < 0) {
+            return;
+        }
+
+        String[] myText = this.getText().split(";");
+        int i = 0;
+        for (String text : myText) {
+            ArcheOLogicPanel.renderTextAndTileQuestion(screen, text, (int)(changeX + getX() + 10), (int)(changeY + getY() + 100 + i * 20), hasErrors());
+            i += 1;
+        }
+    }
+
+    public void renderIsle(GameScreen screen, int changeX, int changeY, int size, byte[][] tile) {
+        float startX = changeX + getX() + getWidth()/2 - tile[0].length * size / 2f;
+        float startY = changeY + getY() + 10;
+
+        for (int y = 0; y < tile.length; y++) {
+            for (int x = 0; x < tile[0].length; x++) {
+                if (tile[y][x] != 0) {
+                    int curTile = tile[y][x];
+                    if (curTile == 3) {
+                        curTile = 0;
+                    }
+                    screen.spriteBatch.draw(AssetLoader.backgroundTextureRegion[curTile], startX + x * size, startY + y * size, size, size);
+                }
+            }
         }
     }
 }

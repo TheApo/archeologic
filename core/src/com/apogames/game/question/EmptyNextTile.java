@@ -1,6 +1,8 @@
 package com.apogames.game.question;
 
 import com.apogames.Constants;
+import com.apogames.asset.AssetLoader;
+import com.apogames.backend.DrawString;
 import com.apogames.backend.GameScreen;
 import com.apogames.common.Localization;
 import com.apogames.help.Helper;
@@ -111,6 +113,14 @@ public class EmptyNextTile extends Question {
                     screen.getRenderer().rect(addX + 1 + x * size, startY + 1 + y * size, size - 2, size - 2);
                 }
             }
+        }
+    }
+
+    public void renderSprite(GameScreen screen, int changeX, int changeY) {
+        if (this.getX() >= 0) {
+            super.renderSprite(screen, changeX, changeY);
+
+            super.renderIsle(screen, changeX, changeY, 20, this.currentTile);
         }
     }
 }

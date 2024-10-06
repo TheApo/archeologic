@@ -53,6 +53,9 @@ public class AssetLoader {
 	private static Texture boardTexture;
 	public static TextureRegion boardTextureRegion;
 
+	private static Texture boardTextureLittle;
+	public static TextureRegion boardTextureLittleRegion;
+
 	private static Texture hudMenuTexture;
 	public static TextureRegion hudMenuTextureRegion;
 	private static Texture xTexture;
@@ -119,6 +122,14 @@ public class AssetLoader {
 
 		boardTextureRegion = new TextureRegion(boardTexture, 0, 0, 455, 455);
 		boardTextureRegion.flip(false, true);
+
+
+		boardTextureLittle = new Texture(Gdx.files.internal("images/gameboard_little.png"));
+		boardTextureLittle.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+		boardTextureLittleRegion = new TextureRegion(boardTextureLittle, 0, 0, 120, 120);
+		boardTextureLittleRegion.flip(false, true);
+
 
 		coinTexture = new Texture(Gdx.files.internal("images/coin.png"));
 		coinTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -239,6 +250,7 @@ public class AssetLoader {
 		backgroundQuestionTexture.dispose();
 		boardMainTexture.dispose();
 		boardTexture.dispose();
+		boardTextureLittle.dispose();
 		waterTexture.dispose();
 		coinTexture.dispose();
 		buttonXTexture.dispose();

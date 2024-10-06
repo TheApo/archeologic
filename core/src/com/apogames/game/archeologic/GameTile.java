@@ -287,8 +287,6 @@ public class GameTile {
             return;
         }
 
-        screen.getRenderer().setColor(Constants.COLOR_GREY[0], Constants.COLOR_GREY[1], Constants.COLOR_GREY[2], 0.6f);
-
         float curX = this.nextX;
         float curY = this.nextY;
 

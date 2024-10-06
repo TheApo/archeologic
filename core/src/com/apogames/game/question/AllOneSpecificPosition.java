@@ -1,7 +1,11 @@
 package com.apogames.game.question;
 
+import com.apogames.ArcheOLogic;
+import com.apogames.Constants;
+import com.apogames.asset.AssetLoader;
 import com.apogames.backend.GameScreen;
 import com.apogames.common.Localization;
+import com.apogames.game.archeologic.ArcheOLogicPanel;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -65,6 +69,10 @@ public class AllOneSpecificPosition extends Question {
             i += 1;
             if (i != this.answers.size()) {
                 result.append(" - ");
+
+                if (i % 2 == 0) {
+                    result.append(";");
+                }
             }
         }
 
@@ -111,5 +119,25 @@ public class AllOneSpecificPosition extends Question {
     @Override
     public void draw(GameScreen screen, int x, int y, int size) {
 
+    }
+
+    public void renderSprite(GameScreen screen, int changeX, int changeY) {
+        if (this.getX() < 0) {
+            return;
+        }
+        super.renderSprite(screen, changeX, changeY);
+        int size = 80;
+        float startX = getX() + changeX + getWidth()/2f - size/2f;
+        float startY = getY() + changeY + 5;
+        screen.spriteBatch.draw(AssetLoader.boardTextureLittleRegion, startX, startY, size, size);
+
+        float calc = size / (float)AssetLoader.boardTextureLittleRegion.getRegionWidth();
+        for (SpecificPosition myAnswer : answers) {
+            int answer = myAnswer.getAnswer();
+            if (answer == 3) {
+                answer = 0;
+            }
+            screen.spriteBatch.draw(AssetLoader.backgroundTextureRegion[answer], startX + 18 * calc + 17 * calc * myAnswer.getColumn(), startY + 18 * calc + 17 * calc * myAnswer.getRow(), 17 * calc, 17 * calc);
+        }
     }
 }
