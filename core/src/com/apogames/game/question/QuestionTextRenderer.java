@@ -614,7 +614,19 @@ public class QuestionTextRenderer {
 
             // Calculate total width for return value
             measureSegmentsWithRealButtonSizes(segments, AssetLoader.font15, screen);
-            return startX + calculateTotalWidth(segments, improvedPadding);
+
+            // Special case for question_enum_one_tile: add extra padding after last text segment
+            float totalWidth = calculateTotalWidth(segments, improvedPadding);
+            if (hasNonTextSegments && segments.size() >= 3) {
+                // Check if this is the pattern: TEXT;TILE_VISUAL;TEXT (like question_enum_one_tile)
+                if (segments.get(segments.size() - 1).getType() == SegmentType.TEXT &&
+                    segments.get(segments.size() - 2).getType() == SegmentType.TILE_VISUAL) {
+                    // Add extra padding after the last text segment for proper spacing
+                    totalWidth += 7; // Add extra 7px for proper spacing before curAddQuestionString
+                }
+            }
+
+            return startX + totalWidth;
         } else {
             // Fall back to old rendering system for backward compatibility
             return renderOldStyleTextAndTileQuestion(screen, text, startX, startY, error, drawString);

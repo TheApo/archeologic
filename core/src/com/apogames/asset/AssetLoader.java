@@ -28,6 +28,7 @@
 package com.apogames.asset;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -237,6 +238,8 @@ public class AssetLoader {
 			buttonBlancoSmallTextureRegion[i].flip(false, true);
 		}
 
+		// Always use bitmap fonts for HTML5 compatibility
+		// TTF fonts are loaded in platform-specific code (Desktop/Android only)
 		font40 = new BitmapFont(Gdx.files.internal("fonts/pirate40.fnt"), Gdx.files.internal("fonts/pirate40.png"), true);
 		font20 = new BitmapFont(Gdx.files.internal("fonts/pirate20.fnt"), Gdx.files.internal("fonts/pirate20.png"), true);
 		font15 = new BitmapFont(Gdx.files.internal("fonts/pirate15.fnt"), Gdx.files.internal("fonts/pirate15.png"), true);
