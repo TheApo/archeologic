@@ -114,6 +114,20 @@ public class TileNextTile extends Question {
 
     @Override
     public void draw(GameScreen screen, int addX, int addY, int size) {
+        // Fallback to old rendering system if not using flexible rendering
+        if (!supportsFlexibleRendering()) {
+            drawOldStyle(screen, addX, addY, size);
+            return;
+        }
+
+        // New flexible rendering is handled by the base class
+        // through renderFlexibleQuestion() method
+    }
+
+    /**
+     * Old style rendering method (kept as fallback)
+     */
+    private void drawOldStyle(GameScreen screen, int addX, int addY, int size) {
         addX += 100;
         addY -= 5;
 
@@ -169,5 +183,30 @@ public class TileNextTile extends Question {
         super.renderIsle(screen, changeX - 40, changeY + 10, 15, this.currentTile);
 
         super.renderIsle(screen, changeX + 10, changeY + 10, 15, this.currentOtherTile);
+    }
+
+    @Override
+    protected boolean supportsFlexibleRendering() {
+        return true; // Enable new flexible rendering system
+    }
+
+    @Override
+    protected Object getTileVisualData(int segmentIndex) {
+        // Return tile data based on segment index
+        // segmentIndex 0 = first tile, segmentIndex 1 = second tile
+        switch (segmentIndex) {
+            case 0:
+                return this.currentTile;
+            case 1:
+                return this.currentOtherTile;
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    protected Object getDropdownData(int segmentIndex) {
+        // TileNextTile doesn't use dropdowns, but this could be extended
+        return null;
     }
 }

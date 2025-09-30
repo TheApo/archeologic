@@ -6,8 +6,10 @@ import com.apogames.backend.DrawString;
 import com.apogames.backend.GameScreen;
 import com.apogames.entity.ApoEntity;
 import com.apogames.game.archeologic.ArcheOLogicPanel;
+import com.apogames.game.question.QuestionTextRenderer.TextSegment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Question extends ApoEntity {
 
@@ -113,7 +115,52 @@ public abstract class Question extends ApoEntity {
     }
 
     public void render(GameScreen screen, int changeX, int changeY) {
-        ArcheOLogicPanel.renderTextAndTileQuestion(screen, text, (int)(this.getX() + changeX), (int)(this.getY() + changeY), this.error);
+        // Use new flexible rendering system if question supports it
+        if (supportsFlexibleRendering()) {
+            renderFlexibleQuestion(screen, changeX, changeY);
+        } else {
+            // Fallback to enhanced system that handles both old and new formats
+            QuestionTextRenderer.renderEnhancedTextAndTileQuestion(screen, text, (int)(this.getX() + changeX), (int)(this.getY() + changeY), this.error);
+        }
+    }
+
+    /**
+     * Override this method to use the new flexible rendering system
+     */
+    protected boolean supportsFlexibleRendering() {
+        return false;
+    }
+
+    /**
+     * Render question using the flexible text segment system
+     */
+    protected void renderFlexibleQuestion(GameScreen screen, int changeX, int changeY) {
+        if (questionEnum != null) {
+            List<TextSegment> segments = QuestionTextRenderer.parseQuestionText(questionEnum.getText());
+
+            float startX = this.getX() + changeX;
+            float startY = this.getY() + changeY;
+
+            QuestionTextRenderer.renderQuestionSegments(
+                screen, segments, startX, startY,
+                AssetLoader.font20, Constants.COLOR_BLACK,
+                5.0f, this
+            );
+        }
+    }
+
+    /**
+     * Override this method to provide custom tile visual data for rendering
+     */
+    protected Object getTileVisualData(int segmentIndex) {
+        return null;
+    }
+
+    /**
+     * Override this method to provide custom dropdown data for rendering
+     */
+    protected Object getDropdownData(int segmentIndex) {
+        return null;
     }
 
     public void renderFilled(GameScreen screen, int changeX, int changeY) {
