@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew:*)",
+      "WebSearch",
+      "WebFetch(domain:libgdx.com)",
+      "Bash(find:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(wmic process where:*)",
+      "Bash(dir)",
+      "Bash(dir:*)",
+      "Bash(.gradlew html:dist)",
+      "Bash(gradlew.bat:*)",
+      "Bash(chmod:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1336,7 +1336,13 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
                 BitmapFont font15 = AssetLoader.font15;
                 String text = Localization.getInstance().getCommon().get(questionEnumForQuestionType[i].getText())+" ";
 
-                float startX = renderTextAndTileQuestion(getMainPanel(), text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, ArcheOLogicPanel.START_QUESTION_Y + 27 + i * (50 + 10), false);
+                float questionStartX = Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130;
+                float questionY = ArcheOLogicPanel.START_QUESTION_Y + 27 + i * (50 + 10);
+
+                // Update button positions based on text segments
+                updateQuestionButtonPositions(questionEnumForQuestionType[i], questionStartX, questionY, i);
+
+                float startX = QuestionTextRenderer.renderEnhancedTextAndTileQuestion(getMainPanel(), text, questionStartX, questionY, false);
 
                 //getMainPanel().drawString(text, Constants.GAME_WIDTH - AssetLoader.backgroundQuestionTextureRegion.getRegionWidth() - 10 + 130, 277 + i * (50 + 10), Constants.COLOR_BLACK, font15, DrawString.BEGIN, true, false);
                 if (this.showTabIndex != OTHER_QUESTIONS) {
@@ -1481,6 +1487,163 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             }
         }
         return startX;
+    }
+
+    /**
+     * Update button positions based on text segments for dynamic positioning
+     */
+    private void updateQuestionButtonPositions(QuestionEnum questionEnum, float startX, float startY, int questionIndex) {
+        String questionText = Localization.getInstance().getCommon().get(questionEnum.getText()) + " ";
+
+        // Calculate UI element positions with real button dimensions
+        java.util.List<QuestionTextRenderer.UIElementPosition> uiPositions =
+                QuestionTextRenderer.calculateUIElementPositions(questionText, startX, startY, getMainPanel());
+
+        // Update button positions based on question type
+        updateButtonPositionsForQuestionType(questionEnum, uiPositions, questionIndex);
+    }
+
+    /**
+     * Update specific button positions based on question type
+     */
+    private void updateButtonPositionsForQuestionType(QuestionEnum questionEnum,
+                                                    java.util.List<QuestionTextRenderer.UIElementPosition> uiPositions,
+                                                    int questionIndex) {
+        switch (questionEnum) {
+            case TILE_NEXT_TILE:
+                updateTileNextTileButtons(uiPositions);
+                break;
+
+            case HORIZONTAL_VERTICAL_BORDER_CHECK:
+                updateHorizontalBorderButtons(uiPositions);
+                break;
+
+            case ONE_TILE_CHECK:
+                updateOneTileCheckButtons(uiPositions);
+                break;
+
+            case CORNER_BORDER_CHECK:
+                updateCornerBorderButtons(uiPositions);
+                break;
+
+            case EMPTY_NEXT_TILE:
+                updateEmptyNextTileButtons(uiPositions);
+                break;
+
+            // Add more cases as needed
+        }
+    }
+
+    /**
+     * Update buttons for TILE_NEXT_TILE questions
+     */
+    private void updateTileNextTileButtons(java.util.List<QuestionTextRenderer.UIElementPosition> uiPositions) {
+        int tileVisualIndex = 0;
+        for (QuestionTextRenderer.UIElementPosition pos : uiPositions) {
+            if (pos.getType() == QuestionTextRenderer.SegmentType.TILE_VISUAL) {
+                String buttonFunction;
+                if (tileVisualIndex == 0) {
+                    buttonFunction = FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE;
+                } else {
+                    buttonFunction = FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE_OTHER;
+                }
+
+                ApoButton button = getMainPanel().getButtonByFunction(buttonFunction);
+                if (button != null) {
+                    // Center button horizontally in the allocated space
+                    int buttonX = (int) (pos.getX() + (pos.getWidth() - button.getWidth()) / 2);
+                    int buttonY = (int) (pos.getY() - button.getHeight() / 2);
+                    button.setX(buttonX);
+                    button.setY(buttonY);
+                }
+                tileVisualIndex++;
+            }
+        }
+    }
+
+    /**
+     * Update buttons for HORIZONTAL_VERTICAL_BORDER_CHECK questions
+     */
+    private void updateHorizontalBorderButtons(java.util.List<QuestionTextRenderer.UIElementPosition> uiPositions) {
+        int elementIndex = 0;
+        for (QuestionTextRenderer.UIElementPosition pos : uiPositions) {
+            if (pos.getType() == QuestionTextRenderer.SegmentType.TILE_VISUAL && elementIndex == 0) {
+                // First element is tile visual
+                ApoButton button = getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL);
+                if (button != null) {
+                    int buttonX = (int) (pos.getX() + (pos.getWidth() - button.getWidth()) / 2);
+                    int buttonY = (int) (pos.getY() - button.getHeight() / 2);
+                    button.setX(buttonX);
+                    button.setY(buttonY);
+                }
+                elementIndex++;
+            } else if (pos.getType() == QuestionTextRenderer.SegmentType.DROPDOWN && elementIndex == 1) {
+                // Second element is the large dropdown (STRING_SIDE)
+                ApoButton button = getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE);
+                if (button != null) {
+                    // For the large dropdown, position it more carefully
+                    int buttonX = (int) pos.getX();  // Use exact position, no centering needed for large dropdown
+                    int buttonY = (int) (pos.getY() - button.getHeight() / 2);
+                    button.setX(buttonX);
+                    button.setY(buttonY);
+                }
+                elementIndex++;
+            }
+        }
+    }
+
+    /**
+     * Update buttons for ONE_TILE_CHECK questions
+     */
+    private void updateOneTileCheckButtons(java.util.List<QuestionTextRenderer.UIElementPosition> uiPositions) {
+        for (QuestionTextRenderer.UIElementPosition pos : uiPositions) {
+            if (pos.getType() == QuestionTextRenderer.SegmentType.TILE_VISUAL) {
+                ApoButton button = getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN);
+                if (button != null) {
+                    int buttonX = (int) (pos.getX() + (pos.getWidth() - button.getWidth()) / 2);
+                    int buttonY = (int) (pos.getY() - button.getHeight() / 2);
+                    button.setX(buttonX);
+                    button.setY(buttonY);
+                }
+                break; // Only first tile visual
+            }
+        }
+    }
+
+    /**
+     * Update buttons for CORNER_BORDER_CHECK questions
+     */
+    private void updateCornerBorderButtons(java.util.List<QuestionTextRenderer.UIElementPosition> uiPositions) {
+        for (QuestionTextRenderer.UIElementPosition pos : uiPositions) {
+            if (pos.getType() == QuestionTextRenderer.SegmentType.TILE_VISUAL) {
+                ApoButton button = getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_CORNER);
+                if (button != null) {
+                    int buttonX = (int) (pos.getX() + (pos.getWidth() - button.getWidth()) / 2);
+                    int buttonY = (int) (pos.getY() - button.getHeight() / 2);
+                    button.setX(buttonX);
+                    button.setY(buttonY);
+                }
+                break; // Only first tile visual
+            }
+        }
+    }
+
+    /**
+     * Update buttons for EMPTY_NEXT_TILE questions
+     */
+    private void updateEmptyNextTileButtons(java.util.List<QuestionTextRenderer.UIElementPosition> uiPositions) {
+        for (QuestionTextRenderer.UIElementPosition pos : uiPositions) {
+            if (pos.getType() == QuestionTextRenderer.SegmentType.TILE_VISUAL) {
+                ApoButton button = getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE);
+                if (button != null) {
+                    int buttonX = (int) (pos.getX() + (pos.getWidth() - button.getWidth()) / 2);
+                    int buttonY = (int) (pos.getY() - button.getHeight() / 2);
+                    button.setX(buttonX);
+                    button.setY(buttonY);
+                }
+                break; // Only first tile visual
+            }
+        }
     }
 
     @Override
