@@ -4,6 +4,7 @@ import com.apogames.Constants;
 import com.apogames.asset.AssetLoader;
 import com.apogames.backend.DrawString;
 import com.apogames.backend.GameScreen;
+import com.apogames.backend.ModalManager;
 import com.apogames.backend.SequentiallyThinkingScreenModel;
 import com.apogames.common.Localization;
 import com.apogames.entity.ApoButton;
@@ -100,7 +101,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_ARCHEOLOGIC_BACK).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_RESTART).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_NEW_LEVEL).setVisible(true);
-        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_TEST).setVisible(true);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_TEST).setVisible(false);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_CHECK).setVisible(true);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(true);
         setPuzzleButtonVisibility();
@@ -110,7 +111,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_ARCHEOLOGIC_BACK).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_RESTART).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_NEW_LEVEL).setVisible(visible);
-        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_TEST).setVisible(visible);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_TEST).setVisible(false);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_CHECK).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(visible);
         getMainPanel().getButtonByFunction(FUNCTION_FINISH_BACK).setVisible(visible);
@@ -765,7 +766,7 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
         getMainPanel().getButtonByFunction(FUNCTION_ARCHEOLOGIC_BACK).setVisible(!showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_RESTART).setVisible(!showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_NEW_LEVEL).setVisible(!showQuestion);
-        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_TEST).setVisible(!showQuestion);
+        getMainPanel().getButtonByFunction(FUNCTION_QUESTION_TEST).setVisible(false);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_CHECK).setVisible(!showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION).setVisible(!showQuestion);
         getMainPanel().getButtonByFunction(FUNCTION_QUESTION_QUESTION_REAL).setVisible(showQuestion);
@@ -1416,19 +1417,32 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             getMainPanel().spriteBatch.end();
         }
 
+        // Normale Buttons rendern (nicht-modal)
         for (ApoButton button : this.getMainPanel().getButtons()) {
             if (!showCoinNextCostAsk && this.showQuestion && button.getFunction().startsWith(FUNCTION_QUESTION_ROW)) {
+                continue;
+            }
+            // Überspringe Modal-Buttons (werden später gerendert)
+            if (button instanceof ApoButtonImageDropdown && ((ApoButtonImageDropdown) button).isSelect()) {
                 continue;
             }
             button.render(this.getMainPanel());
         }
 
+        // Selected normale Buttons rendern
         for (ApoButton button : this.getMainPanel().getButtons()) {
             if (!showCoinNextCostAsk && this.showQuestion && this.showTabIndex == OTHER_QUESTIONS) {
                 continue;
             }
-            if (button.isVisible() && button.isSelect()) {
+            if (button.isVisible() && button.isSelect() && !(button instanceof ApoButtonImageDropdown)) {
                 button.render(this.getMainPanel());
+            }
+        }
+
+        // Modal-Buttons im Vordergrund rendern (höchste Z-Order)
+        for (ApoButtonImageDropdown modal : ModalManager.getActiveModals()) {
+            if (modal.isVisible()) {
+                modal.render(this.getMainPanel());
             }
         }
 

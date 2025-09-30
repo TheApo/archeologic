@@ -4,6 +4,8 @@ import com.apogames.Constants;
 import com.apogames.asset.AssetLoader;
 import com.apogames.backend.DrawString;
 import com.apogames.backend.GameScreen;
+import com.apogames.backend.HtmlInputProcessor;
+import com.apogames.backend.HtmlRenderingController;
 import com.apogames.backend.ScreenModel;
 import com.apogames.common.Localization;
 import com.apogames.game.archeologic.ArcheOLogicPanel;
@@ -29,8 +31,12 @@ public class MainPanel extends GameScreen {
             button.init();
         }
 
+        // HTML5/GWT rendering wird jetzt in ArcheOLogic.java gehandelt
+        // da setContinuousRendering(false) in GWT nicht richtig funktioniert
+
+        // Setup HTML5 Input Processor nach der Initialisierung
         if (Constants.IS_HTML) {
-            Gdx.graphics.setContinuousRendering(false);
+            setupHtmlInputProcessor();
         }
         Localization.getInstance().setLocale(Locale.getDefault());
 
@@ -115,5 +121,21 @@ public class MainPanel extends GameScreen {
         this.getRenderer().setColor(Constants.COLOR_BACKGROUND[0], Constants.COLOR_BACKGROUND[1], Constants.COLOR_BACKGROUND[2], 1);
         this.getRenderer().rect(0, 0, Constants.GAME_WIDTH, Constants.GAME_HEIGHT);
         this.getRenderer().end();
+    }
+
+    private void setupHtmlInputProcessor() {
+        // Delayed setup für HTML5 Input Processor
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if (Gdx.input.getInputProcessor() != null) {
+                    HtmlInputProcessor htmlInputProcessor = new HtmlInputProcessor(Gdx.input.getInputProcessor());
+                    Gdx.input.setInputProcessor(htmlInputProcessor);
+                    System.out.println("HTML5 Input Processor aktiviert");
+                } else {
+                    System.out.println("Kein Input Processor gefunden für HTML5 Setup");
+                }
+            }
+        });
     }
 }

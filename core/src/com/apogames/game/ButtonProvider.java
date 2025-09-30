@@ -29,6 +29,7 @@ package com.apogames.game;
 
 import com.apogames.Constants;
 import com.apogames.asset.AssetLoader;
+import com.apogames.backend.ModalManager;
 import com.apogames.entity.ApoButton;
 import com.apogames.entity.ApoButtonImageDropdown;
 import com.apogames.entity.ApoButtonImageThree;
@@ -64,6 +65,7 @@ public class ButtonProvider {
 			button.setStroke(1);
 			button.setFont(AssetLoader.font40);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_ARCHEOLOGIC_BACK;
@@ -77,6 +79,7 @@ public class ButtonProvider {
 			button.setStroke(1);
 			button.setFont(AssetLoader.font20);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "Play";
 			function = Menu.FUNCTION_PLAY;
@@ -89,6 +92,7 @@ public class ButtonProvider {
 			button.setStroke(1);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "Puzzle";
 			function = Menu.FUNCTION_PUZZLE;
@@ -101,6 +105,7 @@ public class ButtonProvider {
 			button.setStroke(1);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "de";
 			function = Menu.FUNCTION_LANGUAGE;
@@ -111,6 +116,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_language_de");
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			int addValue = 100;
 
@@ -123,6 +129,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonLeftTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = Menu.FUNCTION_AMOUNTTILES_RIGHT;
@@ -133,6 +140,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRightTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 
 			text = "";
@@ -144,6 +152,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonLeftTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = Menu.FUNCTION_DIFFICULTY_RIGHT;
@@ -154,6 +163,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonRightTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 
 			text = "";
@@ -166,6 +176,7 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font20);
 			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "New Level");
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_TEST;
@@ -176,6 +187,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonHelpTextureRegion);
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "check";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_CHECK;
@@ -186,6 +198,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_check");
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "frage";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION;
@@ -196,6 +209,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_question");
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 
 			text = "next hint";
@@ -207,6 +221,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_next_hint");
 			button.setFont(AssetLoader.font20);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "Help";
 			function = ArcheOLogicPanel.FUNCTION_QUESTIONS_HELP;
@@ -217,6 +232,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_help");
 			button.setFont(AssetLoader.font20);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_RESTART;
@@ -228,6 +244,7 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font25);
 			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "Restart");
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			int size = 300;
 
@@ -240,6 +257,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_newlevel");
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_FINISH_RESTART;
@@ -251,6 +269,7 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font25);
 			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "Restart");
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_FINISH_BACK;
@@ -262,6 +281,7 @@ public class ButtonProvider {
 			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "Menu");
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			String[] values = ArcheOLogicPanel.askOrder;
 			for (int i = 0; i < values.length; i++) {
@@ -274,6 +294,7 @@ public class ButtonProvider {
 				button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 				button.setFont(AssetLoader.font30);
 				this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 				if (i == 0) {
 					button.setSelect(true);
@@ -295,6 +316,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_question");
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "ORIGINAL";
 			function = ArcheOLogicPanel.FUNCTION_QUESTIONS_ORIGINAL;
@@ -306,6 +328,7 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font25);
 			button.setSelect(true);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "OTHER";
 			function = ArcheOLogicPanel.FUNCTION_QUESTIONS_OTHER;
@@ -316,6 +339,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageThree(x, y, width, height, function, text, 0, 0, width, height, Constants.COLOR_BLACK, "button_questions_other");
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN;
@@ -326,6 +350,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_EMPTY_NEXT_TILE;
@@ -336,6 +361,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE;
@@ -346,6 +372,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_TILE_NEXT_TILE_OTHER;
@@ -356,6 +383,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_HORIZONTAL;
@@ -366,6 +394,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_CORNER;
@@ -376,6 +405,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageDropdown(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font25);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_DROPDOWN_STRING_SIDE;
@@ -391,6 +421,7 @@ public class ButtonProvider {
 			strings.add("question_complete");
 			((ApoButtonImageDropdown)(button)).setValues(strings);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_QUESTION_QUESTION_CLOSE;
@@ -403,6 +434,7 @@ public class ButtonProvider {
 			button.setStroke(1);
 			button.setFont(AssetLoader.font40);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 
 			text = "";
@@ -415,6 +447,7 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font30);
 			((ApoButtonImageWithThree)(button)).setRotate(90);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_HINT_DOWN;
@@ -426,6 +459,7 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font30);
 			((ApoButtonImageWithThree)(button)).setRotate(90);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 
 			text = "";
@@ -438,6 +472,7 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font25);
 			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "Cancel");
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			text = "";
 			function = ArcheOLogicPanel.FUNCTION_OK;
@@ -449,6 +484,7 @@ public class ButtonProvider {
 			button.setFont(AssetLoader.font25);
 			((ApoButtonImageWithThree)(button)).setMouseOverText(AssetLoader.buttonBlancoTextureRegion[0], "Ok");
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			for (int i = 0; i < this.game.getButtons().size(); i++) {
 				this.game.getButtons().get(i).setBOpaque(false);
@@ -474,6 +510,7 @@ public class ButtonProvider {
 			button = new ApoButtonImageWithThree(x, y, width, height, function, text, AssetLoader.buttonBlancoSmallTextureRegion);
 			button.setFont(AssetLoader.font30);
 			this.game.getButtons().add(button);
+			ModalManager.registerButton(button);
 
 			if (i == 0) {
 				button.setSelect(true);

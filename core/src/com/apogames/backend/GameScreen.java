@@ -30,6 +30,7 @@ package com.apogames.backend;
 import com.apogames.Constants;
 import com.apogames.asset.AssetLoader;
 import com.apogames.entity.ApoButton;
+import com.apogames.entity.ApoButtonImageDropdown;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -384,7 +385,27 @@ public class GameScreen implements Screen, InputProcessor {
         int x = (int) screenCoords.x;
         int y = (int) screenCoords.y;
         boolean bCheck = true;
+
         if (this.buttons != null) {
+            // Schritt 1: Prüfe zuerst aktive Modals (höchste Priorität)
+            ApoButtonImageDropdown activeModal = ModalManager.getModalForEvent(x, y);
+            if (activeModal != null) {
+                if (activeModal.getReleased(x, y)) {
+                    this.buttonFunction = activeModal.getFunction();
+                    bCheck = false;
+                }
+                // Event wurde von Modal behandelt (auch wenn nicht accepted)
+                return false;
+            }
+
+            // Schritt 2: Wenn Modal aktiv ist, ignoriere alle anderen Buttons
+            if (ModalManager.hasActiveModal()) {
+                // Click außerhalb aller Modals - schließe alle Modals
+                ModalManager.closeAllModals();
+                return false;
+            }
+
+            // Schritt 3: Normale Button-Behandlung (kein Modal aktiv)
             for (ApoButton apoButton : this.buttons) {
                 if (apoButton.getReleased(x, y)) {
                     this.buttonFunction = apoButton.getFunction();
@@ -393,9 +414,9 @@ public class GameScreen implements Screen, InputProcessor {
                 }
             }
         }
+
         if ((this.model != null) && (bCheck)) {
             this.clickReleasedArray.add(new GridPoint2(x, y));
-
         }
         return false;
     }
@@ -474,6 +495,15 @@ public class GameScreen implements Screen, InputProcessor {
         viewport.unproject(screenCoords);
         int x = (int) screenCoords.x;
         int y = (int) screenCoords.y;
+
+        // Update Modal MouseOver-Status sofort
+        ModalManager.updateMouseOver(x, y);
+
+        // Request rendering für HTML5 bei Modal-Hover
+        if (Constants.IS_HTML && ModalManager.hasActiveModal()) {
+            HtmlRenderingController.requestRender();
+        }
+
         if (this.model != null) {
             mouseMovedArray.add(new GridPoint2(x, y));
             //this.model.mouseMoved(x, y);
