@@ -12,7 +12,8 @@
       "Bash(dir:*)",
       "Bash(.gradlew html:dist)",
       "Bash(gradlew.bat:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(xargs grep *)"
     ],
     "deny": [],
     "ask": []

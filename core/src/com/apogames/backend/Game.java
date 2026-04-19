@@ -27,6 +27,7 @@
 
 package com.apogames.backend;
 
+import com.apogames.Constants;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -37,6 +38,9 @@ import com.badlogic.gdx.Screen;
 public abstract class Game implements ApplicationListener {
 
     private GameScreen screen;
+    private static boolean needsRender = true;
+    private int lastResizeWidth = -1;
+    private int lastResizeHeight = -1;
 
     /**
      * Instantiates a new Game.
@@ -56,6 +60,7 @@ public abstract class Game implements ApplicationListener {
 
     @Override
     public void resume() {
+        markDirty();
         if (screen != null) screen.resume();
     }
 
@@ -64,12 +69,25 @@ public abstract class Game implements ApplicationListener {
         if (screen != null) {
             float deltaTime = Gdx.graphics.getDeltaTime();
             screen.think(deltaTime);
+            if (Constants.IS_HTML && !needsRender) {
+                return;
+            }
+            needsRender = false;
             screen.render(deltaTime);
         }
     }
 
+    public static void markDirty() {
+        needsRender = true;
+    }
+
     @Override
     public void resize(int width, int height) {
+        if (width != lastResizeWidth || height != lastResizeHeight) {
+            lastResizeWidth = width;
+            lastResizeHeight = height;
+            markDirty();
+        }
         if (screen != null) screen.resize(width, height);
     }
 
@@ -80,6 +98,7 @@ public abstract class Game implements ApplicationListener {
      * @param screen may be {@code null}
      */
     public void setScreen(GameScreen screen) {
+        markDirty();
         if (this.screen != null) this.screen.hide();
         if (screen != null) {
             this.screen = screen;

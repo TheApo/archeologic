@@ -377,6 +377,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        Game.markDirty();
         if (pointer > 0) {
             return false;
         }
@@ -427,6 +428,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+        Game.markDirty();
         if (pointer > 0) {
             return false;
         }
@@ -441,6 +443,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        Game.markDirty();
         if (pointer > 0) {
             return false;
         }
@@ -466,6 +469,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public boolean keyDown(int keycode) {
+        Game.markDirty();
         if (this.model != null) {
             keyPressedArray.add(keycode);
             this.model.keyPressed(keycode, (char) (keycode));
@@ -474,6 +478,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public boolean keyUp(int keycode) {
+        Game.markDirty();
         if (this.model != null) {
             keyReleasedArray.add(keycode);
         }
@@ -481,6 +486,7 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public boolean keyTyped(char character) {
+        Game.markDirty();
         if (this.model != null) {
             if ((int) character != 0) {
                 keyReleasedArray.add((int) character);
@@ -491,37 +497,24 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        Game.markDirty();
         Vector3 screenCoords = new Vector3(screenX, screenY, 0);
         viewport.unproject(screenCoords);
         int x = (int) screenCoords.x;
         int y = (int) screenCoords.y;
 
-        // Update Modal MouseOver-Status sofort
         ModalManager.updateMouseOver(x, y);
-
-        // Request rendering für HTML5 bei Modal-Hover
-        if (Constants.IS_HTML && ModalManager.hasActiveModal()) {
-            HtmlRenderingController.requestRender();
-        }
 
         if (this.model != null) {
             mouseMovedArray.add(new GridPoint2(x, y));
-            //this.model.mouseMoved(x, y);
         }
-
-        /*if (this.buttons != null) {
-            for (ApoButton button : this.buttons) {
-                if (button.getMove(x, y)) {
-                    break;
-                }
-            }
-        }*/
 
         return false;
     }
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
+        Game.markDirty();
         if (this.model != null) {
             this.model.mouseWheelChanged((int)(amountY));
         }

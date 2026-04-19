@@ -696,6 +696,13 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
             }
         } else {
             this.game.mouseButtonReleased(mouseX, mouseY, isRightButton);
+            autoHelpForNewbie();
+        }
+    }
+
+    private void autoHelpForNewbie() {
+        if (this.puzzle && this.game.getDifficulty() == Difficulty.NEWBIE) {
+            this.game.makeQuestionErrorWhenWrong();
         }
     }
 

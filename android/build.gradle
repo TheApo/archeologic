@@ -1,6 +1,7 @@
 android {
-    buildToolsVersion "33.0.1"
-    compileSdkVersion 33
+    namespace 'com.apogames'
+    buildToolsVersion "35.0.0"
+    compileSdk 35
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -13,17 +14,24 @@ android {
         }
 
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += ['META-INF/robovm/ios/robovm.xml']
+        }
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
     defaultConfig {
         applicationId "com.apogames"
-        minSdkVersion 14
-        targetSdkVersion 33
+        minSdk 28
+        targetSdk 35
         versionCode 1
         versionName "1.0"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     buildTypes {
         release {
