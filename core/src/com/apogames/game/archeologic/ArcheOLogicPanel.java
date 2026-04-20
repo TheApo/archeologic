@@ -702,7 +702,11 @@ public class ArcheOLogicPanel extends SequentiallyThinkingScreenModel {
 
     private void autoHelpForNewbie() {
         if (this.puzzle && this.game.getDifficulty() == Difficulty.NEWBIE) {
-            this.game.makeQuestionErrorWhenWrong();
+            if (this.game.areAllTilesInField()) {
+                this.game.makeQuestionErrorWhenWrong();
+            } else {
+                this.game.resetErrors();
+            }
         }
     }
 

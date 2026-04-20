@@ -411,6 +411,29 @@ public class GameEntity {
         }
     }
 
+    public boolean areAllTilesInField() {
+        if (this.solution == null || this.currentTiles == null) {
+            return false;
+        }
+        int height = this.solution.length;
+        int width = this.solution[0].length;
+        for (GameTile curTile : this.currentTiles) {
+            byte[][] tileBytes = curTile.getBytes();
+            for (int y = 0; y < tileBytes.length; y++) {
+                for (int x = 0; x < tileBytes[0].length; x++) {
+                    if (tileBytes[y][x] != 0) {
+                        int gx = curTile.getGameX() + x;
+                        int gy = curTile.getGameY() + y;
+                        if (gx < 0 || gx >= width || gy < 0 || gy >= height) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     public void setAllSolutions(ArrayList<byte[][]> possibleSolutions, ArrayList<byte[][]> possibleSolutionsPossibilities) {
         this.possibleSolutions = new ArrayList<>(possibleSolutions);
         this.possibleSolutionsPossibilities = new ArrayList<>(possibleSolutionsPossibilities);
